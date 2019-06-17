@@ -1,0 +1,7 @@
+/assets/*
+/framework/*
+/filemanager/*
+/protected/extensions/cookies/*
+/protected/config/main.php
+/protected/config/params.php
+/protected/runtime/application.log

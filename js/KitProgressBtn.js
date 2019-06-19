@@ -4,20 +4,24 @@
         total = _.find('input[required], select[required]').length;
 
         options = $.extend({
-            colors : {
-                0 : {
+            colors : [
+                {
                     rgb : 'rgb(178, 16, 16)',
                     point : 0
                 },
-                1 : {
+                {
                     rgb : 'rgb(236, 143, 30)',
-                    point : 50
+                    point : 33
                 },
-                2 : {
+                {
+                    rgb : 'rgb(244, 202, 4)',
+                    point : 67
+                },
+                {
                     rgb : 'rgb(28, 160, 4)',
                     point : 100
-                },
-            },
+                }
+            ],
             buttonId : 'b-progress-bar-container',
         }, options);
 

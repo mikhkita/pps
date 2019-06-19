@@ -909,6 +909,12 @@ $(document).ready(function(){
         buttonId : 'b-progress-bar-container'
     });
 
+    $('#b-progress-bar-container').on('click',function(){
+        if ($("#b-progress-bar").attr('data-complete') == 'true') {
+            $('#faculties-form').submit();
+        }
+    });
+
     $('#passenger_count').on('change',function(){
         console.log($(this).val());
         $('#passenger_total_count').text($(this).val());

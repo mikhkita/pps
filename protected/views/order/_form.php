@@ -83,10 +83,10 @@
 				</div>
 				<div class="b-hor-input">
 					<div class="b-input b-hor-input-left">
-						<?php echo $form->labelEx($model, "date"); ?>
+						<label for="date" class="required">Дата поездки <span class="required">*</span></label>
 					</div>
 					<div class="b-hor-input-right">
-						<?=CHTML::radioButtonList("date", $roles, array( 0 => "Старше 10 лет", 1 => "Младше 10 лет" ), array("template" => '<div class="b-radio">{input}{label}</div>', "separator" => "", "container" => "div", "baseID" => "baseIDasd")); ?>
+						<input type="text" id="date" placeholder="...">
 					</div>
 				</div>
 				<div class="b-hor-input">
@@ -121,10 +121,12 @@
 						<input type="text" id="comment" placeholder="...">
 					</div>
 				</div>
-				<div class="b-price-row">
-					<div class="b-label-block b-person-price" data-price="1900">
-						<label>Итого:</label>
-						<h3>4 500 ₽</h3>
+				<div class="b-hor-input">
+					<div class="b-input b-hor-input-left">
+						<label class="required">Итого</label>
+					</div>
+					<div class="b-hor-input-right">
+						<span class="b-person-price" data-price="1900">1900</span>
 					</div>
 				</div>
 			</div>
@@ -151,7 +153,7 @@
 				</div>
 			</div>
 			<div class="b-right-tile-bottom-block b-right-tile-block">
-				<a href="#" class="b-btn ajax" id="b-progress-bar-container">
+				<a href="#" class="b-btn" id="b-progress-bar-container">
 					<span class="icon-check">Оформить заявку</span>
 				</a>
 			</div>

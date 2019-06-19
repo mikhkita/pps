@@ -1,13 +1,13 @@
 <div class="b-order-form">
 
 	<div class="b-order-form-left">
-	<?php $form=$this->beginWidget("CActiveForm", array(
-		"id" => "faculties-form",
-		"enableAjaxValidation" => false,
-		'htmlOptions'=>array(
-			'class'=>'validatable',
-	    ),
-	)); ?>
+		<?php $form=$this->beginWidget("CActiveForm", array(
+			"id" => "faculties-form",
+			"enableAjaxValidation" => false,
+			'htmlOptions'=>array(
+				'class'=>'validatable',
+		    ),
+		)); ?>
 
 		<?php echo $form->errorSummary($model); ?>
 
@@ -122,7 +122,7 @@
 					</div>
 				</div>
 				<div class="b-price-row">
-					<div class="b-label-block">
+					<div class="b-label-block b-person-price" data-price="1900">
 						<label>Итого:</label>
 						<h3>4 500 ₽</h3>
 					</div>
@@ -138,7 +138,24 @@
 	<?php $this->endWidget(); ?>		
 	</div>
 	<div class="b-tile b-order-form-right">
-		
+		<div class="b-tile">
+			<div class="b-right-tile-top-block b-right-tile-block">
+				Итого
+			</div>
+			<div class="b-right-tile-middle-block b-right-tile-block">
+				<div class="b-right-tile-block-string">
+					<span class="b-count" id="passenger_total_count">1</span>пассажир
+				</div>
+				<div class="b-right-tile-block-string">
+					<span class="b-count" id="totalSum">0</span>рублей
+				</div>
+			</div>
+			<div class="b-right-tile-bottom-block b-right-tile-block">
+				<a href="#" class="b-btn" id="b-progress-bar-container">
+					<span class="icon-check">Оформить заявку</span>
+				</a>
+			</div>
+		</div>
 	</div>
 
 </div><!-- form -->

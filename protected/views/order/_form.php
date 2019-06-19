@@ -151,7 +151,7 @@
 				</div>
 			</div>
 			<div class="b-right-tile-bottom-block b-right-tile-block">
-				<a href="#" class="b-btn" id="b-progress-bar-container">
+				<a href="#" class="b-btn ajax" id="b-progress-bar-container">
 					<span class="icon-check">Оформить заявку</span>
 				</a>
 			</div>

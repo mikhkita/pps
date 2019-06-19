@@ -83,10 +83,10 @@
 				</div>
 				<div class="b-hor-input">
 					<div class="b-input b-hor-input-left">
-						<label for="date" class="required">Дата поездки <span class="required">*</span></label>
+						<?php echo $form->labelEx($model, "date"); ?>
 					</div>
 					<div class="b-hor-input-right">
-						<input type="text" id="date" placeholder="...">
+						<?=CHTML::radioButtonList("date", $roles, array( 0 => "Старше 10 лет", 1 => "Младше 10 лет" ), array("template" => '<div class="b-radio">{input}{label}</div>', "separator" => "", "container" => "div", "baseID" => "baseIDasd")); ?>
 					</div>
 				</div>
 				<div class="b-hor-input">
@@ -119,6 +119,12 @@
 					</div>
 					<div class="b-hor-input-right">
 						<input type="text" id="comment" placeholder="...">
+					</div>
+				</div>
+				<div class="b-price-row">
+					<div class="b-label-block">
+						<label>Итого:</label>
+						<h3>4 500 ₽</h3>
 					</div>
 				</div>
 			</div>

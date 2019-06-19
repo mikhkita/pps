@@ -2836,6 +2836,65 @@ ul.yiiPager .first, ul.yiiPager .last{
     .b-order-form-right{
         width: calc(40% - 20px);
     }
+.b-price-row{
+    padding: 12px 16px 16px;
+    text-align: right;
+}
+.b-radio{
+
+}
+.b-hor-input .b-radio{
+    display: inline-block;
+    vertical-align: top;
+    margin-right: 16px;
+}
+    .b-radio input[type="radio"]{
+        position: absolute;
+        opacity: 0;
+        visibility: hidden;
+        margin-bottom: 0;
+    }
+
+    .b-radio input[type="radio"] + label {
+        position: relative;
+        padding-left: 30px;
+        cursor: pointer;
+    }
+
+    .b-radio input[type="radio"] + label:before {
+        top: 0;
+        left: 0;
+        width: 20px;
+        height: 20px;
+        border-radius: 13px;
+        border: 1px solid #EEF0F3;
+        background-color: #ffffff;
+    }
+
+    .b-radio input[type="radio"]:checked + label:after {
+       background-color: #383B3F !important;
+    }
+
+    .b-radio input[type="radio"]:checked + label{
+
+    }
+
+    .b-radio input[type="radio"] + label:after  {
+        top: 5px;
+        left: 5px;
+        height: 10px;
+        width: 10px;
+        border-radius: 10px;
+    }
+
+    .b-radio input[type="radio"] + label:before,
+    .b-radio input[type="radio"] + label:after{
+        content: ' ';
+        border-radius: 50%;
+        position: absolute;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+    }
 
 
 

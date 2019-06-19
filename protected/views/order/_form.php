@@ -146,10 +146,10 @@
 			</div>
 			<div class="b-right-tile-middle-block b-right-tile-block">
 				<div class="b-right-tile-block-string">
-					<span class="b-count" id="passenger_total_count">1</span>пассажир
+					<span class="b-count" id="passenger_total_count">1</span><span class="b-count-text" id="totalPassText">пассажир</span>
 				</div>
 				<div class="b-right-tile-block-string">
-					<span class="b-count" id="totalSum">0</span>рублей
+					<span class="b-count" id="totalSum">0</span><span class="b-count-text" id="totalSumText">рублей</span>
 				</div>
 			</div>
 			<div class="b-right-tile-bottom-block b-right-tile-block">

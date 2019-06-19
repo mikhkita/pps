@@ -1,7 +1,7 @@
 (function($) {
     $.fn.progressBtn = function(options) {
         var _ = this,
-        total = _.find('input[required], select[required]').length;
+        total = _.find('input[required], select[required], textarea[required]').length;
 
         options = $.extend({
             colors : [
@@ -39,24 +39,19 @@
 
             initHandlers : function(){
 
-                infoText = '<div class="b-right-tile-block-bottom-text">'+
-                                'Осталось заполнить '+
-                                '<a href="#" id="b-need-to-fill-inputs-text">'+
-                                    '<span id="b-need-to-fill-inputs-count">'+_.total+'</span>'+
-                                ' обязательных поля'+
-                                '</a>'+
-                            '</div>';
-
                 $('#' + _.o.buttonId).prepend('<div id="b-progress-bar" data-complete="false" class="b-progress-bar"></div>');
-                $('#' + _.o.buttonId).after(infoText);
+                $('#' + _.o.buttonId).after(_.writeInfoBlock(_.total));
             },
 
             rgbColorPercent : function(percent) {
 
                 var firstPoint,
                     secondPoint;
-
+                   
                 for (var color in _.o.colors){
+                    if (percent == 0) {
+                        firstPoint = _.o.colors[color];
+                    }
                     if (percent > _.o.colors[color].point) {
                         firstPoint = _.o.colors[color];
                     } else {
@@ -97,41 +92,77 @@
             },
 
             checkFilledInputs : function(needToFill){
-                var infoText = $('#'+_.o.buttonId).siblings('.b-right-tile-block-bottom-text');
+
                 if (needToFill == 0) {
-                    if (!infoText.hasClass('hide')) {
-                        infoText.addClass('hide');
-                    }
-                    $('#'+_.o.buttonId).parents('#b-progress-bar').attr('data-complete', 'true');
+                    $('#'+_.o.buttonId).find('#b-progress-bar').attr('data-complete', 'true');
                 } else {
-                    if (infoText.hasClass('hide')) {
-                        infoText.removeClass('hide');
-                    }
-                    infoText.find('#b-need-to-fill-inputs-count').text(''+needToFill);
                     $('#'+_.o.buttonId).find('#b-progress-bar').attr('data-complete', 'false');
                 }
+
+                $('#' + _.o.buttonId).siblings('.b-right-tile-block-bottom-text').remove();
+                $('#' + _.o.buttonId).after(_.writeInfoBlock(needToFill));
             },
+
+            writeInfoBlock : function(needToFill){
+
+                if (needToFill != 0) {
+                    var pluralText = _.pluralForm(needToFill, 'обязательное поле', 'обязательных поля', 'обязательных полей');
+                    return infoText = '<div class="b-right-tile-block-bottom-text">'+
+                                            'Осталось заполнить '+
+                                            '<a href="#" id="b-need-to-fill-inputs-text">'+
+                                                '<span id="b-need-to-fill-inputs-count">'+needToFill+'</span>'+
+                                            ' '+pluralText+
+                                            '</a>'+
+                                        '</div>';
+                } else {
+                    return infoText = '<div class="b-right-tile-block-bottom-text">'+
+                                            'Все обязательные поля заполнены'+
+                                        '</div>';
+                }
+            },
+
+            pluralForm : function(number, one, two, five) {
+                number = Math.abs(number);
+                number %= 100;
+                if (number >= 5 && number <= 20) {
+                    return five;
+                }
+                number %= 10;
+                if (number == 1) {
+                    return one;
+                }
+                if (number >= 2 && number <= 4) {
+                    return two;
+                }
+                return five;
+            } 
         });
 
-        _.find('input[required], select[required]').on('change', function(){
+        _._init();
+
+        _.find('input[required], select[required], textarea[required]').on('change', function(){
+
             var total = 0,
                 filled = 0;
 
-            _.find('input, select').each(function(){
-                if ($(this).attr('required')) {
-                    total ++;
-                    if($(this).val() != ''){
-                        filled ++;
-                    }
+            _.find('input[required], select[required], textarea[required]').each(function(){
+                total ++;
+                if($(this).val() != ''){
+                    filled ++;
                 }
             });
 
             var needToFill = total - filled;
+
             _.checkFilledInputs(needToFill);
             _.checkProgress(filled);
 
         });
 
-        _._init();
+        $('#'+_.o.buttonId).siblings('.b-right-tile-block-bottom-text').find("#b-need-to-fill-inputs-text").on('click',function(){
+            _.submit();
+        })
+
+
     };
 })(jQuery);

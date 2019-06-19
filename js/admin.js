@@ -225,7 +225,7 @@ $(document).ready(function(){
         progress.setColor("#2f3640");
         progress.start(3);
 
-        console.log($form.serialize());
+        // console.log($form.serialize());
 
         $.ajax({
             url: "?partial=true&"+$form.serialize(),
@@ -350,6 +350,10 @@ $(document).ready(function(){
                     $form.find("input").eq(0).focus();
                 }
 
+                if('#b-progress-bar-container'.length != 0){
+                    $('#b-progress-bar-container').addClass('preloader');
+                }
+
                 $.ajax({
                     type: $form.attr("method"),
                     url: url,
@@ -368,6 +372,11 @@ $(document).ready(function(){
                         }
                     }
                 });
+
+                if('#b-progress-bar-container'.length != 0){
+                    $('#b-progress-bar-container').removeClass('preloader');
+                }
+
             }else{
                 $(".fancybox-overlay").animate({
                     scrollTop : 0
@@ -916,8 +925,8 @@ $(document).ready(function(){
     });
 
     $('#passenger_count').on('change',function(){
-        console.log($(this).val());
         $('#passenger_total_count').text($(this).val());
+        $('#totalPassText').text(pluralForm($(this).val(), 'пассажир', 'пассажира', 'пассажиров'));
     });
 
     function calcTotalPrice(){
@@ -925,9 +934,26 @@ $(document).ready(function(){
         $('.b-order-form-person').each(function(){
             price += $(this).find('.b-person-price').attr('data-price')*1;
         })
-        $('#totalSum').text(price);
+        $('#totalSum').text(price.toLocaleString());
+        $('#totalSumText').text(pluralForm(price, 'рубль', 'рубля', 'рублей'));
     }
 
     calcTotalPrice();
+
+    function pluralForm(number, one, two, five) {
+        number = Math.abs(number);
+        number %= 100;
+        if (number >= 5 && number <= 20) {
+            return five;
+        }
+        number %= 10;
+        if (number == 1) {
+            return one;
+        }
+        if (number >= 2 && number <= 4) {
+            return two;
+        }
+        return five;
+    } 
 
 });

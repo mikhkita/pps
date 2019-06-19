@@ -11,15 +11,18 @@
 	$.fn.resizableInput = function(options) {
 		var _ = this;
 
+		// default options
 		options = $.extend({
 			previousValue : null,
 		}, options);
 
+		// service options
        	_.extend({ 
        		items : "",
        		o : options 
        	});
 
+       	// methods
 		_.extend({
 			_init : function (){
 				_.resizeAllInput();

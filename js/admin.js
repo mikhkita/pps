@@ -904,4 +904,24 @@ $(document).ready(function(){
             $(".b-menu-overlay").removeClass("show");
         }
     }
+
+    $('#faculties-form').progressBtn({
+        buttonId : 'b-progress-bar-container'
+    });
+
+    $('#passenger_count').on('change',function(){
+        console.log($(this).val());
+        $('#passenger_total_count').text($(this).val());
+    });
+
+    function calcTotalPrice(){
+        var price = 0;
+        $('.b-order-form-person').each(function(){
+            price += $(this).find('.b-person-price').attr('data-price')*1;
+        })
+        $('#totalSum').text(price);
+    }
+
+    calcTotalPrice();
+
 });

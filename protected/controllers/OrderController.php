@@ -68,7 +68,8 @@ class OrderController extends Controller
 			}
 		} else {
 			$this->render("adminCreate",array(
-				"model" => $model
+				"model" => $model,
+				"person" => new Person
 			));
 		}
 	}
@@ -85,6 +86,7 @@ class OrderController extends Controller
 		}else{
 			$this->renderPartial("adminUpdate",array(
 				"model" => $model,
+				"person" => new Person
 			));
 		}
 	}

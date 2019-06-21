@@ -2809,7 +2809,12 @@ ul.yiiPager .first, ul.yiiPager .last{
             .b-order-form-fio{
                 padding: 16px;
                 font-size: 0px;
+                position: relative;
             }
+                .b-order-form-fio label.error{
+                    right: 16px;
+                    top: 21px;
+                }
                 .b-order-form-fio .b-resize-input{
                     display: inline-block;
                     vertical-align: top;

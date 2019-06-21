@@ -65,7 +65,7 @@
 
 
 			resizeInput : function ($el){
-		        var $buffer = $el.next(".input-buffer"),
+		        var $buffer = $el.prev(".input-buffer"),
 		            value = $el.val();
 
 		        if( value != "" ){

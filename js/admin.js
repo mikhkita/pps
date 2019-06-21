@@ -273,11 +273,11 @@ $(document).ready(function(){
         autosize($form[0].querySelectorAll('textarea'));
 
         $form.find("input[type='text'], input[type='tel'], input[type='email'], textarea, select").blur(function(){
-           $(this).valid();
+           // $(this).valid();
         });
 
         $form.find("input[type='text'], input[type='tel'], input[type='email'], textarea, select").keyup(function(){
-           $(this).valid();
+           // $(this).valid();
         });
 
         $form.find("input[type='text'], input[type='tel'], input[type='email'], textarea, select").change(function(){

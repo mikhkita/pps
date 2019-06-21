@@ -225,7 +225,7 @@ $(document).ready(function(){
         progress.setColor("#2f3640");
         progress.start(3);
 
-        console.log($form.serialize());
+        // console.log($form.serialize());
 
         $.ajax({
             url: "?partial=true&"+$form.serialize(),
@@ -350,6 +350,10 @@ $(document).ready(function(){
                     $form.find("input").eq(0).focus();
                 }
 
+                if('#b-progress-bar-container'.length != 0){
+                    $('#b-progress-bar-container').addClass('preloader');
+                }
+
                 $.ajax({
                     type: $form.attr("method"),
                     url: url,
@@ -368,6 +372,11 @@ $(document).ready(function(){
                         }
                     }
                 });
+
+                if('#b-progress-bar-container'.length != 0){
+                    $('#b-progress-bar-container').removeClass('preloader');
+                }
+
             }else{
                 $(".fancybox-overlay").animate({
                     scrollTop : 0
@@ -909,9 +918,15 @@ $(document).ready(function(){
         buttonId : 'b-progress-bar-container'
     });
 
+    $('#b-progress-bar-container').on('click',function(){
+        if ($("#b-progress-bar").attr('data-complete') == 'true') {
+            $('#faculties-form').submit();
+        }
+    });
+
     $('#passenger_count').on('change',function(){
-        console.log($(this).val());
         $('#passenger_total_count').text($(this).val());
+        $('#totalPassText').text(pluralForm($(this).val(), 'пассажир', 'пассажира', 'пассажиров'));
     });
 
     function calcTotalPrice(){
@@ -919,9 +934,77 @@ $(document).ready(function(){
         $('.b-order-form-person').each(function(){
             price += $(this).find('.b-person-price').attr('data-price')*1;
         })
-        $('#totalSum').text(price);
+        $('#totalSum').text(price.toLocaleString());
+        $('#totalSumText').text(pluralForm(price, 'рубль', 'рубля', 'рублей'));
     }
 
     calcTotalPrice();
 
+    function pluralForm(number, one, two, five) {
+        number = Math.abs(number);
+        number %= 100;
+        if (number >= 5 && number <= 20) {
+            return five;
+        }
+        number %= 10;
+        if (number == 1) {
+            return one;
+        }
+        if (number >= 2 && number <= 4) {
+            return two;
+        }
+        return five;
+    } 
+
+    function checkTotalSum(){
+        var length = $('#totalSum').text().length;
+
+        console.log(length);
+
+        if (length >= 7) {
+            $('#totalSum').addClass('hundreds');
+            $('#passenger_total_count').addClass('hundreds');
+        } else {
+            $('#totalSum').removeClass('hundreds');
+            $('#passenger_total_count').removeClass('hundreds');
+        }
+        
+    }
+
+    checkTotalSum();
+    
 });
+
+
+// $(window).load(function(){
+//     $('.b-sum-text-container').resizableFont();
+//     $('#passenger_total_count').css('font-size', $('#totalSum').css('font-size'));
+//     $('#totalPassText').css('font-size', $('#totalSumText').css('font-size'));
+// })
+
+
+
+// function fontSizeToParentBlockSize(firstWidth, firstTotalSumSize, firstTotalSumTextSize) {
+//     var totalSum = $('#totalSum'),  
+//         totalSumText = $('#totalSumText'),
+//         totalSumfz = totalSum.css('font-size'),
+//         totalSumTextfz = totalSumText.css('font-size'),
+//         width = totalSum.width() + totalSumText.width();
+//         console.log('--------');
+//         console.log('width-'+width);
+//         console.log('firstWidth-'+firstWidth);
+//         console.log('totalSum.parent().width()-'+totalSum.parent().width());
+//         console.log('--------');
+
+//     if (width >= totalSum.parent().width()) {
+//         totalSum.css('font-size', parseInt(totalSumfz) - 2);
+//         totalSumText.css('font-size', parseInt(totalSumTextfz) - 1);
+//     } else {
+//         totalSum.css('font-size', parseInt(firstTotalSumSize));
+//         totalSumText.css('font-size', parseInt(firstTotalSumTextSize));
+//     }
+// }
+
+// var firstWidth = $('#totalSum').width() + $('#totalSumText').width(),
+//     firstTotalSumSize = $('#totalSum').css('font-size'),
+//     firstTotalSumTextSize = $('#totalSumText').css('font-size');

@@ -138,10 +138,12 @@
 						<?=CHTML::textField("Person[".$index."][cash]", "", array("maxlength" => 32, "placeholder" => "...", "class" => "numeric"))?>
 					</div>
 				</div>
-				<div class="b-price-row">
-					<div class="b-label-block b-person-price" data-price="1900">
-						<label>Итого:</label>
-						<h3>4 500 ₽</h3>
+				<div class="b-hor-input">
+					<div class="b-input b-hor-input-left">
+						<label class="required">Итого</label>
+					</div>
+					<div class="b-hor-input-right">
+						<span class="b-person-price" data-price="101900">101900</span>
 					</div>
 				</div>
 			</div>
@@ -160,15 +162,15 @@
 				Итого
 			</div>
 			<div class="b-right-tile-middle-block b-right-tile-block">
-				<div class="b-right-tile-block-string">
-					<span class="b-count" id="passenger_total_count">1</span>пассажир
+				<div class="b-right-tile-block-string b-pass-text-container">
+					<span class="b-count resizable-font-item big-resizable-font-item" id="passenger_total_count">1</span><span class="b-count-text resizable-font-item" id="totalPassText">пассажир</span>
 				</div>
-				<div class="b-right-tile-block-string">
-					<span class="b-count" id="totalSum">0</span>рублей
+				<div class="b-right-tile-block-string b-sum-text-container">
+					<span class="b-count resizable-font-item big-resizable-font-item" id="totalSum">0</span><span class="b-count-text resizable-font-item" id="totalSumText">рублей</span>
 				</div>
 			</div>
 			<div class="b-right-tile-bottom-block b-right-tile-block">
-				<a href="#" class="b-btn ajax" id="b-progress-bar-container">
+				<a href="#" class="b-btn" id="b-progress-bar-container">
 					<span class="icon-check">Оформить заявку</span>
 				</a>
 			</div>

@@ -2925,11 +2925,7 @@ ul.yiiPager .first, ul.yiiPager .last{
                 border-bottom: 1px solid #EEF0F3;
             }
                 .b-right-tile-block-string{
-                    font-family: Roboto-Medium;
-                    font-size: 32px;
-                    color: #C4CCD5;
-                    letter-spacing: 0;
-                    line-height: 40px;
+                    
                 }
                 .b-right-tile-block-string:not(:last-child){
                     margin-bottom: 24px;
@@ -2941,6 +2937,13 @@ ul.yiiPager .first, ul.yiiPager .last{
                         letter-spacing: 0;
                         line-height: 80px;
                         margin-right: 16px;
+                    }
+                    .b-right-tile-block-string .b-count-text{
+                        font-family: Roboto-Medium;
+                        font-size: 32px;
+                        color: #C4CCD5;
+                        letter-spacing: 0;
+                        line-height: 40px;
                     }
             .b-right-tile-bottom-block{
                 padding: 32px;
@@ -2969,6 +2972,9 @@ ul.yiiPager .first, ul.yiiPager .last{
                     -o-transform: translateY(-50%);
                     transform: translateY(-50%);
                 }
+                    .b-right-tile-bottom-block .b-btn.preloader .b-progress-bar{
+                        background-color: transparent!important;
+                    }
                     .b-right-tile-bottom-block .b-btn.preloader span{
                         color: #383B3F;
                         padding-left: 35px;
@@ -2994,6 +3000,9 @@ ul.yiiPager .first, ul.yiiPager .last{
                         line-height: 18px;
                         position: relative;
                         padding-left: 25px;
+                        -webkit-transition: padding .2s;
+                        -o-transition: padding .2s;
+                        transition: padding .2s;
                     }
                     .b-right-tile-bottom-block .b-btn span:before{
                         position: absolute;
@@ -3032,7 +3041,12 @@ ul.yiiPager .first, ul.yiiPager .last{
                 }
 
 
-
+@media screen and (max-width: 1440px){
+    .b-right-tile-block-string .b-count.hundreds{
+        font-size: 70px;
+        line-height: 70px;
+    }
+}
 
 @media screen and (max-width: 1250px){
     .b-two-cols{
@@ -3043,7 +3057,34 @@ ul.yiiPager .first, ul.yiiPager .last{
         }    
         .b-two-cols .b-col:first-child{
             margin-right: 0px;
-        }   
+        }  
+    .b-right-tile-block-string .b-count{
+        font-size: 70px;
+        line-height: 70px;
+    } 
+    .b-right-tile-block-string .b-count-text{
+        font-size: 28px;
+        line-height: 36px;
+    }
+    .b-right-tile-block-string .b-count.hundreds{
+        font-size: 60px;
+        line-height: 60px;
+    } 
+}
+
+@media screen and (max-width: 1100px){
+    .b-right-tile-block-string .b-count{
+        font-size: 60px;
+        line-height: 60px;
+    } 
+    .b-right-tile-block-string .b-count-text{
+        font-size: 24px;
+        line-height: 32px;
+    }
+    .b-right-tile-block-string .b-count.hundreds{
+        font-size: 50px;
+        line-height: 50px;
+    } 
 }
 
 @media screen and (max-height: 610px){

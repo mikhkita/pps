@@ -956,4 +956,55 @@ $(document).ready(function(){
         return five;
     } 
 
+    function checkTotalSum(){
+        var length = $('#totalSum').text().length;
+
+        console.log(length);
+
+        if (length >= 7) {
+            $('#totalSum').addClass('hundreds');
+            $('#passenger_total_count').addClass('hundreds');
+        } else {
+            $('#totalSum').removeClass('hundreds');
+            $('#passenger_total_count').removeClass('hundreds');
+        }
+        
+    }
+
+    checkTotalSum();
+    
 });
+
+
+// $(window).load(function(){
+//     $('.b-sum-text-container').resizableFont();
+//     $('#passenger_total_count').css('font-size', $('#totalSum').css('font-size'));
+//     $('#totalPassText').css('font-size', $('#totalSumText').css('font-size'));
+// })
+
+
+
+// function fontSizeToParentBlockSize(firstWidth, firstTotalSumSize, firstTotalSumTextSize) {
+//     var totalSum = $('#totalSum'),  
+//         totalSumText = $('#totalSumText'),
+//         totalSumfz = totalSum.css('font-size'),
+//         totalSumTextfz = totalSumText.css('font-size'),
+//         width = totalSum.width() + totalSumText.width();
+//         console.log('--------');
+//         console.log('width-'+width);
+//         console.log('firstWidth-'+firstWidth);
+//         console.log('totalSum.parent().width()-'+totalSum.parent().width());
+//         console.log('--------');
+
+//     if (width >= totalSum.parent().width()) {
+//         totalSum.css('font-size', parseInt(totalSumfz) - 2);
+//         totalSumText.css('font-size', parseInt(totalSumTextfz) - 1);
+//     } else {
+//         totalSum.css('font-size', parseInt(firstTotalSumSize));
+//         totalSumText.css('font-size', parseInt(firstTotalSumTextSize));
+//     }
+// }
+
+// var firstWidth = $('#totalSum').width() + $('#totalSumText').width(),
+//     firstTotalSumSize = $('#totalSum').css('font-size'),
+//     firstTotalSumTextSize = $('#totalSumText').css('font-size');

@@ -3036,7 +3036,12 @@ ul.yiiPager .first, ul.yiiPager .last{
                 }
 
 
-
+@media screen and (max-width: 1440px){
+    .b-right-tile-block-string .b-count.hundreds{
+        font-size: 70px;
+        line-height: 70px;
+    }
+}
 
 @media screen and (max-width: 1250px){
     .b-two-cols{
@@ -3047,7 +3052,34 @@ ul.yiiPager .first, ul.yiiPager .last{
         }    
         .b-two-cols .b-col:first-child{
             margin-right: 0px;
-        }   
+        }  
+    .b-right-tile-block-string .b-count{
+        font-size: 70px;
+        line-height: 70px;
+    } 
+    .b-right-tile-block-string .b-count-text{
+        font-size: 28px;
+        line-height: 36px;
+    }
+    .b-right-tile-block-string .b-count.hundreds{
+        font-size: 60px;
+        line-height: 60px;
+    } 
+}
+
+@media screen and (max-width: 1100px){
+    .b-right-tile-block-string .b-count{
+        font-size: 60px;
+        line-height: 60px;
+    } 
+    .b-right-tile-block-string .b-count-text{
+        font-size: 24px;
+        line-height: 32px;
+    }
+    .b-right-tile-block-string .b-count.hundreds{
+        font-size: 50px;
+        line-height: 50px;
+    } 
 }
 
 @media screen and (max-height: 610px){

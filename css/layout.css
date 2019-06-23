@@ -2845,6 +2845,7 @@ ul.yiiPager .first, ul.yiiPager .last{
         margin-left: 36px;
         display: inline-block;
         vertical-align: top;
+        position: -webkit-sticky;
         position: sticky;
         top: 0;
     }

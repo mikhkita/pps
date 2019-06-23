@@ -1049,6 +1049,8 @@ $(document).ready(function(){
             $(".b-resize-input input:not(.binded)").addClass("binded").resizableInput();
         }
     }
+
+    Stickyfill.add($('.b-order-form-right'));
     
 });
 

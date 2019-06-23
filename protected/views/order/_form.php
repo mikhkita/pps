@@ -64,7 +64,9 @@
 			</div>
 		</div>
 
-		<? $index = 0; ?>
+		<div class="b-order-for-person" id="b-order-for-person"></div>
+
+		<? for( $index = 0; $index < 0; $index ++ ): ?>
 		<div class="b-form b-order-form-person">
 			<h5 class="grey">Пассажир №1</h5>
 			<div class="b-tile">
@@ -138,16 +140,15 @@
 						<?=CHTML::textField("Person[".$index."][cash]", "", array("maxlength" => 32, "placeholder" => "...", "class" => "numeric"))?>
 					</div>
 				</div>
-				<div class="b-hor-input">
-					<div class="b-input b-hor-input-left">
-						<label class="required">Итого</label>
-					</div>
-					<div class="b-hor-input-right">
-						<span class="b-person-price" data-price="101900">101900</span>
+				<div class="b-price-row">
+					<div class="b-label-block b-person-price" data-price="4500">
+						<label>Итого:</label>
+						<h3>4 500 ₽</h3>
 					</div>
 				</div>
 			</div>
 		</div>
+		<? endfor; ?>
 
 		<div class="row buttons">
 			<?php echo CHtml::submitButton($model->isNewRecord ? "Добавить" : "Сохранить"); ?>
@@ -159,7 +160,7 @@
 	<div class="b-tile b-order-form-right">
 		<div class="b-tile">
 			<div class="b-right-tile-top-block b-right-tile-block">
-				Итого
+				Итого:
 			</div>
 			<div class="b-right-tile-middle-block b-right-tile-block">
 				<div class="b-right-tile-block-string b-pass-text-container">
@@ -178,3 +179,88 @@
 	</div>
 
 </div><!-- form -->
+
+
+<script id="person-template" type="text/x-handlebars-template">
+  	<div class="b-form b-order-form-person" id="person-form-{{index}}">
+		<h5 class="grey">Пассажир №{{number}}</h5>
+		<div class="b-tile">
+			<div class="b-order-form-fio">
+				<div class="b-resize-input">
+					<div class="input-buffer"></div>
+					<input type="text" required name="Person[{{index}}][last_name]" placeholder="Фамилия" title="ФИО обязательно для заполнения">
+				</div>
+				<div class="b-resize-input">
+					<div class="input-buffer"></div>
+					<input type="text" required name="Person[{{index}}][name]" placeholder="Имя" title="ФИО обязательно для заполнения">
+				</div>
+				<div class="b-resize-input">
+					<div class="input-buffer"></div>
+					<input type="text" name="Person[{{index}}][third_name]" placeholder="Отчество">
+				</div>
+			</div>
+			<div class="b-hor-input">
+				<div class="b-input b-hor-input-left">
+					<?php echo $form->labelEx($person, "is_child"); ?>
+				</div>
+				<div class="b-hor-input-right">
+					<?=CHTML::radioButtonList("Person[{{index}}][is_child]", 0, array( 0 => "Старше 10 лет", 1 => "Младше 10 лет" ), array("template" => '<div class="b-radio">{input}{label}</div>', "separator" => "", "container" => "div", "baseID" => "child_{{index}}")); ?>
+				</div>
+			</div>
+			<div class="b-hor-input">
+				<div class="b-input b-hor-input-left">
+					<?php echo $form->labelEx($person, "direction_id"); ?>
+				</div>
+				<div class="b-hor-input-right">
+					<?=CHTML::radioButtonList("Person[{{index}}][direction_id]", 0, array( 0 => "В обе стороны", 1 => "Туда", 2 => "Обратно" ), array("template" => '<div class="b-radio">{input}{label}</div>', "separator" => "", "container" => "div", "baseID" => "person_{{index}}")); ?>
+				</div>
+			</div>
+			<div class="b-hor-input">
+				<div class="b-input b-hor-input-left">
+					<?php echo $form->labelEx($person, "phone"); ?>
+				</div>
+				<div class="b-hor-input-right b-to-datepicker">
+					<?=CHTML::textField("Person[{{index}}][phone]", "", array("maxlength" => 32, "required" => true, "placeholder" => "...", "class" => "phone", "title" => "Поле обязательно"))?>
+				</div>
+			</div>
+			<div class="b-hor-input">
+				<div class="b-input b-hor-input-left">
+					<?php echo $form->labelEx($person, "transfer_id"); ?>
+				</div>
+				<div class="b-hor-input-right">
+					<?=CHTML::radioButtonList("Person[{{index}}][transfer_id]", 0, array( 0 => "Самостоятельно", 1 => "На такси" ), array("template" => '<div class="b-radio">{input}{label}</div>', "separator" => "", "container" => "div", "baseID" => "transfer_{{index}}")); ?>
+				</div>
+			</div>
+			<div class="b-hor-input">
+				<div class="b-input b-hor-input-left">
+					<?php echo $form->labelEx($person, "address"); ?>
+				</div>
+				<div class="b-hor-input-right">
+					<?=CHTML::textArea("Person[{{index}}][address]", "", array("maxlength" => 1024, "placeholder" => "...", "rows" => 1, "required" => true))?>
+				</div>
+			</div>
+			<div class="b-hor-input">
+				<div class="b-input b-hor-input-left">
+					<?php echo $form->labelEx($person, "comment"); ?>
+				</div>
+				<div class="b-hor-input-right">
+					<?=CHTML::textArea("Person[{{index}}][comment]", "", array("maxlength" => 1024, "placeholder" => "...", "rows" => 1))?>
+				</div>
+			</div>
+			<div class="b-hor-input">
+				<div class="b-input b-hor-input-left">
+					<?php echo $form->labelEx($person, "cash"); ?>
+				</div>
+				<div class="b-hor-input-right b-to-datepicker">
+					<?=CHTML::textField("Person[{{index}}][cash]", "", array("maxlength" => 32, "placeholder" => "...", "class" => "numeric"))?>
+				</div>
+			</div>
+			<div class="b-price-row">
+				<div class="b-label-block b-person-price" data-price="4500">
+					<label>Итого:</label>
+					<h3>4 500 ₽</h3>
+				</div>
+			</div>
+		</div>
+	</div>
+</script>

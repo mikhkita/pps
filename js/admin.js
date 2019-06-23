@@ -763,8 +763,6 @@ $(document).ready(function(){
 
     /* Resizable inputs ---------------------------- Resizable inputs */
 
-    $(".b-resize-input input").resizableInput();
-
 
     // resizeAllInput();
 
@@ -925,20 +923,13 @@ $(document).ready(function(){
     });
 
     $('#passenger_count').on('change',function(){
-        $('#passenger_total_count').text($(this).val());
-        $('#totalPassText').text(pluralForm($(this).val(), 'пассажир', 'пассажира', 'пассажиров'));
+        if( $(this).val() == "" ){
+            $(this).val(1).trigger("change");
+            return false;
+        }
+
+        updatePersonForms();
     });
-
-    function calcTotalPrice(){
-        var price = 0;
-        $('.b-order-form-person').each(function(){
-            price += $(this).find('.b-person-price').attr('data-price')*1;
-        })
-        $('#totalSum').text(price.toLocaleString());
-        $('#totalSumText').text(pluralForm(price, 'рубль', 'рубля', 'рублей'));
-    }
-
-    calcTotalPrice();
 
     function pluralForm(number, one, two, five) {
         number = Math.abs(number);
@@ -956,10 +947,22 @@ $(document).ready(function(){
         return five;
     } 
 
+    function calcTotalPrice(){
+        $('#passenger_total_count').text( $('#passenger_count').val() );
+        $('#totalPassText').text( pluralForm( $('#passenger_count').val(), 'пассажир', 'пассажира', 'пассажиров' ) );
+
+        var price = 0;
+        $('.b-order-form-person').each(function(){
+            price += $(this).find('.b-person-price').attr('data-price')*1;
+        })
+        $('#totalSum').text(price.toLocaleString());
+        $('#totalSumText').text(pluralForm(price, 'рубль', 'рубля', 'рублей'));
+
+        checkTotalSum();
+    }
+
     function checkTotalSum(){
         var length = $('#totalSum').text().length;
-
-        console.log(length);
 
         if (length >= 7) {
             $('#totalSum').addClass('hundreds');
@@ -968,10 +971,51 @@ $(document).ready(function(){
             $('#totalSum').removeClass('hundreds');
             $('#passenger_total_count').removeClass('hundreds');
         }
-        
     }
 
-    checkTotalSum();
+    if( $("#person-template").length ){
+        var source = document.getElementById("person-template").innerHTML;
+        var template = Handlebars.compile(source);
+
+        updatePersonForms();
+
+        // $('#passenger_count').on('change');
+
+        // createPersonForms(5);
+    }
+
+    function updatePersonForms(){
+        var newCount = $("#passenger_count").val()*1,
+            currentCount = $(".b-order-form-person").length;
+
+        if( newCount > currentCount ){
+            createPersonForms( newCount - currentCount );
+        }else{
+
+        }
+
+        calcTotalPrice();
+    }
+
+    function clearPersonForm(id){
+        $("#"+id).find("input:not([type='radio']), select, textarea").val("");
+    }
+
+    function createPersonForms(count){
+        var offset = ($(".b-order-form-person").length)?($(".b-order-form-person").length):0;
+
+        for (var i = 0; i < count; i++) {
+            var index = i*1 + offset*1,
+                html = template({
+                    index: index,
+                    number: index + 1
+                });
+
+            $("#b-order-for-person").append(html);
+
+            $(".b-resize-input input:not(.binded)").addClass("binded").resizableInput();
+        }
+    }
     
 });
 

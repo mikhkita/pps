@@ -26,20 +26,15 @@
 
                     if (width > _.width()) {
                         while (width > _.width()) {
-
                             _.fontSizeToParentBlockSize('-');
                             width = _.countWidth();
-
                         }
                     } else {
                         while (width <= _.width()) {
-
                             _.fontSizeToParentBlockSize('+');
                             width = _.countWidth();
-
                         }
                     }
-
                 });
 
             },

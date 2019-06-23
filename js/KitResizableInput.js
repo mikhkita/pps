@@ -44,6 +44,8 @@
 				_.on('input', function() {
 					var value = $(this).val();
 
+					console.log("asdasda");
+
 					if( value !== value.trim() ){
 			            if( _.focusToNextInput($(this)) ){
 			            	$(this).val( value.trim() );

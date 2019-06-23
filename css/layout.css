@@ -2845,6 +2845,8 @@ ul.yiiPager .first, ul.yiiPager .last{
         margin-left: 36px;
         display: inline-block;
         vertical-align: top;
+        position: sticky;
+        top: 0;
     }
 .b-price-row{
     padding: 12px 16px 16px;

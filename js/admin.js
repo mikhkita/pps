@@ -270,8 +270,6 @@ $(document).ready(function(){
             }
         });
 
-        autosize($form[0].querySelectorAll('textarea'));
-
         $form.find("input[type='text'], input[type='tel'], input[type='email'], textarea, select").blur(function(){
            // $(this).valid();
         });
@@ -280,19 +278,11 @@ $(document).ready(function(){
            // $(this).valid();
         });
 
-        $form.find("input[type='text'], input[type='tel'], input[type='email'], textarea, select").change(function(){
+        $form.on("change", "input[type='text'], input[type='tel'], input[type='email'], textarea, select", function(){
            $(this).valid();
         });
 
-        if( $form.find(".date-time").length ){
-            $form.find(".date-time").mask('99.99.9999 99:99',{placeholder:"_"});
-        }
-
-        if( $form.find(".phone").length ){
-            $form.find(".phone").mask('+7 (999) 999-99-99',{placeholder:"_"});
-        }
-
-        bindDate($form);
+        bindFields($form);
 
         if( $(".type-checkbox").length ){
             $(".type-checkbox").change(function(){
@@ -333,6 +323,10 @@ $(document).ready(function(){
                     data;
 
                 $(this).find("input[type=submit]").addClass("blocked");
+
+                if( $form.hasClass("not-ajax") ){
+                    return true;
+                }
 
                 progress.setColor("#FFF");
                 progress.start(3);
@@ -378,11 +372,16 @@ $(document).ready(function(){
                 }
 
             }else{
+                var firstInput = $(this).find("input[type='text'].error,select.error,textarea.error").eq(0);
                 $(".fancybox-overlay").animate({
                     scrollTop : 0
                 }, 200);
 
-                $(this).find("input[type='text'].error,select.error,textarea.error").eq(0).focus();
+                if( firstInput.is(".select2") ){
+                    firstInput.select2("open");
+                }else{
+                    firstInput.focus();
+                }
             }
             return false;
         });
@@ -415,6 +414,21 @@ $(document).ready(function(){
         });
     }
 
+    function bindFields($form){
+        autosize($form[0].querySelectorAll('textarea:not(.binded)'));
+        $form.find("textarea:not(.binded)").addClass("binded");
+
+        if( $form.find(".date-time").length ){
+            $form.find(".date-time:not(.binded)").addClass("binded").mask('99.99.9999 99:99',{placeholder:"_"});
+        }
+
+        if( $form.find(".phone").length ){
+            $form.find(".phone:not(.binded)").addClass("binded").mask('+7 (999) 999-99-99',{placeholder:"_"});
+        }
+
+        bindDate($form);
+    }
+
     function checkFiles(){
         if( $(".plupload_start:not(.plupload_disabled)").length ){
             $(".plupload_start:not(.plupload_disabled)").attr("data-save", "1").click();
@@ -432,8 +446,8 @@ $(document).ready(function(){
     }
 
     function bindDate($form){
-        if( $form.find(".date").length ){
-            $form.find(".date").each(function(){
+        if( $form.find(".date:not(.binded)").length ){
+            $form.find(".date:not(.binded)").each(function(){
                 var $this = $(this);
                 $(this).mask('99.99.9999',{placeholder:"_"});
                 $(this).wrap("<div class='b-to-datepicker'></div>");
@@ -449,7 +463,7 @@ $(document).ready(function(){
                 if( $(this).hasClass("current") && $(this).val() == "" ){
                     $(this).datepicker("setDate", new Date());
                 }
-            });
+            }).addClass("binded");
         }
     }
 
@@ -912,21 +926,22 @@ $(document).ready(function(){
         }
     }
 
-    $('#faculties-form').progressBtn({
+    $('#order-form').progressBtn({
         buttonId : 'b-progress-bar-container'
     });
 
     $('#b-progress-bar-container').on('click',function(){
-        if ($("#b-progress-bar").attr('data-complete') == 'true') {
-            $('#faculties-form').submit();
-        }
+        // if ($("#b-progress-bar").attr('data-complete') == 'true') {
+            $('#order-form').submit();
+        // }
     });
 
-    $('#passenger_count').on('change',function(){
-        if( $(this).val() == "" ){
+    $('#person_count').on('change',function(){
+        var value = $(this).val()*1;
+        if( value == 0 ){
             $(this).val(1).trigger("change");
             return false;
-        }else if( $(this).val()*1 > 50 ){
+        }else if( value*1 > 50 ){
             $(this).val(50).trigger("change");
             return false;
         }
@@ -951,8 +966,8 @@ $(document).ready(function(){
     } 
 
     function calcTotalPrice(){
-        $('#passenger_total_count').text( $('#passenger_count').val() );
-        $('#totalPassText').text( pluralForm( $('#passenger_count').val(), 'пассажир', 'пассажира', 'пассажиров' ) );
+        $('#person_total_count').text( $('#person_count').val() );
+        $('#totalPassText').text( pluralForm( $('#person_count').val(), 'пассажир', 'пассажира', 'пассажиров' ) );
 
         var price = 0;
         $('.b-order-form-person').each(function(){
@@ -961,7 +976,7 @@ $(document).ready(function(){
         $('#totalSum').text(price.toLocaleString());
         $('#totalSumText').text(pluralForm(price, 'рубль', 'рубля', 'рублей'));
 
-        $('#faculties-form').find("input").eq(0).trigger("change");
+        $('#order-form').trigger("updateState");
 
         checkTotalSum();
     }
@@ -971,45 +986,63 @@ $(document).ready(function(){
 
         if (length >= 7) {
             $('#totalSum').addClass('hundreds');
-            $('#passenger_total_count').addClass('hundreds');
+            $('#person_total_count').addClass('hundreds');
         } else {
             $('#totalSum').removeClass('hundreds');
-            $('#passenger_total_count').removeClass('hundreds');
+            $('#person_total_count').removeClass('hundreds');
         }
     }
 
     if( $("#person-template").length ){
-        var source = document.getElementById("person-template").innerHTML;
-        var template = Handlebars.compile(source);
+        var source = document.getElementById("person-template").innerHTML,
+            template = Handlebars.compile(source),
+            globalIndex = 0;
+
 
         updatePersonForms();
 
-        // $('#passenger_count').on('change');
+        // $('#person_count').on('change');
 
         // createPersonForms(5);
     }
 
     function updatePersonForms(){
-        var newCount = $("#passenger_count").val()*1,
+        var newCount = $("#person_count").val()*1,
             currentCount = $(".b-order-form-person").length;
 
         if( newCount != currentCount ){
             if( newCount > currentCount ){
                 createPersonForms( newCount - currentCount );
             }else{
-                var count = deletePersonForms( currentCount - newCount );
-                $("#passenger_count").val(count).trigger("change");
+                var count = removePersonForms( currentCount - newCount );
+
+                if( count != newCount ){
+                    $("#person_count").notify("Есть частично заполненные пассажиры. Пожалуйста, удалите их вручную.",{
+                        globalPosition: 'top center',
+                        showAnimation: 'fadeIn',
+                        hideAnimation: 'fadeOut',
+                        autoHideDelay: 5000,
+                        autoHide: true,
+                        showDuration: 250,
+                        hideDuration: 100
+                    });
+
+                    $("#person_count").val(count).trigger("change");
+                    return false;
+                }
             }
         }
 
         calcTotalPrice();
+
+        updatePersonFormsIndexes();
     }
 
     function clearPersonForm(id){
         $("#"+id).find("input:not([type='radio']), select, textarea").val("");
     }
 
-    function deletePersonForms( count ){
+    function removePersonForms( count ){
         var length = $(".b-order-form-person").length,  
             removed = 0;
         for( var i = length - 1; i >= 0; i-- ){
@@ -1034,21 +1067,38 @@ $(document).ready(function(){
         return $(".b-order-form-person").length;
     }
 
+    function updatePersonFormsIndexes(){
+        $(".b-order-form-person").each(function(){
+            $(this).find(".b-person-index").text( $(this).index()*1+1 );
+        });
+    }
+
     function createPersonForms(count){
         var offset = ($(".b-order-form-person").length)?($(".b-order-form-person").length):0;
 
         for (var i = 0; i < count; i++) {
-            var index = i*1 + offset*1,
-                html = template({
-                    index: index,
-                    number: index + 1
+            var html = template({
+                    index: globalIndex
                 });
+            globalIndex++;
 
             $("#b-order-for-person").append(html);
 
             $(".b-resize-input input:not(.binded)").addClass("binded").resizableInput();
+
+            bindFields($("#order-form"));
         }
     }
+
+    $("body").on("click", ".b-order-form-fio .b-remove-btn", function(){
+        $(this).parents(".b-order-form-person").remove();
+        $("#person_count").val( $(".b-order-form-person").length ).trigger("change");
+    });
+
+    $("#b-add-person-btn").click(function(){
+        var value = $("#person_count").val()*1;
+        $("#person_count").val( value + 1 ).trigger("change");
+    });
 
     Stickyfill.add($('.b-order-form-right'));
     
@@ -1056,7 +1106,7 @@ $(document).ready(function(){
 
 // $(window).load(function(){
 //     $('.b-sum-text-container').resizableFont();
-//     $('#passenger_total_count').css('font-size', $('#totalSum').css('font-size'));
+//     $('#person_total_count').css('font-size', $('#totalSum').css('font-size'));
 //     $('#totalPassText').css('font-size', $('#totalSumText').css('font-size'));
 // })
 

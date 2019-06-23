@@ -333,7 +333,7 @@ h4{
     font-size: 20px;
     line-height: 28px;
 }
-h5{
+h5, h5 span{
     font-family: "RobotoBold";
     font-size: 16px;
     line-height: 24px;
@@ -2803,6 +2803,7 @@ ul.yiiPager .first, ul.yiiPager .last{
             margin-bottom: 18px;
         }
             .b-order-form-person h5{
+                display: inline-block;
                 margin-left: 16px;
                 margin-bottom: 10px;
             }
@@ -2812,8 +2813,8 @@ ul.yiiPager .first, ul.yiiPager .last{
                 position: relative;
             }
                 .b-order-form-fio label.error{
-                    right: 16px;
-                    top: 21px;
+                    right: 120px;
+                    top: 24px;
                 }
                 .b-order-form-fio .b-resize-input{
                     display: inline-block;
@@ -3042,6 +3043,64 @@ ul.yiiPager .first, ul.yiiPager .last{
                 .b-right-tile-block-bottom-text.hide{
                     visibility: hidden;
                 }
+            .b-remove-btn{
+
+            }
+                .b-remove-btn:hover{
+                    color: #B21010;
+                }
+            .b-order-form-fio .b-remove-btn{
+                margin-top: 8px;
+            }
+                .b-remove-btn:before{
+                    margin-right: 8px;
+                    font-size: 16px;
+                    vertical-align: middle;
+                    position: relative;
+                    top: -2px;
+                    color: #B21010;
+                }
+    .b-add-person-cont{
+        padding-top: 16px;
+    }
+        .b-add-btn{
+            
+        }
+            .b-add-btn:hover{
+                color: #1CA004;
+            }
+            .b-add-btn:before{
+                margin-right: 8px;
+                font-size: 14px;
+                vertical-align: middle;
+                position: relative;
+                top: -1px;
+                color: #1CA004;
+            }
+        .b-add-person-cont .b-add-btn{
+            
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 @media screen and (max-width: 1440px){

@@ -63,7 +63,7 @@ class OrderController extends Controller
 
 		if(isset($_POST["Order"])) {
 			if( $model->updateObj($_POST["Order"]) ){
-				$this->actionAdminIndex(true);
+				$this->actionAdminIndex();
 				return true;
 			}
 		} else {
@@ -80,7 +80,7 @@ class OrderController extends Controller
 
 		if(isset($_POST["Order"])) {
 			if( $model->updateObj($_POST["Order"]) ){
-				$this->actionAdminIndex(true);
+				$this->actionAdminIndex();
 				return true;
 			}
 		}else{

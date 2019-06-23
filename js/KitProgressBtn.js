@@ -47,6 +47,23 @@
                 $('#' + _.o.buttonId).after(_.writeInfoBlock(_.total));
             },
 
+            findNeedToFeel : function(){
+                var total = 0,
+                    filled = 0;
+
+                _.find('input[required], select[required], textarea[required]').each(function(){
+                    total ++;
+                    if($(this).val() != ''){
+                        filled ++;
+                    }
+                });
+
+                var needToFill = total - filled;
+
+                _.checkFilledInputs(needToFill);
+                _.checkProgress(filled);
+            },
+
             rgbColorPercent : function(percent) {
 
                 var firstPoint,
@@ -146,26 +163,11 @@
 
         _._init();
 
-        _.on('change', 'input[required], select[required], textarea[required]', function(){
+        _.on('change', 'input[required], select[required], textarea[required]', _.findNeedToFeel);
 
-            var total = 0,
-                filled = 0;
+        _.on('updateState', _.findNeedToFeel);
 
-            _.find('input[required], select[required], textarea[required]').each(function(){
-                total ++;
-                if($(this).val() != ''){
-                    filled ++;
-                }
-            });
-
-            var needToFill = total - filled;
-
-            _.checkFilledInputs(needToFill);
-            _.checkProgress(filled);
-
-        });
-
-        $('#'+_.o.buttonId).siblings('.b-right-tile-block-bottom-text').find("#b-need-to-fill-inputs-text").on('click',function(){
+        $('#'+_.o.buttonId).parent().on('click', '#b-need-to-fill-inputs-text', function(){
             _.submit();
         })
 

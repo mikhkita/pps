@@ -993,7 +993,7 @@ $(document).ready(function(){
         if( newCount > currentCount ){
             createPersonForms( newCount - currentCount );
         }else{
-            deletePersonForms( currentCount - newCount );
+            // deletePersonForms( currentCount - newCount );
         }
 
         calcTotalPrice();

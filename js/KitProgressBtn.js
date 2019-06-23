@@ -85,12 +85,14 @@
 
             checkProgress : function(filled) {
 
-                var percent = (parseInt(filled)/parseInt(_.total))*100,
+                var total = _.find('input[required], select[required], textarea[required]').length,
+                    percent = (parseInt(filled)/parseInt(total))*100,
                     color = _.rgbColorPercent(percent);
+
                 $('#b-progress-bar').css('background-color', color);
                 $('#b-progress-bar').css('width', percent+'%');
 
-                if (filled == _.total) {
+                if (filled == total) {
                     return true;
                 }
             },
@@ -144,7 +146,7 @@
 
         _._init();
 
-        _.find('input[required], select[required], textarea[required]').on('change', function(){
+        _.on('change', 'input[required], select[required], textarea[required]', function(){
 
             var total = 0,
                 filled = 0;

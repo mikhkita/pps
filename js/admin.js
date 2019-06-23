@@ -1019,14 +1019,11 @@ $(document).ready(function(){
     
 });
 
-
 // $(window).load(function(){
 //     $('.b-sum-text-container').resizableFont();
 //     $('#passenger_total_count').css('font-size', $('#totalSum').css('font-size'));
 //     $('#totalPassText').css('font-size', $('#totalSumText').css('font-size'));
 // })
-
-
 
 // function fontSizeToParentBlockSize(firstWidth, firstTotalSumSize, firstTotalSumTextSize) {
 //     var totalSum = $('#totalSum'),  

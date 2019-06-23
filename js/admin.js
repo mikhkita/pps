@@ -926,6 +926,9 @@ $(document).ready(function(){
         if( $(this).val() == "" ){
             $(this).val(1).trigger("change");
             return false;
+        }else if( $(this).val()*1 > 50 ){
+            $(this).val(50).trigger("change");
+            return false;
         }
 
         updatePersonForms();
@@ -990,10 +993,13 @@ $(document).ready(function(){
         var newCount = $("#passenger_count").val()*1,
             currentCount = $(".b-order-form-person").length;
 
-        if( newCount > currentCount ){
-            createPersonForms( newCount - currentCount );
-        }else{
-            // deletePersonForms( currentCount - newCount );
+        if( newCount != currentCount ){
+            if( newCount > currentCount ){
+                createPersonForms( newCount - currentCount );
+            }else{
+                var count = deletePersonForms( currentCount - newCount );
+                $("#passenger_count").val(count).trigger("change");
+            }
         }
 
         calcTotalPrice();
@@ -1001,6 +1007,31 @@ $(document).ready(function(){
 
     function clearPersonForm(id){
         $("#"+id).find("input:not([type='radio']), select, textarea").val("");
+    }
+
+    function deletePersonForms( count ){
+        var length = $(".b-order-form-person").length,  
+            removed = 0;
+        for( var i = length - 1; i >= 0; i-- ){
+            if( removed == count ){
+                break;
+            }
+            var $form = $(".b-order-form-person").eq(i),
+                canBeRemoved = true;
+
+            $form.find(".not-remove").each(function(){
+                if( $(this).val() != "" ){
+                    canBeRemoved = false;
+                }
+            });
+
+            if( canBeRemoved ){
+                $(".b-order-form-person").eq(i).remove();
+                removed++;
+            }
+        }
+
+        return $(".b-order-form-person").length;
     }
 
     function createPersonForms(count){

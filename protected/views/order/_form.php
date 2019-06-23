@@ -188,15 +188,15 @@
 			<div class="b-order-form-fio">
 				<div class="b-resize-input">
 					<div class="input-buffer"></div>
-					<input type="text" required name="Person[{{index}}][last_name]" placeholder="Фамилия" title="ФИО обязательно для заполнения">
+					<input type="text" required name="Person[{{index}}][last_name]" placeholder="Фамилия" class="not-remove" title="ФИО обязательно для заполнения">
 				</div>
 				<div class="b-resize-input">
 					<div class="input-buffer"></div>
-					<input type="text" required name="Person[{{index}}][name]" placeholder="Имя" title="ФИО обязательно для заполнения">
+					<input type="text" required name="Person[{{index}}][name]" placeholder="Имя" class="not-remove" title="ФИО обязательно для заполнения">
 				</div>
 				<div class="b-resize-input">
 					<div class="input-buffer"></div>
-					<input type="text" name="Person[{{index}}][third_name]" placeholder="Отчество">
+					<input type="text" name="Person[{{index}}][third_name]" placeholder="Отчество" class="not-remove">
 				</div>
 			</div>
 			<div class="b-hor-input">
@@ -220,7 +220,7 @@
 					<?php echo $form->labelEx($person, "phone"); ?>
 				</div>
 				<div class="b-hor-input-right b-to-datepicker">
-					<?=CHTML::textField("Person[{{index}}][phone]", "", array("maxlength" => 32, "required" => true, "placeholder" => "...", "class" => "phone", "title" => "Поле обязательно"))?>
+					<?=CHTML::textField("Person[{{index}}][phone]", "", array("maxlength" => 32, "required" => true, "placeholder" => "...", "class" => "phone not-remove", "title" => "Поле обязательно"))?>
 				</div>
 			</div>
 			<div class="b-hor-input">
@@ -228,7 +228,7 @@
 					<?php echo $form->labelEx($person, "transfer_id"); ?>
 				</div>
 				<div class="b-hor-input-right">
-					<?=CHTML::radioButtonList("Person[{{index}}][transfer_id]", 0, array( 0 => "Самостоятельно", 1 => "На такси" ), array("template" => '<div class="b-radio">{input}{label}</div>', "separator" => "", "container" => "div", "baseID" => "transfer_{{index}}")); ?>
+					<?=CHTML::radioButtonList("Person[{{index}}][transfer_id]", 0, array( 0 => "Самостоятельно", 1 => "На такси" ), array("template" => '<div class="b-radio not-remove">{input}{label}</div>', "separator" => "", "container" => "div", "baseID" => "transfer_{{index}}")); ?>
 				</div>
 			</div>
 			<div class="b-hor-input">

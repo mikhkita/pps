@@ -958,6 +958,8 @@ $(document).ready(function(){
         $('#totalSum').text(price.toLocaleString());
         $('#totalSumText').text(pluralForm(price, 'рубль', 'рубля', 'рублей'));
 
+        $('#faculties-form').find("input").eq(0).trigger("change");
+
         checkTotalSum();
     }
 

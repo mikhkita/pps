@@ -2841,7 +2841,7 @@ ul.yiiPager .first, ul.yiiPager .last{
                     color: #C4CCD5;
                 }
     .b-order-form-right{
-        width: calc(40% - 20px);
+        width: calc(40% - 40px);
         margin-left: 36px;
         display: inline-block;
         vertical-align: top;

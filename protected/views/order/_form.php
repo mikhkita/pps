@@ -158,7 +158,7 @@
 	<?php $this->endWidget(); ?>		
 	</div>
 	<div class="b-tile b-order-form-right">
-		<div class="b-tile">
+		<div class="b-tile sticky">
 			<div class="b-right-tile-top-block b-right-tile-block">
 				Итого:
 			</div>

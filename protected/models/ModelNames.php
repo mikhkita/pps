@@ -11,9 +11,12 @@
  * @property string $rod_name
  * @property integer $admin_menu
  * @property integer $sort
+ * @property integer $parent_id
  */
 class ModelNames extends CActiveRecord
 {
+	public $isDictionary = true;
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -31,12 +34,12 @@ class ModelNames extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array("code, name, vin_name, rod_name, menu_name", "required"),
-			array("sort", "numerical", "integerOnly" => true),
+			array("sort, parent_id", "numerical", "integerOnly" => true),
 			array("code, name, vin_name, rod_name", "length", "max" => 128),
 			array("rule, menu_name", "length", "max" => 32),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array("id, code, name, vin_name, rod_name, menu_name, rule, sort", "safe", "on" => "search"),
+			array("id, code, name, vin_name, rod_name, menu_name, rule, sort, parent_id", "safe", "on" => "search"),
 		);
 	}
 
@@ -54,19 +57,53 @@ class ModelNames extends CActiveRecord
 	/**
 	 * @return array customized attribute labels (name=>label)
 	 */
-	public function attributeLabels()
+	public function attributeLabels($viewLabels = false)
 	{
-		return array(
-			"id" => "ID",
-			"code" => "Код",
-			"name" => "Название раздела",
-			"vin_name" => "Винительный падеж элемента",
-			"rod_name" => "Родительный падеж элемента",
-			"rule" => "Правило доступа",
-			"sort" => "Сортировка",
-			"parent" => "Родитель",
-			"menu_name" => "Название в меню"
-		);
+		if( $viewLabels ){
+			return array(
+				"id" => (object) array(
+					"name" => "ID",
+					"width" => "30px"
+				),
+				"code" => (object) array(
+					"name" => "Код"
+				),
+				"name" => (object) array(
+					"name" => "Название раздела"
+				),
+				"vin_name" => (object) array(
+					"name" => "Винительный падеж элемента"
+				),
+				"rod_name" => (object) array(
+					"name" => "Родительный падеж элемента"
+				),
+				"rule" => (object) array(
+					"name" => "Правило доступа"
+				),
+				"sort" => (object) array(
+					"name" => "Сортировка"
+				),
+				"menu_name" => (object) array(
+					"name" => "Название в меню"
+				),
+				"parent_id" => (object) array(
+					"name" => "Родительский раздел"
+				)
+			);
+		}else{
+			return array(
+				"id" => "ID",
+				"code" => "Код",
+				"name" => "Название раздела",
+				"vin_name" => "Винительный падеж элемента",
+				"rod_name" => "Родительный падеж элемента",
+				"rule" => "Правило доступа",
+				"sort" => "Сортировка",
+				// "parent" => "Родитель",
+				"menu_name" => "Название в меню",
+				"parent_id" => "Родительский раздел",
+			);
+		}
 	}
 
 	/**
@@ -81,7 +118,7 @@ class ModelNames extends CActiveRecord
 	 * @return CActiveDataProvider the data provider that can return the models
 	 * based on the search/filter conditions.
 	 */
-	public function search()
+	public function search($pages, $count = false)
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
@@ -92,12 +129,33 @@ class ModelNames extends CActiveRecord
 		$criteria->compare("name", $this->name,true);
 		$criteria->compare("vin_name", $this->vin_name,true);
 		$criteria->compare("rod_name", $this->rod_name,true);
-		$criteria->compare("admin_menu", $this->admin_menu);
-		$criteria->compare("sort", $this->sort);
+		// $criteria->compare("admin_menu", $this->admin_menu);
+		// $criteria->compare("sort", $this->sort);
+		// $criteria->compare("parent_id", $this->parent_id);
 
-		return new CActiveDataProvider($this, array(
-			"criteria" => $criteria,
-		));
+		if( $count ){
+			return ModelNames::model()->count($criteria);
+		}else{
+			return new CActiveDataProvider($this, array(
+				"criteria" => $criteria,
+				"pagination" => array("pageSize" => $pages, "route" => "point/adminindex")
+			));
+		}
+	}
+
+	public function updateObj($attributes){
+		foreach ($attributes as &$value) {
+	    	$value = trim($value);
+		}
+
+		$this->attributes = $attributes;
+
+		if($this->save()){
+			return true;
+		}else{
+			print_r($this->getErrors());
+			return false;
+		}
 	}
 
 	/**

@@ -193,6 +193,9 @@ small.gray{
 small.block{
     display: block;
 }
+.hide{
+    display: none;
+}
 
 [class^="icon-"]:before,
 [class*=" icon-"]:before,
@@ -219,6 +222,9 @@ small.block{
     text-decoration: none;
 }
 
+.icon-dictionary:before {
+    content: "\e919";
+}
 .icon-arrow-down:before,
 .b-hor-input .select2-arrow:before{
     content: "\e918";
@@ -237,7 +243,7 @@ small.block{
 }
 .icon-pdf:before {
     content: "\e901";
-    color: #b21010;
+    color: #C80909;
 }
 .icon-back:before,
 .b-back:before {
@@ -312,6 +318,7 @@ h1,h2,h3,h4,h5,h6{
     color: #383B3F;
 }
 h1,
+h1 span,
 h2{
     font-family: "RobotoBold";
     font-size: 32px;
@@ -775,23 +782,36 @@ h1.b-with-nav{
             text-decoration: none;
         }
 .b-butt{
-    border-radius: 5px;
     margin-top: 15px;
-    background-color: #4c8bf7;
+    background-color: #EC8F1E;
     display: inline-block;
     float: right;
-    padding: 10px 20px;
+    padding: 17px 24px 19px;
     color: #FFF;
-    border: 1px solid #4077d6;
     text-decoration: none;
+    letter-spacing: 0.5px;
+    font-size: 14px;
 }
     .b-butt:hover{
-        background-color: #4d85e6;
+        background-color: #E1820E;
+    }
+    .b-butt:active{
+        background-color: #CD7408;
+    }
+.b-butt.icon-add{
+    
+}
+    .b-butt.icon-add:before{
+        margin-right: 10px;
+        font-size: 14px;
+        vertical-align: middle;
+        position: relative;
+        top: -1px;
     }
     .b-top-butt{
         position: absolute;
         right: 0px;
-        top: -18px;
+        top: -23px;
     }
     .b-top-butt.b-with-nav{
         top: 12px;
@@ -806,6 +826,19 @@ h1.b-with-nav{
         margin-top: 25px;
         margin-right: 20px;
     }
+
+.b-btn:hover .b-progress-bar[data-complete="true"],
+.b-btn:active .b-progress-bar[data-complete="true"]{
+    background-color: #178803 !important;   
+    -webkit-transition: all 0ms ease-out;
+       -moz-transition: all 0ms ease-out;
+        -ms-transition: all 0ms ease-out;
+         -o-transition: all 0ms ease-out;
+            transition: all 0ms ease-out;
+}
+.b-btn:active .b-progress-bar[data-complete="true"]{
+    background-color: #137202 !important;   
+}
 .fancybox-skin{
     /*background-color: #FFF;*/
     border-radius: 0px;
@@ -845,10 +878,11 @@ h1.b-with-nav{
         text-align: left;
     }
 .fancybox-slide .b-popup-delete{
+    max-width: 660px;
     padding: 30px !important;
 }
 .fancybox-slide .b-popup-delete h1{
-    
+    padding: 0px 30px;
 }
 .fancybox-wrap{
     margin-bottom: 30px;
@@ -1063,6 +1097,9 @@ h1.b-with-nav{
                 background: #FFF;
                 padding-left: 5px;
             }
+            .b-popup label.error{
+                background: #f5f5f5;
+            }
             .without-error-labels input.error{
                 border-color: #D26A44;
             }
@@ -1113,7 +1150,11 @@ h1.b-with-nav{
                     cursor: default;
                 }
                     .b-input > label span{
+                        font-family: "RobotoBold", Arial;
                         font-size: 12px;
+                    }
+                    .b-input > label span.required{
+                        color: #C80909;
                     }
                 .b-popup .b-input > label:not(.error){
                     color: rgba(133, 145, 165, 0.72);
@@ -1488,7 +1529,7 @@ h1.b-with-nav{
         color: #EC8F1E;
     }
     .red{
-        color: #B21010;
+        color: #C80909;
     }
     .b-text-title{
         padding-top: 30px;
@@ -1973,9 +2014,9 @@ li.ui-autocomplete-category {
 .autocomplete-cont{
     position: relative;
 }
-    .autocomplete-cont label.error,
-    .b-to-datepicker label.error{
-        /* top: -24px; */
+    .b-popup .autocomplete-cont label.error,
+    .b-popup .b-to-datepicker label.error{
+         top: -24px; 
     }
 .ui-autocomplete {
     max-height: 400px;
@@ -2996,9 +3037,9 @@ ul.yiiPager .first, ul.yiiPager .last{
                         height: 100%;
                         top: 0;
                         left: 0;
-                        -webkit-transition: width .5s ease-out, background-color .5s;
-                        -o-transition: width .5s ease-out, background-color .5s;
-                        transition: width .5s ease-out, background-color .5s;
+                        -webkit-transition: width .3s ease-out, background-color .3s;
+                        -o-transition: width .3s ease-out, background-color .3s;
+                        transition: width .3s ease-out, background-color .3s;
                     }
                     .b-right-tile-bottom-block .b-btn span{
                         font-family: Roboto-Medium;
@@ -3051,7 +3092,7 @@ ul.yiiPager .first, ul.yiiPager .last{
 
             }
                 .b-remove-btn:hover{
-                    color: #B21010;
+                    color: #C80909;
                 }
             .b-order-form-fio .b-remove-btn{
                 margin-top: 8px;
@@ -3062,7 +3103,7 @@ ul.yiiPager .first, ul.yiiPager .last{
                     vertical-align: middle;
                     position: relative;
                     top: -2px;
-                    color: #B21010;
+                    color: #C80909;
                 }
     .b-add-person-cont{
         padding-top: 16px;
@@ -3074,7 +3115,7 @@ ul.yiiPager .first, ul.yiiPager .last{
                 color: #1CA004;
             }
             .b-add-btn:before{
-                margin-right: 8px;
+                margin-right: 10px;
                 font-size: 14px;
                 vertical-align: middle;
                 position: relative;
@@ -3084,7 +3125,18 @@ ul.yiiPager .first, ul.yiiPager .last{
         .b-add-person-cont .b-add-btn{
             
         }
-
+div.notifyjs-bootstrap-base{
+    border-radius: 0px;
+    border: none !important;
+    background-color: #C80909;
+    text-shadow: none;
+    padding: 12px 16px 14px 41px;
+}
+div.notifyjs-bootstrap-error{
+    color: #FFF;
+    background-image: url('../i/error.svg');
+    background-position: 14px 14px;
+}
 
 
 

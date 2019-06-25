@@ -69,7 +69,7 @@ class OrderController extends Controller
 		$model = new Order;
 
 		if(isset($_POST["Order"])) {
-			if( $model->updateObj($_POST["Order"], $_POST["Person"]) ){
+			if( $model->updateObj($_POST["Order"]) ){
 				$this->actionAdminIndex();
 				return true;
 			}
@@ -86,12 +86,12 @@ class OrderController extends Controller
 		$model = $this->loadModel($id);
 
 		if(isset($_POST["Order"])) {
-			if( $model->updateObj($_POST["Order"], $_POST["Person"]) ){
+			if( $model->updateObj($_POST["Order"]) ){
 				$this->actionAdminIndex();
 				return true;
 			}
 		}else{
-			$this->render("adminUpdate",array(
+			$this->renderPartial("adminUpdate",array(
 				"model" => $model,
 				"person" => new Person
 			));
@@ -107,7 +107,7 @@ class OrderController extends Controller
 
 	public function loadModel($id)
 	{
-		$model = Order::model()->with("persons")->findByPk($id);
+		$model = Order::model()->findByPk($id);
 
 		if($model===null)
 			throw new CHttpException(404, "The requested page does not exist.");

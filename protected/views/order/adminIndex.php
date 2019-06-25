@@ -1,5 +1,5 @@
 <h1><?=$this->adminMenu["cur"]->name?></h1>
-<? if( Yii::app()->user->checkAccess('updateSection') ): ?><a href="<?php echo $this->createUrl("/".$this->adminMenu["cur"]->code."/admincreate")?>" class="b-butt b-top-butt">Добавить</a><? endif; ?>
+<? if( Yii::app()->user->checkAccess('updateSection') ): ?><a href="<?php echo $this->createUrl("/".$this->adminMenu["cur"]->code."/admincreate")?>" class="b-butt icon-add b-top-butt">Добавить заявку</a><? endif; ?>
 <div class="b-tile">
 	<div class="b-tile-header clearfix">
 		<a href="#"><h3 class="b-tile-title">Томск – Толмачево 24 мая 2019 г. (3 чел.)</h3></a>

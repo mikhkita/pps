@@ -1,5 +1,7 @@
 <div class="b-order-form">
-
+	<script>
+		var points = JSON.parse('<?=json_encode(CHtml::listData(Point::model()->sorted()->findAll(), "id", "is_airport"))?>');
+	</script>
 	<div class="b-order-form-left">
 		<?php $form=$this->beginWidget("CActiveForm", array(
 			"id" => "order-form",
@@ -7,7 +9,11 @@
 			'htmlOptions'=>array(
 				'class'=>'validatable',
 		    ),
-		)); ?>
+		)); 
+		$labels = $model->attributeLabels();
+
+		$points = CHtml::listData(Point::model()->sorted()->findAll(), "id", "name");
+		?>
 
 		<?php echo $form->errorSummary($model); ?>
 
@@ -15,18 +21,10 @@
 			<div class="b-tile">
 				<div class="b-hor-input">
 					<div class="b-input b-hor-input-left">
-						<?php echo $form->labelEx($model, "date"); ?>
-					</div>
-					<div class="b-hor-input-right b-to-datepicker">
-						<?php echo $form->textField($model, "date", array("maxlength" => 32, "required" => true, "autocomplete" => "off", "placeholder" => "...", "class" => "date", "title" => "Поле обязательно")); ?>
-					</div>
-				</div>
-				<div class="b-hor-input">
-					<div class="b-input b-hor-input-left">
 						<?php echo $form->labelEx($model, "start_point_id"); ?>
 					</div>
 					<div class="b-hor-input-right">
-						<?php echo $form->dropDownList($model, "start_point_id", array("" => "Не выбрано") + CHtml::listData(Point::model()->sorted()->findAll(), "id", "name"), array("class" => "select2", "required" => true, "title" => "Поле обязательно")); ?>
+						<?php echo $form->dropDownList($model, "start_point_id", array("" => "Не выбрано") + $points, array("class" => "select2", "required" => true, "title" => "Поле обязательно")); ?>
 					</div>
 				</div>
 				<div class="b-hor-input">
@@ -34,15 +32,31 @@
 						<?php echo $form->labelEx($model, "end_point_id"); ?>
 					</div>
 					<div class="b-hor-input-right">
-						<?php echo $form->dropDownList($model, "end_point_id", array("" => "Не выбрано") + CHtml::listData(Point::model()->sorted()->findAll(), "id", "name"), array("class" => "select2", "required" => true, "title" => "Поле обязательно")); ?>
+						<?php echo $form->dropDownList($model, "end_point_id", array("" => "Не выбрано") + $points, array("class" => "select2", "required" => true, "title" => "Поле обязательно")); ?>
+					</div>
+				</div>
+				<div class="b-hor-input date-airplane hide">
+					<div class="b-input b-hor-input-left">
+						<label for="Order_flight" class="required"><?=$labels["flight_id"]?> <span class="required">*</span></label>
+					</div>
+					<div class="b-hor-input-right">
+						<?php echo $form->dropDownList($model, "flight_id", array("" => "Не выбрано") + CHtml::listData(Flight::model()->sorted()->findAll(), "id", "name"), array("class" => "select2", "required" => true, "title" => "Поле обязательно")); ?>
 					</div>
 				</div>
 				<div class="b-hor-input">
 					<div class="b-input b-hor-input-left">
-						<?php echo $form->labelEx($model, "flight"); ?>
+						<label for="Order_to_date" class="required"><span class="date-bus"><?=$labels["to_date"]?></span><span class="date-airplane hide">Дата/время вылета рейса</span></label>
 					</div>
-					<div class="b-hor-input-right">
-						<?php echo $form->textField($model, "flight", array("maxlength" => 32, "required" => true, "placeholder" => "...", "title" => "Поле обязательно")); ?>
+					<div class="b-hor-input-right b-to-datepicker">
+						<?php echo $form->textField($model, "to_date", array("maxlength" => 32, "autocomplete" => "off", "placeholder" => "...", "class" => "date-time", "title" => "Поле обязательно")); ?>
+					</div>
+				</div>
+				<div class="b-hor-input">
+					<div class="b-input b-hor-input-left">
+						<label for="Order_from_date" class="required"><span class="date-bus"><?=$labels["from_date"]?></span><span class="date-airplane hide">Дата/время прилета рейса</span></label>
+					</div>
+					<div class="b-hor-input-right b-to-datepicker">
+						<?php echo $form->textField($model, "from_date", array("maxlength" => 32, "autocomplete" => "off", "placeholder" => "...", "class" => "date-time", "title" => "Поле обязательно")); ?>
 					</div>
 				</div>
 				<div class="b-hor-input">
@@ -154,11 +168,6 @@
 		</div>
 		<? endfor; */ ?>
 
-		<? /* ?><div class="row buttons">
-			<?php echo CHtml::submitButton($model->isNewRecord ? "Добавить" : "Сохранить"); ?>
-			<input type="button" onclick="$.fancybox.close(); return false;" value="Отменить">
-		</div><? */ ?>
-
 	<?php $this->endWidget(); ?>		
 	</div>
 	<div class="b-tile b-order-form-right">
@@ -192,11 +201,11 @@
 			<div class="b-order-form-fio">
 				<div class="b-resize-input">
 					<div class="input-buffer"></div>
-					<input type="text" required name="Person[{{index}}][last_name]" placeholder="Фамилия" class="not-remove" title="ФИО обязательно">
+					<input type="text" required name="Person[{{index}}][last_name]" placeholder="Фамилия *" class="not-remove" title="ФИО обязательно">
 				</div>
 				<div class="b-resize-input">
 					<div class="input-buffer"></div>
-					<input type="text" required name="Person[{{index}}][name]" placeholder="Имя" class="not-remove" title="ФИО обязательно">
+					<input type="text" required name="Person[{{index}}][name]" placeholder="Имя *" class="not-remove" title="ФИО обязательно">
 				</div>
 				<div class="b-resize-input">
 					<div class="input-buffer"></div>
@@ -209,7 +218,7 @@
 					<?php echo $form->labelEx($person, "is_child"); ?>
 				</div>
 				<div class="b-hor-input-right">
-					<?=CHTML::radioButtonList("Person[{{index}}][is_child]", 0, array( 0 => "Старше 10 лет", 1 => "Младше 10 лет" ), array("template" => '<div class="b-radio">{input}{label}</div>', "separator" => "", "container" => "div", "baseID" => "child_{{index}}")); ?>
+					<?=CHTML::radioButtonList("Person[{{index}}][is_child]", 0, array( 0 => "Взрослый", 1 => "Детский" ), array("template" => '<div class="b-radio">{input}{label}</div>', "separator" => "", "container" => "div", "baseID" => "child_{{index}}")); ?>
 				</div>
 			</div>
 			<div class="b-hor-input">
@@ -217,7 +226,23 @@
 					<?php echo $form->labelEx($person, "direction_id"); ?>
 				</div>
 				<div class="b-hor-input-right">
-					<?=CHTML::radioButtonList("Person[{{index}}][direction_id]", 0, array( 0 => "В обе стороны", 1 => "Туда", 2 => "Обратно" ), array("template" => '<div class="b-radio">{input}{label}</div>', "separator" => "", "container" => "div", "baseID" => "person_{{index}}")); ?>
+					<?=CHTML::radioButtonList("Person[{{index}}][direction_id]", 1, array( 1 => "В обе стороны", 2 => "Туда", 3 => "Обратно" ), array("template" => '<div class="b-radio">{input}{label}</div>', "separator" => "", "container" => "div", "class" => "direction-field", "baseID" => "person_{{index}}")); ?>
+				</div>
+			</div>
+			<div class="b-hor-input b-transfer-input">
+				<div class="b-input b-hor-input-left">
+					<?php echo $form->labelEx($person, "transfer_id"); ?>
+				</div>
+				<div class="b-hor-input-right">
+					<?=CHTML::radioButtonList("Person[{{index}}][transfer_id]", 0, array( 1 => "На такси", 0 => "Самостоятельно" ), array("template" => '<div class="b-radio not-remove">{input}{label}</div>', "separator" => "", "container" => "div", "baseID" => "transfer_{{index}}")); ?>
+				</div>
+			</div>
+			<div class="b-hor-input">
+				<div class="b-input b-hor-input-left">
+					<?php echo $form->labelEx($person, "pay_himself"); ?>
+				</div>
+				<div class="b-hor-input-right">
+					<?=CHTML::radioButtonList("Person[{{index}}][pay_himself]", 0, array( 0 => "Через турагентство", 1 => "Напрямую водителю" ), array("template" => '<div class="b-radio not-remove">{input}{label}</div>', "separator" => "", "container" => "div", "baseID" => "pay_himself_{{index}}")); ?>
 				</div>
 			</div>
 			<div class="b-hor-input">
@@ -225,15 +250,7 @@
 					<?php echo $form->labelEx($person, "phone"); ?>
 				</div>
 				<div class="b-hor-input-right b-to-datepicker">
-					<?=CHTML::textField("Person[{{index}}][phone]", "", array("maxlength" => 32, "required" => true, "placeholder" => "...", "class" => "phone not-remove", "title" => "Поле обязательно"))?>
-				</div>
-			</div>
-			<div class="b-hor-input">
-				<div class="b-input b-hor-input-left">
-					<?php echo $form->labelEx($person, "transfer_id"); ?>
-				</div>
-				<div class="b-hor-input-right">
-					<?=CHTML::radioButtonList("Person[{{index}}][transfer_id]", 0, array( 0 => "Самостоятельно", 1 => "На такси" ), array("template" => '<div class="b-radio not-remove">{input}{label}</div>', "separator" => "", "container" => "div", "baseID" => "transfer_{{index}}")); ?>
+					<?=CHTML::textField("Person[{{index}}][phone]", "", array("maxlength" => 32, "required" => true, "placeholder" => "...", "class" => "phone not-remove", "title" => "Поле обязательно", "autocomplete" => "off"))?>
 				</div>
 			</div>
 			<div class="b-hor-input">
@@ -242,6 +259,22 @@
 				</div>
 				<div class="b-hor-input-right">
 					<?=CHTML::textArea("Person[{{index}}][address]", "", array("maxlength" => 1024, "placeholder" => "...", "class" => "not-remove", "rows" => 1, "required" => true))?>
+				</div>
+			</div>
+			<div class="b-hor-input">
+				<div class="b-input b-hor-input-left">
+					<?php echo $form->labelEx($person, "passport"); ?>
+				</div>
+				<div class="b-hor-input-right b-to-datepicker">
+					<?=CHTML::textField("Person[{{index}}][passport]", "", array("maxlength" => 12, "placeholder" => "...", "class" => "passport not-remove", "title" => "Поле обязательно"))?>
+				</div>
+			</div>
+			<div class="b-hor-input">
+				<div class="b-input b-hor-input-left">
+					<?php echo $form->labelEx($person, "birthday"); ?>
+				</div>
+				<div class="b-hor-input-right b-to-datepicker">
+					<?=CHTML::textField("Person[{{index}}][birthday]", "", array("maxlength" => 32, "placeholder" => "...", "class" => "date not-remove", "title" => "Поле обязательно", "autocomplete" => "off"))?>
 				</div>
 			</div>
 			<div class="b-hor-input">

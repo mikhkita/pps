@@ -52,7 +52,9 @@
                     filled = 0;
 
                 _.find('input[required], select[required], textarea[required]').each(function(){
-                    total ++;
+                    if( !$(this).parents(".hide").length ){
+                        total ++;
+                    }
                     if($(this).val() != ''){
                         filled ++;
                     }
@@ -61,7 +63,7 @@
                 var needToFill = total - filled;
 
                 _.checkFilledInputs(needToFill);
-                _.checkProgress(filled);
+                _.checkProgress(total, filled);
             },
 
             rgbColorPercent : function(percent) {
@@ -100,10 +102,9 @@
                 return 'rgb('+R+', '+G+', '+B+')';
             },
 
-            checkProgress : function(filled) {
+            checkProgress : function(total, filled) {
 
-                var total = _.find('input[required], select[required], textarea[required]').length,
-                    percent = (parseInt(filled)/parseInt(total))*100,
+                var percent = (parseInt(filled)/parseInt(total))*100,
                     color = _.rgbColorPercent(percent);
 
                 $('#b-progress-bar').css('background-color', color);

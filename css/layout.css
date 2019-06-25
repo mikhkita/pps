@@ -3001,10 +3001,7 @@ ul.yiiPager .first, ul.yiiPager .last{
                     margin-bottom: 16px;
                     position: relative;
                 }
-                .b-right-tile-bottom-block .b-btn.preloader{
-                    background: #fff;
-                }
-                .b-right-tile-bottom-block .b-btn.preloader:before{
+                .b-right-tile-bottom-block .b-btn:before{
                     position: absolute;
                     content: '';
                     background: url('../i/preloader.svg');
@@ -3016,7 +3013,14 @@ ul.yiiPager .first, ul.yiiPager .last{
                     -ms-transform: translateY(-50%);
                     -o-transform: translateY(-50%);
                     transform: translateY(-50%);
+                    display: none;
                 }
+                .b-right-tile-bottom-block .b-btn.preloader{
+                    background: #fff;
+                }
+                .b-right-tile-bottom-block .b-btn.preloader:before{
+                    display: block;
+                } 
                     .b-right-tile-bottom-block .b-btn.preloader .b-progress-bar{
                         background-color: transparent!important;
                     }

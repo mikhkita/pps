@@ -1,25 +1,24 @@
 <?php
 
 /**
- * This is the model class for table "point".
+ * This is the model class for table "flight".
  *
- * The followings are the available columns in table "point":
+ * The followings are the available columns in table "flight":
  * @property string $id
  * @property string $name
+ * @property integer $active
  * @property string $code_1c
- * @property string $active
- * @property string $is_airport
  */
-class Point extends CActiveRecord
+class Flight extends CActiveRecord
 {
 	public $isDictionary = true;
-
+	
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
 	{
-		return "point";
+		return "flight";
 	}
 
 	/**
@@ -31,10 +30,12 @@ class Point extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array("name, code_1c", "required"),
-			array("name, active, is_airport", "length", "max" => 128),
+			array("active", "numerical", "integerOnly" => true),
+			array("name", "length", "max" => 256),
+			array("code_1c", "length", "max" => 32),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array("id, name, code_1c, active, is_airport", "safe", "on" => "search"),
+			array("id, name, active, code_1c", "safe", "on" => "search"),
 		);
 	}
 
@@ -55,8 +56,6 @@ class Point extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			"ordersStart" => array(self::HAS_MANY, "Order", "start_point_id"),
-			"ordersEnd" => array(self::HAS_MANY, "Order", "end_point_id"),
 		);
 	}
 
@@ -72,14 +71,10 @@ class Point extends CActiveRecord
 					"width" => "30px"
 				),
 				"name" => (object) array(
-					"name" => "Наименование",
+					"name" => "Наименование"
 				),
 				"code_1c" => (object) array(
 					"name" => "Код 1С",
-				),
-				"is_airport" => (object) array(
-					"name" => "Аэропорт",
-					"type" => "bool"
 				),
 				"active" => (object) array(
 					"name" => "Активность",
@@ -90,9 +85,8 @@ class Point extends CActiveRecord
 			return array(
 				"id" => "ID",
 				"name" => "Наименование",
-				"code_1c" => "Код 1С",
-				"is_airport" => "Аэропорт",
 				"active" => "Активность",
+				"code_1c" => "Код 1С",
 			);
 		}
 	}
@@ -117,13 +111,15 @@ class Point extends CActiveRecord
 
 		$criteria->addSearchCondition("id", $this->id);
 		$criteria->addSearchCondition("name", $this->name);
+		$criteria->compare("active", $this->active);
+		$criteria->addSearchCondition("code_1c", $this->code_1c);
 
 		if( $count ){
-			return Point::model()->count($criteria);
+			return Flight::model()->count($criteria);
 		}else{
 			return new CActiveDataProvider($this, array(
 				"criteria" => $criteria,
-				"pagination" => array("pageSize" => $pages, "route" => "point/adminindex")
+				"pagination" => array("pageSize" => $pages, "route" => "flight/adminindex")
 			));
 		}
 	}
@@ -147,7 +143,7 @@ class Point extends CActiveRecord
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return Point the static model class
+	 * @return Flight the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{

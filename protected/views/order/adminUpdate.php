@@ -1,5 +1,4 @@
-<div class="b-popup">
-	<h1>Редактирование <?=$this->adminMenu["cur"]->rod_name?></h1>
+<a href="<?php echo $this->createUrl("/".$this->adminMenu["cur"]->code."/adminIndex")?>" class="b-back">Назад</a>
+<h1><?=$model->getTitle()?></h1>
 
-	<?php $this->renderPartial("_form", array("model" => $model, "person" => $person)); ?>
-</div>
+<?php $this->renderPartial("_view", array("model" => $model)); ?>

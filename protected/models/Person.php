@@ -19,6 +19,11 @@
  * @property integer $cash
  * @property integer $to_status_id
  * @property integer $from_status_id
+ * @property integer $passport
+ * @property string $birthday
+ * @property integer $pay_himself
+ * @property string $code_1c
+ * @property integer $number
  */
 class Person extends CActiveRecord
 {
@@ -38,15 +43,15 @@ class Person extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array("name, last_name, order_id, phone, address, transfer_id, direction_id, price", "required"),
-			array("is_child, transfer_id, direction_id, price, cash, to_status_id, from_status_id", "numerical", "integerOnly" => true),
+			array("name, last_name, order_id, phone, address", "required"),
+			array("is_child, transfer_id, direction_id, price, cash, to_status_id, from_status_id, pay_himself, number", "numerical", "integerOnly" => true),
 			array("name, last_name, third_name", "length", "max" => 64),
 			array("order_id", "length", "max" => 10),
-			array("phone", "length", "max" => 32),
+			array("phone, code_1c", "length", "max" => 32),
 			array("comment, address", "length", "max" => 1024),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array("id, name, last_name, third_name, order_id, is_child, phone, comment, address, transfer_id, direction_id, price, cash, to_status_id, from_status_id", "safe", "on" => "search"),
+			array("id, name, last_name, third_name, order_id, is_child, phone, comment, address, transfer_id, direction_id, price, cash, to_status_id, from_status_id, passport, birthday, pay_himself, code_1c, number", "safe", "on" => "search"),
 		);
 	}
 
@@ -73,7 +78,7 @@ class Person extends CActiveRecord
 			"name" => "Имя",
 			"third_name" => "Отчество",
 			"order_id" => "Заказ",
-			"is_child" => "Возраст",
+			"is_child" => "Билет",
 			"phone" => "Телефон",
 			"comment" => "Комментарий",
 			"address" => "Адрес",
@@ -83,7 +88,12 @@ class Person extends CActiveRecord
 			"cash" => "Получено",
 			"to_status_id" => "Статус поездки «туда»",
 			"from_status_id" => "Статус поездки «обратно»",
-			"status" => "Статус"
+			"status" => "Статус",
+			"passport" => "Серия и номер паспорта",
+			"birthday" => "День рождения",
+			"pay_himself" => "Клиент оплачивает",
+			"code_1c" => "Код 1С",
+			"number" => "Номер строки (для 1С)",
 		);
 	}
 
@@ -114,6 +124,7 @@ class Person extends CActiveRecord
 		$criteria->addSearchCondition("phone", $this->phone);
 		$criteria->addSearchCondition("comment", $this->comment);
 		$criteria->addSearchCondition("address", $this->address);
+		$criteria->addSearchCondition("passport", $this->passport);
 		$criteria->compare("transfer_id", $this->transfer_id);
 		$criteria->compare("direction_id", $this->direction_id);
 		$criteria->compare("price", $this->price);

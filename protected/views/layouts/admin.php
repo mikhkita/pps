@@ -32,7 +32,7 @@
     <script type="text/javascript" src="<?php echo Yii::app()->request->baseUrl; ?>/js/handlebars-v4.1.2.js"></script>
     <script type="text/javascript" src="<?php echo Yii::app()->request->baseUrl; ?>/js/jquery.fancybox.min.js"></script>
     <script type="text/javascript" src="<?php echo Yii::app()->request->baseUrl; ?>/js/KitResizableInput.js"></script>
-    <script type="text/javascript" src="<?php echo Yii::app()->request->baseUrl; ?>/js/notify.min.js"></script>
+    <script type="text/javascript" src="<?php echo Yii::app()->request->baseUrl; ?>/js/notify.js"></script>
     <script type="text/javascript" src="<?php echo Yii::app()->request->baseUrl; ?>/js/stickyfill.js"></script>
     <script type="text/javascript" src="<?php echo Yii::app()->request->baseUrl; ?>/js/KitProgressBtn.js"></script>
     <script type="text/javascript" src="<?php echo Yii::app()->request->baseUrl; ?>/js/jquery.validate.min.js"></script>
@@ -55,7 +55,7 @@
             </a>
             <h3>Меню</h3>
             <?foreach ($this->adminMenu["items"] as $i => $menuItem):?>
-                <? if( $menuItem->rule == NULL || Yii::app()->user->checkAccess($menuItem->rule) ): ?>
+                <? if( ($menuItem->rule == NULL || Yii::app()->user->checkAccess($menuItem->rule)) && $menuItem->parent_id == 0 ): ?>
                     <a href="<?php echo $this->createUrl('/'.$menuItem->code.'/adminindex')?>" class="b-menu-tile" data-name="<?=$menuItem->code?>">
                         <span class="b-icon icon-<?=$menuItem->code?>"></span>
                         <p><?=$menuItem->menu_name?></p>
@@ -83,9 +83,9 @@
     <? endif; ?>
     <div style="display: none;">
         <div class="b-popup b-popup-delete" id="b-popup-delete">
-            <h1>Вы действительно хотите удалить запись?</h1>
+            <h1>Вы действительно хотите удалить <span></span>?</h1>
             <div class="row buttons">
-                <input type="button" class="b-delete-yes" value="Да">
+                <input type="submit" class="b-delete-yes" value="Да">
                 <input type="button" onclick="$.fancybox.close();" value="Нет">
             </div>
         </div>

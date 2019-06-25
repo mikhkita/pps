@@ -42,11 +42,15 @@ $(document).ready(function(){
             myWidth = document.body.clientWidth;
             myHeight = document.body.clientHeight;
         }
+
         $("body,html").css("height",myHeight);
         // $(".main").css("height",myHeight-50);
     }
     $(window).resize(whenResize);
     whenResize();
+
+    var img = new Image();
+    img.src = "/i/error.svg";
 
     $().fancybox({
         selector : ".ajax-update, .ajax-create",
@@ -87,8 +91,10 @@ $(document).ready(function(){
             padding: 0,
             src: "#b-popup-delete",
             type: "inline",
+            touch: false,
             afterLoad: function(){
                 bindDelete($this.attr("href"));
+                $("#b-popup-delete").find("h1 span").text( $this.attr("data-name") );
             }
         });
         return false;
@@ -317,7 +323,9 @@ $(document).ready(function(){
             removeNewInputs();
 
             tinymce.triggerSave();
-            if( $(this).valid() && !$(this).find("input[type=submit]").hasClass("blocked") ){
+            $(this).valid();
+
+            if( isFormValid( $(this) ) && !$(this).find("input[type=submit]").hasClass("blocked") ){
                 var $form = $(this),
                     url = $form.attr("action"),
                     data;
@@ -414,16 +422,26 @@ $(document).ready(function(){
         });
     }
 
+    function isFormValid($form){
+        var count = 0;
+        $form.find("input.error,select.error,textarea.error,.b-postamat-error").each(function(){
+            if( !$(this).parents(".hide").length ){
+                count++;
+            }
+        });
+        return ( count == 0 )?true:false;
+    }
+
     function bindFields($form){
         autosize($form[0].querySelectorAll('textarea:not(.binded)'));
         $form.find("textarea:not(.binded)").addClass("binded");
 
-        if( $form.find(".date-time").length ){
-            $form.find(".date-time:not(.binded)").addClass("binded").mask('99.99.9999 99:99',{placeholder:"_"});
-        }
-
         if( $form.find(".phone").length ){
             $form.find(".phone:not(.binded)").addClass("binded").mask('+7 (999) 999-99-99',{placeholder:"_"});
+        }
+
+        if( $form.find(".passport").length ){
+            $form.find(".passport:not(.binded)").addClass("binded").mask('9999 999999',{placeholder:"_"});
         }
 
         bindDate($form);
@@ -450,13 +468,52 @@ $(document).ready(function(){
             $form.find(".date:not(.binded)").each(function(){
                 var $this = $(this);
                 $(this).mask('99.99.9999',{placeholder:"_"});
-                $(this).wrap("<div class='b-to-datepicker'></div>");
+                // $(this).wrap("<div class='b-to-datepicker'></div>");
 
                 $(this).datepicker({
                     currentText: "Now",
                     dateFormat: "dd.mm.yy",
                     beforeShow:function(input, inst){
                         $this.parents(".b-to-datepicker").append($('#ui-datepicker-div'));  
+                    }
+                });
+
+                if( $(this).hasClass("current") && $(this).val() == "" ){
+                    $(this).datepicker("setDate", new Date());
+                }
+            }).addClass("binded");
+        }
+        if( $form.find(".date-time:not(.binded)").length ){
+            $form.find(".date-time:not(.binded)").each(function(){
+                var $this = $(this);
+                $(this).mask('99.99.9999? 99:99',{placeholder:"_"});
+                // $(this).wrap("<div class='b-to-datepicker'></div>");
+
+                $(this).click(function(){
+                    if( !$("#ui-datepicker-div:visible").length ){
+                        $(this).datepicker( "show" );
+                    }
+                }).blur(function(){
+                    // if( $("#ui-datepicker-div:visible").length ){
+                        // $(this).datepicker( "hide" );
+                    // }
+                }).datepicker({
+                    currentText: "Now",
+                    dateFormat: "dd.mm.yy",
+                    beforeShow:function(input, inst){
+                        if( !$this.parents(".b-to-datepicker").find(".ui-datepicker").length ){
+                            $this.parents(".b-to-datepicker").append($('#ui-datepicker-div'));  
+                        }
+                    },
+                    onSelect: function(dateText, inst){
+                        var val = inst.lastVal,
+                            tmp = val.split(" ");
+
+                        tmp[0] = dateText;
+
+                        dateText = tmp.join(" ");
+
+                        $this.val(dateText).change().focus();
                     }
                 });
 
@@ -932,8 +989,9 @@ $(document).ready(function(){
 
     $('#b-progress-bar-container').on('click',function(){
         // if ($("#b-progress-bar").attr('data-complete') == 'true') {
-            $('#order-form').submit();
+        $('#order-form').submit();
         // }
+        return false;
     });
 
     $('#person_count').on('change',function(){
@@ -1090,15 +1148,61 @@ $(document).ready(function(){
         }
     }
 
+    function isAirport(){
+        var startPoint = $("#Order_start_point_id").val(),
+            endPoint = $("#Order_end_point_id").val();
+
+        return ( points[startPoint] == "1" || points[endPoint] == "1" );
+    }
+
     $("body").on("click", ".b-order-form-fio .b-remove-btn", function(){
         $(this).parents(".b-order-form-person").remove();
         $("#person_count").val( $(".b-order-form-person").length ).trigger("change");
+
+        return false;
     });
 
     $("#b-add-person-btn").click(function(){
         var value = $("#person_count").val()*1;
         $("#person_count").val( value + 1 ).trigger("change");
+
+        return false;
     });
+
+    $("#Order_start_point_id, #Order_end_point_id").change(function(){
+        if( isAirport() ){
+            $(".date-airplane").removeClass("hide");
+            $(".date-bus").addClass("hide");
+        }else{
+            $(".date-airplane").addClass("hide");
+            $(".date-bus").removeClass("hide");
+            $("#Order_flight_id").val("").change();
+        }
+
+        checkTransferAccess();
+    });
+
+    function checkTransferAccess(){
+        $(".b-order-form-person").each(function(){
+            if( isAirport() || $(".direction-field:checked").val() == 1 ){
+                $(this).find(".b-transfer-input").removeClass("hide");
+
+                $(".b-transfer-input input[value='0']:checked").prop("checked", false);
+                $(".b-transfer-input input[value='1']").prop("checked", true);
+            }else{
+                $(this).find(".b-transfer-input").addClass("hide");
+
+                $(".b-transfer-input input[value='1']:checked").prop("checked", false);
+                $(".b-transfer-input input[value='0']").prop("checked", true);
+            }
+        });
+    }
+
+    $(".direction-field").change(function(){
+        checkTransferAccess();
+    });
+
+    checkTransferAccess();
 
     Stickyfill.add($('.b-order-form-right'));
     

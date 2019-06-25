@@ -364,12 +364,16 @@ $(document).ready(function(){
                         if( a != false ){
                             $.fancybox.close();
                         }
+                    },
+                    error: function(){
+
+                    },
+                    complete : function(){
+                        if('#b-progress-bar-container'.length != 0){
+                            $('#b-progress-bar-container').removeClass('preloader');
+                        }
                     }
                 });
-
-                if('#b-progress-bar-container'.length != 0){
-                    $('#b-progress-bar-container').removeClass('preloader');
-                }
 
             }else{
                 var firstInput = $(this).find("input[type='text'].error,select.error,textarea.error").eq(0);

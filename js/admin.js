@@ -4,7 +4,7 @@ $(document).ready(function(){
         myHeight,
         title = window.location.href,
         titleVar = ( title.split("localhost").length > 1 )?4:3,
-        progress = new KitProgress("#FFF",2),
+        progress = new KitProgress("#EC8F1E",2),
         isMobile = $("body.is-mobile").length;
 
     progress.endDuration = 0.3;
@@ -135,7 +135,7 @@ $(document).ready(function(){
         $(".fancybox-slide .b-delete-yes").unbind("click");
         $(".fancybox-slide .b-delete-yes").bind("click", function(){
 
-            progress.setColor("#FFF");
+            progress.setColor("#EC8F1E");
             progress.start(3);
 
             url = ( $(".main form").length ) ? (url+"&"+$(".main form").serialize()) : url;
@@ -157,7 +157,7 @@ $(document).ready(function(){
     }
 
     $("body").on("click", ".ajax-action", function(){
-        progress.setColor("#2f3640");
+        progress.setColor("#EC8F1E");
         progress.start(3);
 
         $.ajax({
@@ -228,7 +228,7 @@ $(document).ready(function(){
     });
 
     function filterSubmit($form){
-        progress.setColor("#2f3640");
+        progress.setColor("#EC8F1E");
         progress.start(3);
 
         // console.log($form.serialize());
@@ -336,7 +336,7 @@ $(document).ready(function(){
                     return true;
                 }
 
-                progress.setColor("#FFF");
+                progress.setColor("#EC8F1E");
                 progress.start(3);
 
                 url = ( $(".main form").length ) ? (url+( (url.split("?").length>1)?"&":"?" )+$(".main form").serialize()) : url;

@@ -372,14 +372,19 @@ $(document).ready(function(){
                         if( a != false ){
                             $.fancybox.close();
                         }
-                    },
-                    error: function(){
-
-                    },
-                    complete : function(){
                         if('#b-progress-bar-container'.length != 0){
                             $('#b-progress-bar-container').removeClass('preloader');
+                            $('#b-progress-bar-container').addClass('success');
                         }
+                    },
+                    error: function(){
+                        if('#b-progress-bar-container'.length != 0){
+                            $('#b-progress-bar-container').removeClass('preloader');
+                            $('#b-progress-bar-container').addClass('error');
+                        }
+                    },
+                    complete : function(){
+
                     }
                 });
 

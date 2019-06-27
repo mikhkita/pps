@@ -108,23 +108,26 @@ $(document).ready(function(){
                     window.location.href = json.href;
                 break;
                 case "redirectDelay":
+                    if('#b-progress-bar-container'.length != 0){
+                        $('#b-progress-bar-container').removeClass('preloader');
+                        $('#b-progress-bar-container').addClass('success');
+                    }
                     setTimeout(function(){
-                        if('#b-progress-bar-container'.length != 0){
-                            $('#b-progress-bar-container').removeClass('preloader');
-                            $('#b-progress-bar-container').addClass('success');
-                        }
                         window.location.href = json.href;
-                    },3000)  
+                    },1000)  
                 break;
             }
         } else {
             if (json.result == "error") {
                 if('#b-progress-bar-container'.length != 0){
+                    var text = $('#b-progress-bar-container .error').text();
                     $('#b-progress-bar-container .error').text(json.message);
                     $('#b-progress-bar-container').removeClass('preloader');
                     $('#b-progress-bar-container').addClass('error');
                     setTimeout(function(){
                         $('#b-progress-bar-container').removeClass('error');
+                        $('#b-progress-bar-container .error').text(text);
+                        progress.end();
                     },3000)
                 }
             }
@@ -397,6 +400,9 @@ $(document).ready(function(){
                         if('#b-progress-bar-container'.length != 0){
                             $('#b-progress-bar-container').removeClass('preloader');
                             $('#b-progress-bar-container').addClass('error');
+                            setTimeout(function(){
+                                $('#b-progress-bar-container').removeClass('error');
+                            },2000)
                         }
                     },
                     complete : function(){

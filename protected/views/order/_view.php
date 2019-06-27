@@ -136,6 +136,8 @@
 						<?=$person->address?>
 					</div>
 				</div>
+
+				<? if( !empty($person->passport) ): ?>
 				<div class="b-hor-input">
 					<div class="b-input b-hor-input-left">
 						<?php echo $form->labelEx($person, "passport"); ?>
@@ -144,6 +146,9 @@
 						<?=$person->passport?>
 					</div>
 				</div>
+				<? endif; ?>
+
+				<? if( !empty($person->birthday) ): ?>
 				<div class="b-hor-input">
 					<div class="b-input b-hor-input-left">
 						<?php echo $form->labelEx($person, "birthday"); ?>
@@ -152,6 +157,9 @@
 						<?=$person->birthday?>
 					</div>
 				</div>
+				<? endif; ?>
+
+				<? if( !empty($person->comment) ): ?>
 				<div class="b-hor-input">
 					<div class="b-input b-hor-input-left">
 						<?php echo $form->labelEx($person, "comment"); ?>
@@ -160,6 +168,8 @@
 						<?=$person->comment?>
 					</div>
 				</div>
+				<? endif; ?>
+
 				<div class="b-hor-input">
 					<div class="b-input b-hor-input-left">
 						<?php echo $form->labelEx($person, "cash"); ?>

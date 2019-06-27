@@ -1,4 +1,4 @@
-<div class="b-section-nav clearfix">
+<div class="b-section-nav">
 	<div class="b-section-nav-back clearfix">
 		<h1><?=$this->adminMenu["cur"]->name?></h1>
 		<? if( Yii::app()->user->checkAccess('updateSection') ): ?><a href="<?php echo $this->createUrl("/".$this->adminMenu["cur"]->code."/admincreate")?>" class="b-butt icon-add b-top-butt">Добавить заявку</a><? endif; ?>

@@ -2548,8 +2548,10 @@ ul.yiiPager .first, ul.yiiPager .last{
         height: 54px;
         padding-top: 17px;
         padding-left: 14px;
-        position: relative;
+        position: absolute;
+        width: 100%;
         z-index: 10;
+        top: 54px;
         box-shadow: 0 6px 15px 0 rgba(0,0,0,0.03);
         border-bottom: 1px solid #EEF0F3;
         -webkit-transition: -webkit-transform 250ms ease-out, opacity 250ms ease-out, visibility 250ms ease-out;

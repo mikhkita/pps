@@ -145,6 +145,10 @@ class Order extends CActiveRecord
 			$attributes["from_date"] = date("Y-m-d H:i:s", strtotime($attributes["from_date"]));
 		}
 
+		if( $attributes["flight_id"] == "" ){
+			$attributes["flight_id"] = NULL;
+		}
+
 		$this->attributes = $attributes;
 
 		$errors = array();

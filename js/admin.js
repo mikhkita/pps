@@ -108,13 +108,13 @@ $(document).ready(function(){
                     window.location.href = json.href;
                 break;
                 case "redirectDelay":
+                    if('#b-progress-bar-container'.length != 0){
+                        $('#b-progress-bar-container').removeClass('preloader');
+                        $('#b-progress-bar-container').addClass('success');
+                    }
                     setTimeout(function(){
-                        if('#b-progress-bar-container'.length != 0){
-                            $('#b-progress-bar-container').removeClass('preloader');
-                            $('#b-progress-bar-container').addClass('success');
-                        }
                         window.location.href = json.href;
-                    },3000)  
+                    },1000)  
                 break;
             }
         } else {

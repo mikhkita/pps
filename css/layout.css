@@ -3055,7 +3055,8 @@ ul.yiiPager .first, ul.yiiPager .last{
                     .b-right-tile-bottom-block .b-btn span.error{
                         display: none;
                     }
-                    .b-right-tile-bottom-block .b-btn.success{
+                    .b-right-tile-bottom-block .b-btn.success,
+                    .b-right-tile-bottom-block .b-btn.error{
                         background:#fff;
                     }
                     .b-right-tile-bottom-block .b-btn.success span{
@@ -3068,16 +3069,39 @@ ul.yiiPager .first, ul.yiiPager .last{
                     .b-right-tile-bottom-block .b-btn.success span.success:before{
                         color: rgb(28, 160, 4);
                     }
-                    .b-right-tile-bottom-block .b-btn.error{
-                        background: rgb(178, 16, 16)!important;   
-                    }
                     .b-right-tile-bottom-block .b-btn.error span{
-                        color: #fff;
+                        color: rgb(178, 16, 16);   
                         display: none;
                     }
                     .b-right-tile-bottom-block .b-btn.error span.error{
                         display: block;
-                        padding: 0;
+                        padding-left: 40px;
+                    }
+                    .b-right-tile-bottom-block .b-btn.error span.error:before{
+                        position: absolute;
+                        content: '';
+                        width: 30px;
+                        height: 5px;
+                        background-color: rgb(178, 16, 16);
+                        left: 0;
+                        top: 6px;
+                        -webkit-transform: rotate(45deg);
+                        -ms-transform: rotate(45deg);
+                        -o-transform: rotate(45deg);
+                        transform: rotate(45deg);
+                    }
+                    .b-right-tile-bottom-block .b-btn.error span.error:after{
+                        position: absolute;
+                        content: '';
+                        width: 30px;
+                        height: 5px;
+                        background-color: rgb(178, 16, 16);
+                        left: 0;
+                        top: 6px;
+                        -webkit-transform: rotate(-45deg);
+                        -ms-transform: rotate(-45deg);
+                        -o-transform: rotate(-45deg);
+                        transform: rotate(-45deg);
                     }
                     .b-right-tile-bottom-block .b-btn span{
                         font-family: Roboto-Medium;

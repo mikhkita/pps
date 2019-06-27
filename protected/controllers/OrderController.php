@@ -67,9 +67,14 @@ class OrderController extends Controller
 		}
 
 		if(isset($_POST["Order"])) {
-			if( $model->updateObj($_POST["Order"], $_POST["Person"]) ){
-				$this->actionAdminIndex();
-				return true;
+			$result = $model->updateObj($_POST["Order"], $_POST["Person"]);
+			if( $result->result ){
+				Controller::returnSuccess( array(
+					"action" => "redirectDelay",
+					"href" => Yii::app()->createUrl("/order/adminIndex")
+				) );
+			}else{
+				Controller::returnError("Ошибка: ".$result->message);
 			}
 		} else {
 			$this->render("adminCreate",array(

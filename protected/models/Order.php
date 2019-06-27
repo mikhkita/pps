@@ -40,10 +40,10 @@ class Order extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array("start_point_id, end_point_id, user_id", "required"),
-			array("id, start_point_id, end_point_id, to_code_1c, from_code_1c", "length", "max" => 10),
-			array("flight_id, to_date, from_date, create_date, export_date", "length", "max" => 32),
-			array("comment", "length", "max" => 1024),
+			array("start_point_id, end_point_id, user_id", "required", "message" => "Поле «{attribute}» не может быть пустым"),
+			array("id, start_point_id, end_point_id, to_code_1c, from_code_1c", "length", "max" => 10, "tooLong" => "Поле «{attribute}» должно содержать не более 10 символов"),
+			array("flight_id, to_date, from_date, create_date, export_date", "length", "max" => 32, "tooLong" => "Поле «{attribute}» должно содержать не более 32 символов"),
+			array("comment", "length", "max" => 1024, "tooLong" => "Поле «{attribute}» должно содержать не более 1024 символов"),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array("id, to_date, from_date, create_date, export_date, start_point_id, end_point_id, flight_id, comment, to_code_1c, from_code_1c, user_id", "safe", "on" => "search"),
@@ -147,6 +147,7 @@ class Order extends CActiveRecord
 
 		$this->attributes = $attributes;
 
+		$errors = array();
 		if($this->save()){
 			if( count($persons) ){
 				$number = 0;
@@ -159,16 +160,24 @@ class Order extends CActiveRecord
 					$model->number = $number;
 
 					if( !$model->save() ){
-						print_r($model->getErrors());
+						array_push($errors, Controller::implodeErrors($this->getErrors()) );
 						// die();
 					}
 				}
 			}
-
-			return true;
 		}else{
-			print_r($this->getErrors());
-			return false;
+			array_push($errors, Controller::implodeErrors($this->getErrors()) );
+		}
+
+		if( !count($errors) ){
+			return (object) array(
+				"result" => true
+			);
+		}else{
+			return (object) array(
+				"result" => false,
+				"message" => implode("<br>", $errors)
+			);
 		}
 	}
 

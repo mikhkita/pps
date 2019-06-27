@@ -3193,6 +3193,12 @@ ul.yiiPager .first, ul.yiiPager .last{
                     .b-right-tile-bottom-block .b-btn.success,
                     .b-right-tile-bottom-block .b-btn.error{
                         background:#fff;
+                        padding-left: 0;
+                    }
+                    .b-right-tile-bottom-block .b-btn.preloader + .b-right-tile-block-bottom-text,
+                    .b-right-tile-bottom-block .b-btn.success + .b-right-tile-block-bottom-text,
+                    .b-right-tile-bottom-block .b-btn.error + .b-right-tile-block-bottom-text{
+                        display: none;
                     }
                     .b-right-tile-bottom-block .b-btn.success span{
                         color: rgb(28, 160, 4);

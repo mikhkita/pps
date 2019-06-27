@@ -28,34 +28,28 @@ class OrderController extends Controller
 
 	public function actionAdminIndex($partial = false){
 		unset($_GET["partial"]);
-		// $className = "Order";
 
-		// $model = new $className();
+		if( !$partial ){
+			$this->layout = "admin";
+			$this->pageTitle = $this->adminMenu["cur"]->name;
+		}
 
-		// echo "<pre>";
-		// var_dump($model);
-		// echo "</pre>";
-		// if( !$partial ){
-		// 	$this->layout = "admin";
-		// 	$this->pageTitle = $this->adminMenu["cur"]->name;
-		// }
+        $filter = new Order('filter');
 
-  //       $filter = new Order('filter');
+		if (isset($_GET['Order'])){
+            $filter->attributes = $_GET['Order'];
+        }
 
-		// if (isset($_GET['Order'])){
-  //           $filter->attributes = $_GET['Order'];
-  //       }
+        $dataProvider = $filter->search(50);
+		$count = $filter->search(50, true);
 
-  //       $dataProvider = $filter->search(50);
-		// $count = $filter->search(50, true);
-
-		// $params = array(
-		// 	"data" => $dataProvider->getData(),
-		// 	"pages" => $dataProvider->getPagination(),
-		// 	"filter" => $filter,
-		// 	"count" => $count,
-		// 	"labels" => Order::attributeLabels(),
-		// );
+		$params = array(
+			"data" => $dataProvider->getData(),
+			"pages" => $dataProvider->getPagination(),
+			"filter" => $filter,
+			"count" => $count,
+			"labels" => Person::attributeLabels(),
+		);
 
 		if( !$partial ){
 			$this->render("adminIndex".(($this->isMobile)?"Mobile":""), $params);
@@ -68,6 +62,10 @@ class OrderController extends Controller
 	{
 		$model = new Order;
 
+		if( $this->user->agency && $this->user->agency->default_start_point_id ){
+			$model->start_point_id = $this->user->agency->default_start_point_id;
+		}
+
 		if(isset($_POST["Order"])) {
 			if( $model->updateObj($_POST["Order"], $_POST["Person"]) ){
 				$this->actionAdminIndex();
@@ -76,7 +74,7 @@ class OrderController extends Controller
 		} else {
 			$this->render("adminCreate",array(
 				"model" => $model,
-				"person" => new Person
+				"person" => new Person,
 			));
 		}
 	}

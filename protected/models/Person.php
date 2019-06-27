@@ -16,6 +16,8 @@
  * @property integer $transfer_id
  * @property integer $direction_id
  * @property integer $price
+ * @property integer $one_way_price
+ * @property integer $commission
  * @property integer $cash
  * @property integer $to_status_id
  * @property integer $from_status_id
@@ -27,6 +29,16 @@
  */
 class Person extends CActiveRecord
 {
+	public $fio = NULL;
+	public $age = NULL;
+	public $direction = NULL;
+	public $transfer = NULL;
+	public $payment = NULL;
+
+	public $ages = array( 0 => "Взрослый", 1 => "Детский" );
+	public $directions = array( 1 => "В обе стороны", 2 => "Туда", 3 => "Обратно" );
+	public $transfers = array( 1 => "На такси", 0 => "Самостоятельно" );
+	public $payments = array( 0 => "Через турагентство", 1 => "Напрямую водителю" );
 	/**
 	 * @return string the associated database table name
 	 */
@@ -44,14 +56,14 @@ class Person extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array("name, last_name, order_id, phone, address", "required"),
-			array("is_child, transfer_id, direction_id, price, cash, to_status_id, from_status_id, pay_himself, number", "numerical", "integerOnly" => true),
+			array("is_child, transfer_id, direction_id, price, one_way_price, commission, cash, to_status_id, from_status_id, pay_himself, number", "numerical", "integerOnly" => true),
 			array("name, last_name, third_name", "length", "max" => 64),
 			array("order_id", "length", "max" => 10),
 			array("phone, code_1c", "length", "max" => 32),
 			array("comment, address", "length", "max" => 1024),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array("id, name, last_name, third_name, order_id, is_child, phone, comment, address, transfer_id, direction_id, price, cash, to_status_id, from_status_id, passport, birthday, pay_himself, code_1c, number", "safe", "on" => "search"),
+			array("id, name, last_name, third_name, order_id, is_child, phone, comment, address, transfer_id, direction_id, price, one_way_price, commission, cash, to_status_id, from_status_id, passport, birthday, pay_himself, code_1c, number", "safe", "on" => "search"),
 		);
 	}
 
@@ -85,6 +97,8 @@ class Person extends CActiveRecord
 			"transfer_id" => "Добирается до посадки",
 			"direction_id" => "Направление",
 			"price" => "Стоимость",
+			"one_way_price" => "Стоимость в одну сторону",
+			"commission" => "Комиссия",
 			"cash" => "Получено",
 			"to_status_id" => "Статус поездки «туда»",
 			"from_status_id" => "Статус поездки «обратно»",
@@ -94,6 +108,9 @@ class Person extends CActiveRecord
 			"pay_himself" => "Клиент оплачивает",
 			"code_1c" => "Код 1С",
 			"number" => "Номер строки (для 1С)",
+			"fio" => "ФИО",
+			"commission" => "Комиссия",
+			"payment_status" => "Оплата",
 		);
 	}
 
@@ -128,6 +145,8 @@ class Person extends CActiveRecord
 		$criteria->compare("transfer_id", $this->transfer_id);
 		$criteria->compare("direction_id", $this->direction_id);
 		$criteria->compare("price", $this->price);
+		$criteria->compare("one_way_price", $this->one_way_price);
+		$criteria->compare("commission", $this->commission);
 		$criteria->compare("cash", $this->cash);
 		$criteria->compare("to_status_id", $this->to_status_id);
 		$criteria->compare("from_status_id", $this->from_status_id);
@@ -155,6 +174,17 @@ class Person extends CActiveRecord
 			print_r($this->getErrors());
 			return false;
 		}
+	}
+
+	public function afterFind()
+	{
+		parent::afterFind();
+
+		$this->fio = $this->last_name." ".$this->name.( ($this->third_name)?(" ".$this->third_name):"" );
+		$this->age = $this->ages[ $this->is_child ];
+		$this->direction = $this->directions[ $this->direction_id ];
+		$this->transfer = $this->transfers[ $this->transfer_id ];
+		$this->payment = $this->payments[ $this->pay_himself ];
 	}
 
 	/**

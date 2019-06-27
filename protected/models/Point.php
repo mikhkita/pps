@@ -44,6 +44,17 @@ class Point extends CActiveRecord
             "sorted" => array(
                 "order" => "t.name ASC",
             ),
+            "active" => array(
+                "condition" => "t.active = '1'",
+            ),
+            "startAvailable" => array(
+            	"with" => "pricesStart",
+            	"condition" => "pricesStart.id IS NOT NULL"
+            ),
+            "endAvailable" => array(
+            	"with" => "pricesEnd",
+            	"condition" => "pricesEnd.id IS NOT NULL"
+            )
         );
     }
 
@@ -57,6 +68,8 @@ class Point extends CActiveRecord
 		return array(
 			"ordersStart" => array(self::HAS_MANY, "Order", "start_point_id"),
 			"ordersEnd" => array(self::HAS_MANY, "Order", "end_point_id"),
+			"pricesStart" => array(self::HAS_MANY, "Price", "start_point_id"),
+			"pricesEnd" => array(self::HAS_MANY, "Price", "end_point_id"),
 		);
 	}
 
@@ -114,6 +127,7 @@ class Point extends CActiveRecord
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
 		$criteria=new CDbCriteria;
+		$criteria->order = "name ASC";
 
 		$criteria->addSearchCondition("id", $this->id);
 		$criteria->addSearchCondition("name", $this->name);
@@ -123,7 +137,7 @@ class Point extends CActiveRecord
 		}else{
 			return new CActiveDataProvider($this, array(
 				"criteria" => $criteria,
-				"pagination" => array("pageSize" => $pages, "route" => "point/adminindex")
+				"pagination" => array("pageSize" => $pages, "route" => "dictionary/adminlist")
 			));
 		}
 	}

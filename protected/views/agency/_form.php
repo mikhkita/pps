@@ -8,15 +8,21 @@
 	<?php echo $form->errorSummary($model); ?>
 
 	<div class="row clearfix">
-		<div class="row-half">
-			<?php echo $form->labelEx($model, "name"); ?>
-			<?php echo $form->textField($model, "name", array("maxlength" => 64, "required" => true)); ?>
-			<?php echo $form->error($model, "name"); ?>
-		</div>
+		<?php echo $form->labelEx($model, "name"); ?>
+		<?php echo $form->textField($model, "name", array("maxlength" => 64, "required" => true)); ?>
+		<?php echo $form->error($model, "name"); ?>
+	</div>
+
+	<div class="row clearfix">
 		<div class="row-half">
 			<?php echo $form->labelEx($model, "code_1c"); ?>
 			<?php echo $form->textField($model, "code_1c", array("maxlength" => 64)); ?>
 			<?php echo $form->error($model, "code_1c"); ?>
+		</div>
+		<div class="row-half b-input">
+			<?php echo $form->labelEx($model, "default_start_point_id"); ?>
+			<?php echo $form->dropDownList($model, "default_start_point_id", array(0 => "Не выбрано") + CHtml::listData(Point::model()->sorted()->active()->endAvailable()->findAll(), "id", "name"), array("class" => "select2")); ?>
+			<?php echo $form->error($model, "default_start_point_id"); ?>
 		</div>
 	</div>
 

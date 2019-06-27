@@ -1,72 +1,70 @@
-<h1><?=$this->adminMenu["cur"]->name?></h1>
-<? if( Yii::app()->user->checkAccess('updateSection') ): ?><a href="<?php echo $this->createUrl("/".$this->adminMenu["cur"]->code."/admincreate")?>" class="b-butt icon-add b-top-butt">Добавить заявку</a><? endif; ?>
-<div class="b-tile">
-	<div class="b-tile-header clearfix">
-		<a href="#"><h3 class="b-tile-title">Томск – Толмачево 24 мая 2019 г. (3 чел.)</h3></a>
-		<div class="b-tile-header-right">
-			<div class="b-label-block">
-				<label>Итого:</label>
-				<h3>4 500 ₽</h3>
-			</div>
-		</div>
+<div class="b-section-nav clearfix">
+	<div class="b-section-nav-back clearfix">
+		<h1><?=$this->adminMenu["cur"]->name?></h1>
+		<? if( Yii::app()->user->checkAccess('updateSection') ): ?><a href="<?php echo $this->createUrl("/".$this->adminMenu["cur"]->code."/admincreate")?>" class="b-butt icon-add b-top-butt">Добавить заявку</a><? endif; ?>
 	</div>
-	<table class="b-table b-overflow-table" border="0">
-		<tr>
-			<th></th>
-			<th>ФИО</th>
-			<th>Телефон</th>
-			<th>Адрес</th>
-			<th>Статус</th>
-			<th>Стоимость</th>
-			<th>Принято</th>
-			<th>Комиссия</th>
-			<th>Оплата</th>
-		</tr>
-		<tr>
-			<td></td>
-			<td>Китаев Михаил Андреевич</td>
-			<td>+7 (999) 499-50-00</td>
-			<td>г. Томск, пер. Дербышевский 26б, оф. 301, 3 этаж</td>
-			<td><span class="green tooltip" title="В обе стороны">Бронь</span></td>
-			<td class="tr">1 800 ₽</td>
-			<td class="tr">1 800 ₽</td>
-			<td class="tr">250 ₽</td>
-			<td><span class="green">Оплачено</span></td>
-		</tr>
-		<tr>
-			<td></td>
-			<td>Китаева Валерия Евгеньевна</td>
-			<td>+7 (999) 499-50-01</td>
-			<td>г. Томск, пер. Дербышевский 26б</td>
-			<td><span class="green tooltip" title="В обе стороны">Бронь</span></td>
-			<td class="tr">1 800 ₽</td>
-			<td class="tr">1 800 ₽</td>
-			<td class="tr">250 ₽</td>
-			<td><span class="orange">Оплачено частично</span></td>
-		</tr>
-		<tr>
-			<td></td>
-			<td>Китаев Лев Михайлович</td>
-			<td>+7 (999) 499-50-02</td>
-			<td>г. Томск, пер. Дербышевский 26б</td>
-			<td><span class="red tooltip" title="Туда">Отменен</span> / <span class="green tooltip" title="Обратно">Бронь</span></td>
-			<td class="tr">1 800 ₽</td>
-			<td class="tr">1 800 ₽</td>
-			<td class="tr">125 ₽</td>
-			<td><span class="green">Оплачено обратно</span></td>
-		</tr>
-		<tr class="b-big-row">
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td class="b-label-block tr"><label>Итого:</label></td>
-			<td class="tr"><h4>4 500 ₽</h4></td>
-			<td class="tr"><h4>4 500 ₽</h4></td>
-			<td class="tr"><h4>625 ₽</h4></td>
-			<td><span class="orange">Оплачено частично</span></td>
-		</tr>
-	</table>
+	<div class="b-section-actions">
+		<div class="b-checkbox"><input type="checkbox" id="all-checkboxes"><label for="all-checkboxes"></label></div>
+		<a href="#" class="b-icon-btn b-action b-pay-action icon-card">Оплатить онлайн</a>
+		<a href="#" class="b-icon-btn b-action b-bill-action icon-bill">Выставить счет</a>
+	</div>
+</div>
+
+<div class="b-section-content">
+<? if(count($data)): ?>
+	<? foreach ($data as $i => $order): ?>
+	<div class="b-tile">
+		<div class="b-tile-header clearfix">
+			<a href="<?php echo Yii::app()->createUrl('/'.$this->adminMenu["cur"]->code.'/adminupdate',array('id'=>$order->id))?>"><h3 class="b-tile-title"><?=$order->getTitle()?></h3></a>
+			<!-- <div class="b-tile-header-right">
+				<div class="b-label-block">
+					<label>Итого:</label>
+					<h3>4 500 ₽</h3>
+				</div>
+			</div> -->
+		</div>
+		<table class="b-table b-overflow-table" border="0">
+			<tr>
+				<th class="b-checkbox"><input type="checkbox" id="order-<?=$order->id?>" class="b-table-checkbox"><label for="order-<?=$order->id?>"></label></th>
+				<th style="width: 20%;"><?=$labels["fio"]?></th>
+				<th style="width: 148px;"><?=$labels["phone"]?></th>
+				<th><?=$labels["address"]?></th>
+				<th style="width: 7%;"><?=$labels["status"]?></th>
+				<th style="width: 111px;"><?=$labels["price"]?></th>
+				<th style="width: 102px;"><?=$labels["cash"]?></th>
+				<th style="width: 103px;"><?=$labels["commission"]?></th>
+				<th style="width: 123px;"><?=$labels["payment_status"]?></th>
+			</tr>
+			<? foreach ($order->persons as $key => $person): ?>
+			<tr>
+				<td class="b-checkbox"><input type="checkbox" id="person-<?=$person->id?>"><label for="person-<?=$person->id?>"></label></td>
+				<td><?=$person->fio?></td>
+				<td><nobr><?=$person->phone?></nobr></td>
+				<td><?=$person->address?></td>
+				<td><nobr><span class="red tooltip" title="Туда">В работе</span> / <span class="green tooltip" title="Обратно">В работе</span></nobr></td>
+				<td class="tr"><?=number_format( $person->price, 0, ',', '&nbsp;' )?> ₽</td>
+				<td class="tr"><?=number_format( $person->cash, 0, ',', '&nbsp;' )?> ₽</td>
+				<td class="tr"><?=number_format( $person->commission, 0, ',', '&nbsp;' )?> ₽</td>
+				<td><span class="green">Оплачено</span></td>
+			</tr>
+			<? endforeach; ?>
+			<tr class="b-big-row">
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td class="b-label-block tr"><label>Итого:</label></td>
+				<td class="tr"><h4><?=number_format( $order->getTotalPrice(), 0, ',', '&nbsp;' )?> ₽</h4></td>
+				<td class="tr"><h4><?=number_format( $order->getTotalCash(), 0, ',', '&nbsp;' )?> ₽</h4></td>
+				<td class="tr"><h4><?=number_format( $order->getTotalCommission(), 0, ',', '&nbsp;' )?> ₽</h4></td>
+				<td><span class="orange">Оплачено частично</span></td>
+			</tr>
+		</table>
+	</div>
+	<? endforeach; ?>
+<? else: ?>
+	<p class="tc">У вас пока нет заявок</p>
+<? endif; ?>
 </div>
 <?php /* $form=$this->beginWidget('CActiveForm'); ?>
 <table class="b-table" border="0">

@@ -45,6 +45,9 @@ class Flight extends CActiveRecord
             "sorted" => array(
                 "order" => "t.name ASC",
             ),
+            "active" => array(
+                "condition" => "t.active = '1'",
+            ),
         );
     }
 
@@ -108,6 +111,7 @@ class Flight extends CActiveRecord
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
 		$criteria=new CDbCriteria;
+		$criteria->order = "name ASC";
 
 		$criteria->addSearchCondition("id", $this->id);
 		$criteria->addSearchCondition("name", $this->name);
@@ -119,7 +123,7 @@ class Flight extends CActiveRecord
 		}else{
 			return new CActiveDataProvider($this, array(
 				"criteria" => $criteria,
-				"pagination" => array("pageSize" => $pages, "route" => "flight/adminindex")
+				"pagination" => array("pageSize" => $pages, "route" => "dictionary/adminlist")
 			));
 		}
 	}

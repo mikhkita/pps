@@ -4,13 +4,15 @@
  * This is the model class for table "price".
  *
  * The followings are the available columns in table "price":
- * @property string $id
+ * @property integer $id
  * @property string $date
  * @property integer $is_child
- * @property string $start_point_id
- * @property string $end_point_id
- * @property string $one_way_price
- * @property string $total_price
+ * @property integer $start_point_id
+ * @property integer $end_point_id
+ * @property integer $one_way_price
+ * @property integer $total_price
+ * @property integer $is_percent
+ * @property integer $commission
  */
 class Price extends CActiveRecord
 {
@@ -33,11 +35,11 @@ class Price extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array("date, is_child, start_point_id, end_point_id, one_way_price, total_price", "required"),
-			array("is_child", "numerical", "integerOnly" => true),
+			array("is_child, start_point_id, end_point_id, one_way_price, total_price, is_percent, commission", "numerical", "integerOnly" => true),
 			array("start_point_id, end_point_id, one_way_price, total_price", "length", "max" => 10),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array("id, date, is_child, start_point_id, end_point_id, one_way_price, total_price", "safe", "on" => "search"),
+			array("id, date, is_child, start_point_id, end_point_id, one_way_price, total_price, is_percent, commission", "safe", "on" => "search"),
 		);
 	}
 
@@ -93,6 +95,14 @@ class Price extends CActiveRecord
 					"name" => "Цена в обе стороны",
 					"class" => "numeric"
 				),
+				"is_percent" => (object) array(
+					"name" => "Комиссия в процентах",
+					"type" => "bool"
+				),
+				"commission" => (object) array(
+					"name" => "Величина комиссии",
+					"class" => "numeric"
+				),
 			);
 		}else{
 			return array(
@@ -103,6 +113,8 @@ class Price extends CActiveRecord
 				"end_point_id" => "Конечная точка",
 				"one_way_price" => "Цена в одну сторону",
 				"total_price" => "Цена в обе стороны",
+				"is_percent" => "Комиссия в процентах",
+				"commission" => "Величина комиссии",
 			);
 		}
 	}
@@ -124,6 +136,8 @@ class Price extends CActiveRecord
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
 		$criteria=new CDbCriteria;
+		$criteria->with = array("startPoint", "endPoint");
+		$criteria->order = "startPoint.name ASC, endPoint.name ASC";
 
 		$criteria->addSearchCondition("id", $this->id);
 		$criteria->addSearchCondition("date", $this->date);
@@ -138,7 +152,7 @@ class Price extends CActiveRecord
 		}else{
 			return new CActiveDataProvider($this, array(
 				"criteria" => $criteria,
-				"pagination" => array("pageSize" => $pages, "route" => "price/adminindex")
+				"pagination" => array("pageSize" => $pages, "route" => "dictionary/adminlist")
 			));
 		}
 	}
@@ -158,6 +172,28 @@ class Price extends CActiveRecord
 			print_r($this->getErrors());
 			return false;
 		}
+	}
+
+	public function getPriceList(){
+		$model = new Price();
+
+		$items = $model->findAll();
+
+		$prices = array();
+		foreach ($items as $key => $item) {
+			$start = intval($item->start_point_id);
+			$end = intval($item->end_point_id);
+
+			if( !isset($prices[ $start ]) ){
+				$prices[ $start ] = array();
+			}
+			if( !isset($prices[ $start ][ $end ]) ){
+				$prices[ $start ][ $end ] = array();
+			}
+			$prices[ $start ][ $end ][ $item->is_child ] = array( intval($item->one_way_price), intval($item->total_price), intval($item->is_percent), intval($item->commission) );
+		}
+
+		return $prices;
 	}
 
 	public function afterFind()

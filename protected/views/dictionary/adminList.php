@@ -10,6 +10,26 @@
 		<? endforeach; ?>
 		<th style="width: 100px;">Действия</th>
 	</tr>
+	<tr class="b-filter">
+		<? foreach ($labels as $key => $label): ?>
+			<? if($key == "id"): ?>
+				<td></td>
+			<? continue;
+			   endif; ?>
+			<? switch($label->type):
+				case "bool": ?>
+					<td><?php echo CHtml::activeDropDownList($filter, $key, array(0 => "Нет", 1 => "Да"), array("class" => "select2", "empty" => "Не выбрано", "tabindex" => 1, "placeholder" => "Не выбрано")); ?></td>
+					<?break;
+				case "select": ?>
+					<td><?php echo CHtml::activeDropDownList($filter, $key, CHtml::listData($label->model::model()->sorted()->findAll(), 'id', 'name'), array("class" => "select2", "empty" => "Все", "tabindex" => 1, "placeholder" => "Не выбрано")); ?></td>
+					<?break;?>
+				
+				<? default: ?>
+					<td><?php echo CHtml::activeTextField($filter, $key, array('tabindex' => 1, "placeholder" => "Поиск")); ?></td>
+			<? endswitch; ?>
+		<? endforeach; ?>
+		<td class="tc"><a href="#" class="b-clear-filter">Сбросить</a><input type="hidden" name="class" value="<?=$_GET["class"]?>"></td>
+	</tr>
 	<? if(count($data)): ?>
 		<? foreach ($data as $i => $item): ?>
 			<tr>

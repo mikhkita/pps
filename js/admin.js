@@ -384,7 +384,12 @@ $(document).ready(function(){
                 });
 
             }else{
-                var firstInput = $(this).find("input[type='text'].error,select.error,textarea.error").eq(0);
+                var firstInput = null;
+                $(this).find("input[type='text'].error,select.error,textarea.error").each(function(){
+                    if( !$(this).parents(".hide").length && firstInput == null ){
+                        firstInput = $(this);
+                    }
+                });
                 $(".fancybox-overlay").animate({
                     scrollTop : 0
                 }, 200);
@@ -987,6 +992,82 @@ $(document).ready(function(){
         }
     }
 
+    // Checkboxes --------------------------------------------------------- Checkboxes
+    if( $(".b-table-checkbox").length ){
+        $(".b-table td input[type='checkbox']").change(function(){
+            var $table = $(this).parents(".b-table"),
+                $tableCheckbox = $table.find(".b-table-checkbox");
+
+            $tableCheckbox.removeClass("any");
+
+            if( $table.find("td input[type='checkbox']").length == $table.find("td input[type='checkbox']:checked").length ){
+                $tableCheckbox.prop("checked", true);
+            }else{
+                $tableCheckbox.prop("checked", false);
+
+                if( $table.find("td input[type='checkbox']:checked").length >= 1 ){
+                    $tableCheckbox.addClass("any");
+                }
+            }
+
+            checkedHandler();
+            checkGlobalCheckbox();
+        });
+
+        $(".b-table-checkbox").change(function(){
+            var $table = $(this).parents(".b-table");
+
+            $table.find("td input[type='checkbox']").prop("checked", $(this).prop("checked") );
+            $(this).removeClass("any");
+
+            checkedHandler();
+            checkGlobalCheckbox();
+        });
+
+        $("#all-checkboxes").change(function(){
+            $(".b-table input[type='checkbox']").prop("checked", $(this).prop("checked") );
+            $(this).removeClass("any");
+            $(".b-table-checkbox").removeClass("any");
+
+            checkedHandler();
+        });
+
+        function checkGlobalCheckbox(){
+            var $globalCheckbox = $("#all-checkboxes");
+
+            $globalCheckbox.removeClass("any");
+            
+            if( $("td input[type='checkbox']").length == $("td input[type='checkbox']:checked").length ){
+                $globalCheckbox.prop("checked", true);
+            }else{
+                $globalCheckbox.prop("checked", false);
+
+                if( $("td input[type='checkbox']:checked").length >= 1 ){
+                    $globalCheckbox.addClass("any");
+                }
+            }
+        }
+
+        function checkedHandler(){
+            if( $("td input[type='checkbox']:checked").length >= 1 ){
+                showActions();
+            }else{
+                hideActions();
+            }
+        }
+
+        function showActions(){
+            $(".b-section-actions").addClass("show");
+        }
+
+        function hideActions(){
+            $(".b-section-actions").removeClass("show");
+        }
+    }
+    // Checkboxes --------------------------------------------------------- Checkboxes
+
+
+
     $('#order-form').progressBtn({
         buttonId : 'b-progress-bar-container'
     });
@@ -1033,7 +1114,7 @@ $(document).ready(function(){
 
         var price = 0;
         $('.b-order-form-person').each(function(){
-            price += $(this).find('.b-person-price').attr('data-price')*1;
+            price += $(this).find('.price-input').val()*1;
         })
         $('#totalSum').text(price.toLocaleString());
         $('#totalSumText').text(pluralForm(price, 'рубль', 'рубля', 'рублей'));
@@ -1083,7 +1164,7 @@ $(document).ready(function(){
                         globalPosition: 'top center',
                         showAnimation: 'fadeIn',
                         hideAnimation: 'fadeOut',
-                        autoHideDelay: 5000,
+                        autoHideDelay: 4000,
                         autoHide: true,
                         showDuration: 250,
                         hideDuration: 100
@@ -1150,6 +1231,8 @@ $(document).ready(function(){
 
             bindFields($("#order-form"));
         }
+
+        checkTransferAccess();
     }
 
     function isAirport(){
@@ -1184,27 +1267,100 @@ $(document).ready(function(){
         }
 
         checkTransferAccess();
+
+        checkPrices( ( $("#Order_start_point_id").val() != "" && $("#Order_end_point_id").val() != "" )?$(this):null );
     });
 
     function checkTransferAccess(){
         $(".b-order-form-person").each(function(){
-            if( isAirport() || $(".direction-field:checked").val() == 1 ){
-                $(this).find(".b-transfer-input").removeClass("hide");
+            if( isAirport() || $(this).find(".direction-field:checked").val() == 1 ){
+                if( $(this).find(".b-transfer-input").hasClass("hide") ){
+                    $(this).find(".b-transfer-input input[value='0']:checked").prop("checked", false);
+                    $(this).find(".b-transfer-input input[value='1']").prop("checked", true);
+                }
 
-                $(".b-transfer-input input[value='0']:checked").prop("checked", false);
-                $(".b-transfer-input input[value='1']").prop("checked", true);
+                $(this).find(".b-transfer-input").removeClass("hide");
             }else{
                 $(this).find(".b-transfer-input").addClass("hide");
 
-                $(".b-transfer-input input[value='1']:checked").prop("checked", false);
-                $(".b-transfer-input input[value='0']").prop("checked", true);
+                $(this).find(".b-transfer-input input[value='1']:checked").prop("checked", false);
+                $(this).find(".b-transfer-input input[value='0']").prop("checked", true);
             }
         });
     }
 
-    $(".direction-field").change(function(){
+    function getPrices(){
+        var prices = null;
+        if( $("#Order_start_point_id").val() != "" && $("#Order_end_point_id").val() != "" ){
+            var start = $("#Order_start_point_id").val()*1,
+                end = $("#Order_end_point_id").val()*1;
+
+            if( priceList[ start ] ){
+                prices = priceList[ start ][ end ];
+            }
+        }
+
+        return prices;
+    }
+
+    function checkPrices($input){
+        var prices = getPrices();
+
+        if( !prices ){
+            prices = [[0, 0], [0, 0]];
+
+            if( $input ){
+                $input.notify("По данному маршруту нет цен. Пожалуйста, обратитесь к диспетчеру СПП.", {
+                    globalPosition: 'top center',
+                    showAnimation: 'fadeIn',
+                    hideAnimation: 'fadeOut',
+                    autoHideDelay: 4000,
+                    autoHide: true,
+                    showDuration: 250,
+                    hideDuration: 100
+                });
+                setTimeout(function(){
+                    $input.val("").change();
+                },10);
+            }
+        }
+
+        $(".b-order-form-person").each(function(){
+            var isChild = $(this).find(".is_child-input:checked").val()*1,
+                direction = $(this).find(".direction-field:checked").val()*1,
+                price = prices[isChild]?prices[isChild]:prices[0],
+                oneWayPrice = price[0]*1,
+                totalPrice = ( direction == 1 )?(price[1]*1):oneWayPrice,
+                isPercent = price[2]*1,
+                commission = price[3]*1;
+
+            $(this).find(".price-input").val( totalPrice ).change();
+            $(this).find(".one_way_price-input").val( oneWayPrice );
+
+            if( isPercent ){
+                $(this).find(".commission-input").val( totalPrice/100*commission ).change();
+            }else{
+                $(this).find(".commission-input").val( commission ).change();
+            }
+        });
+
+        calcTotalPrice();
+    }
+
+    $("body").on("change", ".direction-field", function(){
         checkTransferAccess();
     });
+
+    $("body").on("change", ".is_child-input, .direction-field", function(){
+        checkPrices();
+    });
+
+    $("body").on("change", ".price-input", function(){
+        var value = $(this).val()*1;
+        $(this).parents(".b-price-row").find("h3 span").text( value.toLocaleString() );
+    });
+
+    calcTotalPrice();
 
     checkTransferAccess();
 

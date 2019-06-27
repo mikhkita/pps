@@ -1,6 +1,7 @@
 <div class="b-order-form">
 	<script>
-		var points = JSON.parse('<?=json_encode(CHtml::listData(Point::model()->sorted()->findAll(), "id", "is_airport"))?>');
+		var points = JSON.parse('<?=json_encode(CHtml::listData(Point::model()->sorted()->findAll(), "id", "is_airport"))?>'),
+			priceList = JSON.parse('<?=json_encode(Price::getPriceList())?>');
 	</script>
 	<div class="b-order-form-left">
 		<?php $form=$this->beginWidget("CActiveForm", array(
@@ -11,8 +12,6 @@
 		    ),
 		)); 
 		$labels = $model->attributeLabels();
-
-		$points = CHtml::listData(Point::model()->sorted()->findAll(), "id", "name");
 		?>
 
 		<?php echo $form->errorSummary($model); ?>
@@ -24,7 +23,7 @@
 						<?php echo $form->labelEx($model, "start_point_id"); ?>
 					</div>
 					<div class="b-hor-input-right">
-						<?php echo $form->dropDownList($model, "start_point_id", array("" => "Не выбрано") + $points, array("class" => "select2", "required" => true, "title" => "Поле обязательно")); ?>
+						<?php echo $form->dropDownList($model, "start_point_id", array("" => "Не выбрано") + CHtml::listData(Point::model()->sorted()->active()->startAvailable()->findAll(), "id", "name"), array("class" => "select2", "required" => true, "title" => "Поле обязательно")); ?>
 					</div>
 				</div>
 				<div class="b-hor-input">
@@ -32,7 +31,7 @@
 						<?php echo $form->labelEx($model, "end_point_id"); ?>
 					</div>
 					<div class="b-hor-input-right">
-						<?php echo $form->dropDownList($model, "end_point_id", array("" => "Не выбрано") + $points, array("class" => "select2", "required" => true, "title" => "Поле обязательно")); ?>
+						<?php echo $form->dropDownList($model, "end_point_id", array("" => "Не выбрано") + CHtml::listData(Point::model()->sorted()->active()->endAvailable()->findAll(), "id", "name"), array("class" => "select2", "required" => true, "title" => "Поле обязательно")); ?>
 					</div>
 				</div>
 				<div class="b-hor-input date-airplane hide">
@@ -40,7 +39,7 @@
 						<label for="Order_flight" class="required"><?=$labels["flight_id"]?> <span class="required">*</span></label>
 					</div>
 					<div class="b-hor-input-right">
-						<?php echo $form->dropDownList($model, "flight_id", array("" => "Не выбрано") + CHtml::listData(Flight::model()->sorted()->findAll(), "id", "name"), array("class" => "select2", "required" => true, "title" => "Поле обязательно")); ?>
+						<?php echo $form->dropDownList($model, "flight_id", array("" => "Не выбрано") + CHtml::listData(Flight::model()->sorted()->active()->findAll(), "id", "name"), array("class" => "select2", "required" => true, "title" => "Поле обязательно")); ?>
 					</div>
 				</div>
 				<div class="b-hor-input">
@@ -170,7 +169,7 @@
 
 	<?php $this->endWidget(); ?>		
 	</div>
-	<div class="b-tile b-order-form-right">
+	<div class="b-order-form-right">
 		<div class="b-tile">
 			<div class="b-right-tile-top-block b-right-tile-block">
 				Итого:
@@ -218,7 +217,7 @@
 					<?php echo $form->labelEx($person, "is_child"); ?>
 				</div>
 				<div class="b-hor-input-right">
-					<?=CHTML::radioButtonList("Person[{{index}}][is_child]", 0, array( 0 => "Взрослый", 1 => "Детский" ), array("template" => '<div class="b-radio">{input}{label}</div>', "separator" => "", "container" => "div", "baseID" => "child_{{index}}")); ?>
+					<?=CHTML::radioButtonList("Person[{{index}}][is_child]", 0, $person->ages, array("template" => '<div class="b-radio">{input}{label}</div>', "separator" => "", "class" => "is_child-input", "container" => "div", "baseID" => "child_{{index}}")); ?>
 				</div>
 			</div>
 			<div class="b-hor-input">
@@ -226,7 +225,7 @@
 					<?php echo $form->labelEx($person, "direction_id"); ?>
 				</div>
 				<div class="b-hor-input-right">
-					<?=CHTML::radioButtonList("Person[{{index}}][direction_id]", 1, array( 1 => "В обе стороны", 2 => "Туда", 3 => "Обратно" ), array("template" => '<div class="b-radio">{input}{label}</div>', "separator" => "", "container" => "div", "class" => "direction-field", "baseID" => "person_{{index}}")); ?>
+					<?=CHTML::radioButtonList("Person[{{index}}][direction_id]", 1, $person->directions, array("template" => '<div class="b-radio">{input}{label}</div>', "separator" => "", "container" => "div", "class" => "direction-field", "baseID" => "person_{{index}}")); ?>
 				</div>
 			</div>
 			<div class="b-hor-input b-transfer-input">
@@ -234,7 +233,7 @@
 					<?php echo $form->labelEx($person, "transfer_id"); ?>
 				</div>
 				<div class="b-hor-input-right">
-					<?=CHTML::radioButtonList("Person[{{index}}][transfer_id]", 0, array( 1 => "На такси", 0 => "Самостоятельно" ), array("template" => '<div class="b-radio not-remove">{input}{label}</div>', "separator" => "", "container" => "div", "baseID" => "transfer_{{index}}")); ?>
+					<?=CHTML::radioButtonList("Person[{{index}}][transfer_id]", 1, $person->transfers, array("template" => '<div class="b-radio not-remove">{input}{label}</div>', "separator" => "", "container" => "div", "baseID" => "transfer_{{index}}")); ?>
 				</div>
 			</div>
 			<div class="b-hor-input">
@@ -242,7 +241,7 @@
 					<?php echo $form->labelEx($person, "pay_himself"); ?>
 				</div>
 				<div class="b-hor-input-right">
-					<?=CHTML::radioButtonList("Person[{{index}}][pay_himself]", 0, array( 0 => "Через турагентство", 1 => "Напрямую водителю" ), array("template" => '<div class="b-radio not-remove">{input}{label}</div>', "separator" => "", "container" => "div", "baseID" => "pay_himself_{{index}}")); ?>
+					<?=CHTML::radioButtonList("Person[{{index}}][pay_himself]", 0, $person->payments, array("template" => '<div class="b-radio not-remove">{input}{label}</div>', "separator" => "", "container" => "div", "baseID" => "pay_himself_{{index}}")); ?>
 				</div>
 			</div>
 			<div class="b-hor-input">
@@ -294,9 +293,12 @@
 				</div>
 			</div>
 			<div class="b-price-row">
-				<div class="b-label-block b-person-price" data-price="4500">
+				<div class="b-label-block b-person-price" data-price="0">
+					<input type="hidden" class="price-input" name="Person[{{index}}][price]" value="0">
+					<input type="hidden" class="one_way_price-input" name="Person[{{index}}][one_way_price]" value="0">
+					<input type="hidden" class="commission-input" name="Person[{{index}}][commission]" value="0">
 					<label>Итого:</label>
-					<h3>4 500 ₽</h3>
+					<h3><span>0</span> ₽</h3>
 				</div>
 			</div>
 		</div>

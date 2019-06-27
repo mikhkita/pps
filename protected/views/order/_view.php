@@ -1,9 +1,7 @@
 <div class="b-order-form">
-	<? /* ?>
 	<script>
 		var points = JSON.parse('<?=json_encode(CHtml::listData(Point::model()->sorted()->findAll(), "id", "is_airport"))?>');
 	</script>
-	<? */ ?>
 	<div class="b-order-form-left">
 		<?php $form=$this->beginWidget("CActiveForm", array(
 			"id" => "order-form",
@@ -66,7 +64,8 @@
 						<label for="person_count" class="required">Количество пассажиров <span class="required">*</span></label>
 					</div>
 					<div class="b-hor-input-right">
-						<input type="text" class="numeric" id="person_count" value="1" placeholder="...">
+						<input type="hidden" id="person_count" value="<?=count($model->persons)?>">
+						<?=count($model->persons)?>
 					</div>
 				</div>
 				<div class="b-hor-input">
@@ -94,7 +93,7 @@
 						<?php echo $form->labelEx($person, "is_child"); ?>
 					</div>
 					<div class="b-hor-input-right">
-						<?=$person->is_child?>
+						<?=$person->age?>
 					</div>
 				</div>
 				<div class="b-hor-input">
@@ -102,7 +101,7 @@
 						<?php echo $form->labelEx($person, "direction_id"); ?>
 					</div>
 					<div class="b-hor-input-right">
-						<?=$person->direction_id?>
+						<?=$person->direction?>
 					</div>
 				</div>
 				<div class="b-hor-input b-transfer-input">
@@ -110,7 +109,7 @@
 						<?php echo $form->labelEx($person, "transfer_id"); ?>
 					</div>
 					<div class="b-hor-input-right">
-						<?=$person->transfer_id?>
+						<?=$person->transfer?>
 					</div>
 				</div>
 				<div class="b-hor-input">
@@ -118,7 +117,7 @@
 						<?php echo $form->labelEx($person, "pay_himself"); ?>
 					</div>
 					<div class="b-hor-input-right">
-						<?=$person->pay_himself?>
+						<?=$person->payment?>
 					</div>
 				</div>
 				<div class="b-hor-input">
@@ -183,7 +182,7 @@
 
 	<?php $this->endWidget(); ?>		
 	</div>
-	<div class="b-tile b-order-form-right">
+	<div class="b-order-form-right">
 		<div class="b-tile">
 			<div class="b-right-tile-top-block b-right-tile-block">
 				Итого:
@@ -193,7 +192,7 @@
 					<span class="b-count resizable-font-item big-resizable-font-item" id="person_total_count">1</span><span class="b-count-text resizable-font-item" id="totalPassText">пассажир</span>
 				</div>
 				<div class="b-right-tile-block-string b-sum-text-container">
-					<span class="b-count resizable-font-item big-resizable-font-item" id="totalSum">0</span><span class="b-count-text resizable-font-item" id="totalSumText">рублей</span>
+					<span class="b-count resizable-font-item big-resizable-font-item" id="totalSum"></span><span class="b-count-text resizable-font-item" id="totalSumText">рублей</span>
 				</div>
 			</div>
 			<div class="b-right-tile-bottom-block b-right-tile-block">

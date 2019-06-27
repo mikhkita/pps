@@ -6,8 +6,9 @@
  * The followings are the available columns in table "Agency":
  * @property integer $id
  * @property string $name
- * @property string $contractor
+ * @property string $code_1c
  * @property integer $sort
+ * @property integer $default_start_point_id
  */
 class Agency extends CActiveRecord
 {
@@ -30,11 +31,11 @@ class Agency extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array("name", "required"),
-			array("code_1c", "numerical", "integerOnly" => true),
+			array("default_start_point_id", "numerical", "integerOnly" => true),
 			array("name", "length", "max" => 64),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array("id, name, code_1c", "safe", "on" => "search"),
+			array("id, name, code_1c, default_start_point_id", "safe", "on" => "search"),
 		);
 	}
 
@@ -43,6 +44,9 @@ class Agency extends CActiveRecord
         return array(
             "sorted" => array(
                 "order" => "t.name ASC",
+            ),
+            "active" => array(
+                "condition" => "t.active = '1'",
             ),
         );
     }
@@ -56,6 +60,7 @@ class Agency extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			"users" => array(self::HAS_MANY, "User", "agency_id"),
+			"defaultStartPoint" => array(self::BELONGS_TO, "Point", "default_start_point_id"),
 		);
 	}
 
@@ -68,6 +73,7 @@ class Agency extends CActiveRecord
 			"id" => "ID",
 			"name" => "Наименование",
 			"code_1c" => "Код 1С",
+			"default_start_point_id" => "Точка отправления по умолчанию",
 		);
 	}
 
@@ -88,6 +94,7 @@ class Agency extends CActiveRecord
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
 		$criteria=new CDbCriteria;
+		$criteria->order = "name ASC";
 
 		$criteria->compare("id", $this->id);
 		$criteria->addSearchCondition("name", $this->name);

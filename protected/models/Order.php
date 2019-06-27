@@ -20,6 +20,10 @@
 class Order extends CActiveRecord
 {
 	public $title = NULL;
+	public $price = NULL;
+	public $cash = NULL;
+	public $commission = NULL;
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -38,7 +42,7 @@ class Order extends CActiveRecord
 		return array(
 			array("start_point_id, end_point_id, user_id", "required"),
 			array("id, start_point_id, end_point_id, to_code_1c, from_code_1c", "length", "max" => 10),
-			array("flight_id", "length", "max" => 32),
+			array("flight_id, to_date, from_date, create_date, export_date", "length", "max" => 32),
 			array("comment", "length", "max" => 1024),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
@@ -114,6 +118,8 @@ class Order extends CActiveRecord
 		$criteria->addSearchCondition("from_code_1c", $this->from_code_1c);
 		$criteria->addSearchCondition("user_id", $this->user_id);
 
+		$criteria->order = "id DESC";
+
 		if( $count ){
 			return Order::model()->count($criteria);
 		}else{
@@ -180,6 +186,41 @@ class Order extends CActiveRecord
 		}
 
 		return $this->title;
+	}
+
+	public function getTotals(){
+		$this->price = 0;
+		$this->cash = 0;
+		$this->commission = 0;
+		foreach ($this->persons as $key => $person) {
+			$this->price = $this->price + $person->price;
+			$this->cash = $this->cash + $person->cash;
+			$this->commission = $this->commission + $person->commission;
+		}
+	}
+
+	public function getTotalPrice(){
+		if( $this->price === NULL ){
+			$this->getTotals();
+		}
+
+		return $this->price;
+	}
+
+	public function getTotalCash(){
+		if( $this->cash === NULL ){
+			$this->getTotals();
+		}
+
+		return $this->cash;
+	}
+
+	public function getTotalCommission(){
+		if( $this->commission === NULL ){
+			$this->getTotals();
+		}
+
+		return $this->commission;
 	}
 
 	public function afterFind()

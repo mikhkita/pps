@@ -3162,6 +3162,10 @@ ul.yiiPager .first, ul.yiiPager .last{
                     .b-right-tile-bottom-block .b-btn.preloader span{
                         color: #383B3F;
                         padding-left: 35px;
+                        display: none;
+                    }
+                    .b-right-tile-bottom-block .b-btn.preloader span.process{
+                        display: block;
                     }
                     .b-right-tile-bottom-block .b-btn.preloader span:before{
                         visibility: hidden;
@@ -3175,6 +3179,64 @@ ul.yiiPager .first, ul.yiiPager .last{
                         -webkit-transition: width .3s ease-out, background-color .3s;
                         -o-transition: width .3s ease-out, background-color .3s;
                         transition: width .3s ease-out, background-color .3s;
+                    }
+                    .b-right-tile-bottom-block .b-btn.preloader .b-progress-bar,
+                    .b-right-tile-bottom-block .b-btn.success .b-progress-bar,
+                    .b-right-tile-bottom-block .b-btn.error .b-progress-bar{
+                        background-color: transparent!important;
+                    }
+                    .b-right-tile-bottom-block .b-btn span.process,
+                    .b-right-tile-bottom-block .b-btn span.success,
+                    .b-right-tile-bottom-block .b-btn span.error{
+                        display: none;
+                    }
+                    .b-right-tile-bottom-block .b-btn.success,
+                    .b-right-tile-bottom-block .b-btn.error{
+                        background:#fff;
+                    }
+                    .b-right-tile-bottom-block .b-btn.success span{
+                        color: rgb(28, 160, 4);
+                        display: none;
+                    }
+                    .b-right-tile-bottom-block .b-btn.success span.success{
+                        display: block;
+                    }
+                    .b-right-tile-bottom-block .b-btn.success span.success:before{
+                        color: rgb(28, 160, 4);
+                    }
+                    .b-right-tile-bottom-block .b-btn.error span{
+                        color: rgb(178, 16, 16);   
+                        display: none;
+                    }
+                    .b-right-tile-bottom-block .b-btn.error span.error{
+                        display: block;
+                        padding-left: 40px;
+                    }
+                    .b-right-tile-bottom-block .b-btn.error span.error:before{
+                        position: absolute;
+                        content: '';
+                        width: 30px;
+                        height: 5px;
+                        background-color: rgb(178, 16, 16);
+                        left: 0;
+                        top: 6px;
+                        -webkit-transform: rotate(45deg);
+                        -ms-transform: rotate(45deg);
+                        -o-transform: rotate(45deg);
+                        transform: rotate(45deg);
+                    }
+                    .b-right-tile-bottom-block .b-btn.error span.error:after{
+                        position: absolute;
+                        content: '';
+                        width: 30px;
+                        height: 5px;
+                        background-color: rgb(178, 16, 16);
+                        left: 0;
+                        top: 6px;
+                        -webkit-transform: rotate(-45deg);
+                        -ms-transform: rotate(-45deg);
+                        -o-transform: rotate(-45deg);
+                        transform: rotate(-45deg);
                     }
                     .b-right-tile-bottom-block .b-btn span{
                         font-family: Roboto-Medium;

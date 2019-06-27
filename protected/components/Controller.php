@@ -412,6 +412,32 @@ class Controller extends CController
         return mb_strtoupper(mb_substr($text, 0, 1)) . mb_substr($text, 1);
     }
 
+    public function implodeErrors($arr){
+        $errors = array();
+        foreach ($arr as $key => $item) {
+            array_push($errors, implode(", ", $item));
+        }
+        return implode("; ", $errors);
+    }
+
+    public function returnError( $text ){
+        echo json_encode(array(
+            "result" => "error",
+            "message" => $text
+        ));
+        die();
+    }
+
+    public function returnSuccess( $array = array() ){
+        $arResult = array(
+            "result" => "success"
+        );
+        $arResult = $arResult + $array;
+
+        echo json_encode($arResult);
+        die();
+    }
+
     public function sendNoteMail($note){
         $attrs = array("Текст примечания" => $note->text);
 

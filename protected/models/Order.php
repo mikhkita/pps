@@ -137,17 +137,9 @@ class Order extends CActiveRecord
 
 		$attributes["user_id"] = Yii::app()->user->id;
 
-		if( !empty($attributes["to_date"]) ){
-			$attributes["to_date"] = date("Y-m-d H:i:s", strtotime($attributes["to_date"]));
-		}
-
-		if( !empty($attributes["from_date"]) ){
-			$attributes["from_date"] = date("Y-m-d H:i:s", strtotime($attributes["from_date"]));
-		}
-
-		if( $attributes["flight_id"] == "" ){
-			$attributes["flight_id"] = NULL;
-		}
+		$attributes["to_date"] = ( empty($attributes["to_date"]) )?NULL:date("Y-m-d H:i:s", strtotime($attributes["to_date"]));
+		$attributes["from_date"] = ( empty($attributes["from_date"]) )?NULL:date("Y-m-d H:i:s", strtotime($attributes["from_date"]));
+		$attributes["flight_id"] = ( empty($attributes["flight_id"]) )?NULL:$attributes["flight_id"];
 
 		$this->attributes = $attributes;
 

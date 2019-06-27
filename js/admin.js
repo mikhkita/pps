@@ -1353,7 +1353,9 @@ $(document).ready(function(){
                 oneWayPrice = price[0]*1,
                 totalPrice = ( direction == 1 )?(price[1]*1):oneWayPrice,
                 isPercent = price[2]*1,
-                commission = price[3]*1;
+                commission = ( isPercent )?(totalPrice/100*(price[3]*1)):(price[3]*1);
+
+            commission = ( direction == 1 )?(price[1]*1):oneWayPrice;
 
             $(this).find(".price-input").val( totalPrice ).change();
             $(this).find(".one_way_price-input").val( oneWayPrice );

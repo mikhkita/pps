@@ -3141,6 +3141,9 @@ ul.yiiPager .first, ul.yiiPager .last{
                     margin-bottom: 16px;
                     position: relative;
                 }
+                .b-right-tile-bottom-block .b-btn.no-bottom-text{
+                    margin-bottom: 0;
+                }
                 .b-right-tile-bottom-block .b-btn-green{
                     background: #178803;
                     margin-bottom: 0;

@@ -70,7 +70,7 @@
 				</div>
 			</div>
 			<div class="b-right-tile-bottom-block b-right-tile-block">
-				<a href="#" class="b-btn b-btn-green">
+				<a href="#" id="b-person-form-btn" class="b-btn b-btn-green">
 					<span class="icon-check main-text"><?=$btnText?></span>
 					<span class="process">Отправка заявки,<br>пожалуйста подождите...</span>
 					<span class="icon-check success">Заявка успешно отправлена</span>

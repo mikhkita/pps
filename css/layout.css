@@ -284,7 +284,7 @@ small.block{
 .icon-logout:before {
     content: "\e910";
 }
-.icon-pay:before {
+.icon-payment:before {
     content: "\e911";
 }
 .icon-user:before {
@@ -1551,6 +1551,9 @@ h1.b-with-nav{
     }
     .red{
         color: #C80909;
+    }
+    .blue{
+        color: #3179D3;
     }
     .b-text-title{
         padding-top: 30px;
@@ -3350,8 +3353,16 @@ div.notifyjs-bootstrap-error{
     background-image: url('../i/error.svg');
     background-position: 14px 14px;
 }
-
-
+.b-payment-inputs>div{
+    display: inline-block;
+}
+.b-right-price{
+    float: right;
+}
+    .b-right-price input{
+        text-align: right;
+        width: 50px !important;
+    }
 
 
 

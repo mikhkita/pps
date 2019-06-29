@@ -35,30 +35,51 @@
 						<?=$model->endPoint->name?>
 					</div>
 				</div>
-				<div class="b-hor-input date-airplane hide">
+
+				<? if( !empty($model->to_flight_id) ): ?>
+				<div class="b-hor-input date-airplane">
 					<div class="b-input b-hor-input-left">
-						<label for="Order_flight" class="required"><?=$labels["flight_id"]?> <span class="required">*</span></label>
+						<label for="Order_flight" class="required"><?=$labels["to_flight_id"]?> <span class="required">*</span></label>
 					</div>
 					<div class="b-hor-input-right">
-						<?=$model->flight->name?>
+						<?=$model->flightTo->name?>
 					</div>
 				</div>
+				<? endif; ?>
+
+				<? if( !empty($model->to_date) ): ?>
 				<div class="b-hor-input">
 					<div class="b-input b-hor-input-left">
-						<label for="Order_to_date" class="required"><span class="date-bus"><?=$labels["to_date"]?></span><span class="date-airplane hide">Дата/время вылета рейса</span></label>
+						<label for="Order_to_date" class="required"><? if( !empty($model->to_flight_id) ): ?>Дата/время вылета рейса<?else:?><?=$labels["to_date"]?><? endif; ?></label>
 					</div>
 					<div class="b-hor-input-right b-to-datepicker">
 						<?=$model->to_date?>
 					</div>
 				</div>
+				<? endif; ?>
+
+				<? if( !empty($model->from_flight_id) ): ?>
+				<div class="b-hor-input date-airplane">
+					<div class="b-input b-hor-input-left">
+						<label for="Order_flight" class="required"><?=$labels["from_flight_id"]?> <span class="required">*</span></label>
+					</div>
+					<div class="b-hor-input-right">
+						<?=$model->flightFrom->name?>
+					</div>
+				</div>
+				<? endif; ?>
+
+				<? if( !empty($model->from_date) ): ?>
 				<div class="b-hor-input">
 					<div class="b-input b-hor-input-left">
-						<label for="Order_from_date" class="required"><span class="date-bus"><?=$labels["from_date"]?></span><span class="date-airplane hide">Дата/время прилета рейса</span></label>
+						<label for="Order_from_date" class="required"><? if( !empty($model->from_flight_id) ): ?>Дата/время прилета рейса<?else:?><?=$labels["from_date"]?><? endif; ?></span></label>
 					</div>
 					<div class="b-hor-input-right b-to-datepicker">
 						<?=$model->from_date?>
 					</div>
 				</div>
+				<? endif; ?>
+
 				<div class="b-hor-input">
 					<div class="b-input b-hor-input-left">
 						<label for="person_count" class="required">Количество пассажиров <span class="required">*</span></label>
@@ -179,8 +200,9 @@
 					</div>
 				</div>
 				<div class="b-price-row">
-					<div class="b-label-block b-person-price" data-price="<?=$person->price?>">
+					<div class="b-label-block b-person-price">
 						<label>Итого:</label>
+						<input type="hidden" class="price-input" value="<?=$person->price?>">
 						<h3><?=number_format( $person->price, 0, ',', '&nbsp;' )?> ₽</h3>
 					</div>
 				</div>

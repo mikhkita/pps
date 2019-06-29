@@ -114,7 +114,7 @@ $(document).ready(function(){
                     }
                     setTimeout(function(){
                         window.location.href = json.href;
-                    },1000)  
+                    }, 2000);
                 break;
             }
         } else {
@@ -397,13 +397,15 @@ $(document).ready(function(){
                         }
                     },
                     error: function(){
-                        if('#b-progress-bar-container'.length != 0){
-                            $('#b-progress-bar-container').removeClass('preloader');
-                            $('#b-progress-bar-container').addClass('error');
-                            setTimeout(function(){
-                                $('#b-progress-bar-container').removeClass('error');
-                            },2000)
-                        }
+                        progress.end(function(){
+                            if('#b-progress-bar-container'.length != 0){
+                                $('#b-progress-bar-container').removeClass('preloader');
+                                $('#b-progress-bar-container').addClass('error');
+                                setTimeout(function(){
+                                    $('#b-progress-bar-container').removeClass('error');
+                                },2000);
+                            }
+                        });
                     },
                     complete : function(){
 
@@ -477,7 +479,7 @@ $(document).ready(function(){
         }
 
         if( $form.find(".passport").length ){
-            $form.find(".passport:not(.binded)").addClass("binded").mask('9999 999999',{placeholder:"_"});
+            $form.find(".passport:not(.binded)").addClass("binded").mask('99 99 999999',{placeholder:"_"});
         }
 
         bindDate($form);
@@ -1136,19 +1138,40 @@ $(document).ready(function(){
     } 
 
     function calcTotalPrice(){
-        $('#person_total_count').text( $('#person_count').val() );
-        $('#totalPassText').text( pluralForm( $('#person_count').val(), 'пассажир', 'пассажира', 'пассажиров' ) );
+        var personCount = $('#person_count').val();
+
+        if( $(".b-payment-form").length ){
+            personCount = $(".price-input").length;
+        }
+
+        $('#person_total_count').text( personCount );
+        $('#totalPassText').text( pluralForm( personCount, 'пассажир', 'пассажира', 'пассажиров' ) );
 
         var price = 0;
-        $('.b-order-form-person').each(function(){
-            price += $(this).find('.price-input').val()*1;
+        $('.b-order-form-person .price-input').each(function(){
+            price += $(this).val()*1;
         })
+
         $('#totalSum').text(price.toLocaleString());
         $('#totalSumText').text(pluralForm(price, 'рубль', 'рубля', 'рублей'));
 
         $('#order-form').trigger("updateState");
 
         checkTotalSum();
+    }
+
+    function calcOrdersPrice(){
+        if( $(".b-payment-form").length ){
+            $(".b-order-form-person").each(function(){
+                var sum = 0;
+
+                $(this).find(".price-input").each(function(){
+                    sum = sum + $(this).val()*1;
+                });
+
+                $(this).find(".b-order-price h3 span").text(sum.toLocaleString());
+            });
+        }
     }
 
     function checkTotalSum(){
@@ -1361,16 +1384,13 @@ $(document).ready(function(){
                 isPercent = price[2]*1,
                 commission = ( isPercent )?(totalPrice/100*(price[3]*1)):(price[3]*1);
 
-            commission = ( direction == 1 )?(price[1]*1):oneWayPrice;
+            if( direction == 1 && !isPercent ){
+                commission = commission*2;
+            }
 
             $(this).find(".price-input").val( totalPrice ).change();
             $(this).find(".one_way_price-input").val( oneWayPrice );
-
-            if( isPercent ){
-                $(this).find(".commission-input").val( totalPrice/100*commission ).change();
-            }else{
-                $(this).find(".commission-input").val( commission ).change();
-            }
+            $(this).find(".commission-input").val( commission ).change();
         });
 
         calcTotalPrice();
@@ -1387,9 +1407,15 @@ $(document).ready(function(){
     $("body").on("change", ".price-input", function(){
         var value = $(this).val()*1;
         $(this).parents(".b-price-row").find("h3 span").text( value.toLocaleString() );
+
+        if( $(".b-payment-form").length ){
+            calcTotalPrice();
+        }
     });
 
     calcTotalPrice();
+
+    calcOrdersPrice();
 
     checkTransferAccess();
 

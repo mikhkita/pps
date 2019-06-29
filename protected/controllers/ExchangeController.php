@@ -13,7 +13,7 @@ class ExchangeController extends Controller
 	{
 		return array(
 			array("allow",
-				"actions" => array("adminImportDictionaries"),
+				"actions" => array("importDictionaries", "exportOrder"),
 				"users" => array("*"),
 			),
 			array("deny",
@@ -22,7 +22,161 @@ class ExchangeController extends Controller
 		);
 	}
 
-	public function actionAdminImportDictionaries($partial = false){
+	public function actionExportOrder(){
+
+		// $test_array = array (
+		//   'bla' => 'blub',
+		//   'foo' => 'bar',
+		//   'another_array' => array (
+		//     'stack' => 'overflow',
+		//   ),
+		// );
+		// $xml = new SimpleXMLElement('<root/>');
+		// array_walk_recursive($test_array, array ($xml, 'addChild'));
+		// print $xml->asXML();
+		// die();
+
+		function addDocumentToXML(&$xml, $order, $persons){
+			// var_dump($document);
+			// var_dump($passengers);
+			// echo "\n=============\n";
+
+			$document = $xml->addChild("Документ");
+			foreach ($order as $code => $field) {
+				$document->addAttribute($code, $field);
+			}
+
+			$passengers = $document->addChild("Пассажиры");
+			foreach ($persons as $key => $person) {
+				$passenger = $passengers->addChild("Пассажир");
+
+				foreach ( $person as $code => $field) {
+					$passenger->addAttribute($code, $field);
+				}
+			}
+		}
+
+		function addOrderToXML(&$xml, $order){
+			$orderFields = array(
+				"ИД" => $order->id,
+				"Дата" => $order->create_date,
+				"НазваниеАгентства" => $order->user->agency->code_1c,
+				"ИсходТочка" => "",
+				"КонТочка" => "",
+				"Рейс" => "",
+				"ДатаВылетаРейса" => "",
+				"ДатаПрилетаРейса" => "",
+				"ДатаВыезда" => "",
+				"ДатаПриезда" => "",
+				"ТипЗаказа" => "",
+			);
+
+			$personsTo = array();
+			$personsFrom = array();
+			foreach ($order->persons as $key => $person) {
+				$personFields = array(
+					"Серия" => "",
+					"Номер" => "",
+					"ВидДокумента" => "",
+					"ФИО" => $person->fio,
+					"ИДПассажира" => $person->id,
+					// "ПассажирКод" => "",
+					"ДатаРождения" => $person->birthday,
+					"Телефон" => $person->phone,
+					"Адрес" => $person->address,
+					"ТипПассажира" => ($person->is_child)?"Детский":"Взрослый",
+					"Цена" => "",
+					"Комментарий" => $person->comment,
+					"СпособОплаты" => "",
+					// "СостояниеИсполнения" => "",
+					// "СтатусОплаты" => "",
+				);
+
+				if( !empty($person->passport) ){
+					$tmp = explode(" ", $person->passport);
+					if( count( $tmp ) == 3 ){
+						$personFields["Серия"] = $tmp[0]." ".$tmp[1];
+						$personFields["Номер"] = $tmp[2];
+						$personFields["ВидДокумента"] = "Паспорт гражданина РФ";
+					}
+				}
+
+				if( $person->pay_himself ){
+					$personFields["СпособОплаты"] = "На руки водителю";
+				}
+
+				switch ($person->direction_id) {
+					case 1:
+						$personFields["Цена"] = number_format($person->price/2, 2, '.', '');
+
+						array_push($personsTo, $personFields);
+						array_push($personsFrom, $personFields);
+						break;
+					case 2:
+						$personFields["Цена"] = number_format($person->price, 2, '.', '');
+						array_push($personsTo, $personFields);
+						break;
+					case 3:
+						$personFields["Цена"] = number_format($person->price, 2, '.', '');
+						array_push($personsFrom, $personFields);
+						break;
+				}
+			}
+
+			if( count($personsTo) ){
+				$orderFieldsTo = $orderFields;
+
+				$orderFieldsTo["ИсходТочка"] = $order->startPoint->code_1c;
+				$orderFieldsTo["КонТочка"] = $order->endPoint->code_1c;
+				$orderFieldsTo["ТипЗаказа"] = "Вылет";
+
+				if( !empty($order->flightTo) ){
+					$orderFieldsTo["Рейс"] = $order->flightTo->code_1c;
+				}
+
+				if( !empty($order->to_date) ){
+					$orderFieldsTo[ ( !empty($orderFieldsTo["Рейс"]) )?"ДатаВылетаРейса":"ДатаВыезда" ] = $order->to_date;
+				}
+
+				addDocumentToXML($xml, $orderFieldsTo, $personsTo);
+			}
+
+			if( count($personsFrom) ){
+				$orderFieldsFrom = $orderFields;
+
+				$orderFieldsFrom["ИсходТочка"] = $order->endPoint->code_1c;
+				$orderFieldsFrom["КонТочка"] = $order->startPoint->code_1c;
+				$orderFieldsFrom["ТипЗаказа"] = "Прилет";
+
+				if( !empty($order->flightFrom) ){
+					$orderFieldsFrom["Рейс"] = $order->flightFrom->code_1c;
+				}
+
+				if( !empty($order->from_date) ){
+					$orderFieldsFrom[ ( !empty($orderFieldsFrom["Рейс"]) )?"ДатаПрилетаРейса":"ДатаПриезда" ] = $order->from_date;
+				}
+
+				addDocumentToXML($xml, $orderFieldsFrom, $personsFrom);
+			}
+		}
+
+		$xml = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><Документы/>');
+
+		$order = Order::model()->findByPk(16);
+		$order = addOrderToXML($xml, $order);
+
+		$order = Order::model()->findByPk(17);
+		$order = addOrderToXML($xml, $order);
+		
+
+		// array_walk_recursive($test_array, array ($xml, 'addChild'));
+		// print $xml->asXML();
+		file_put_contents("example.xml", $xml->asXML());
+
+		// var_dump($order);
+	}
+
+	public function actionImportDictionaries($partial = false){
 		$filename = Yii::app()->basePath."/../1c_exchange/dictionaries.xml";
 
 		$xml = simplexml_load_file($filename);

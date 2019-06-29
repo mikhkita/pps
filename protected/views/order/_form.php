@@ -1,4 +1,4 @@
-<div class="b-order-form">
+<div class="b-order-form b-order-form-edit">
 	<script>
 		var points = JSON.parse('<?=json_encode(CHtml::listData(Point::model()->sorted()->findAll(), "id", "is_airport"))?>'),
 			priceList = JSON.parse('<?=json_encode(Price::getPriceList())?>');
@@ -36,10 +36,10 @@
 				</div>
 				<div class="b-hor-input date-airplane hide">
 					<div class="b-input b-hor-input-left">
-						<label for="Order_flight" class="required"><?=$labels["flight_id"]?> <span class="required">*</span></label>
+						<label for="Order_to_flight_id" class="required"><?=$labels["to_flight_id"]?> <span class="required">*</span></label>
 					</div>
 					<div class="b-hor-input-right">
-						<?php echo $form->dropDownList($model, "flight_id", array("" => "Не выбрано") + CHtml::listData(Flight::model()->sorted()->active()->findAll(), "id", "name"), array("class" => "select2", "required" => true, "title" => "Поле обязательно")); ?>
+						<?php echo $form->dropDownList($model, "to_flight_id", array("" => "Не выбрано") + CHtml::listData(Flight::model()->sorted()->active()->findAll(), "id", "name"), array("class" => "select2", "required" => true, "title" => "Поле обязательно")); ?>
 					</div>
 				</div>
 				<div class="b-hor-input">
@@ -48,6 +48,14 @@
 					</div>
 					<div class="b-hor-input-right b-to-datepicker">
 						<?php echo $form->textField($model, "to_date", array("maxlength" => 32, "autocomplete" => "off", "placeholder" => "...", "class" => "date-time", "title" => "Поле обязательно")); ?>
+					</div>
+				</div>
+				<div class="b-hor-input date-airplane hide">
+					<div class="b-input b-hor-input-left">
+						<label for="Order_from_flight_id" class="required"><?=$labels["from_flight_id"]?> <span class="required">*</span></label>
+					</div>
+					<div class="b-hor-input-right">
+						<?php echo $form->dropDownList($model, "from_flight_id", array("" => "Не выбрано") + CHtml::listData(Flight::model()->sorted()->active()->findAll(), "id", "name"), array("class" => "select2", "required" => true, "title" => "Поле обязательно")); ?>
 					</div>
 				</div>
 				<div class="b-hor-input">
@@ -187,7 +195,7 @@
 					<span class="icon-check main-text">Оформить заявку</span>
 					<span class="process">Отправка заявки,<br>пожалуйста подождите...</span>
 					<span class="icon-check success">Заявка успешно отправлена</span>
-					<span class="error">Ошибка! Попробуйте ещё раз.</span>
+					<span class="error">Ошибка! Проверьте интернет-соединение и попробуйте ещё раз</span>
 				</a>
 			</div>
 		</div>
@@ -296,7 +304,7 @@
 				</div>
 			</div>
 			<div class="b-price-row">
-				<div class="b-label-block b-person-price" data-price="0">
+				<div class="b-label-block b-person-price">
 					<input type="text" class="price-input" name="Person[{{index}}][price]" value="0">
 					<input type="text" class="one_way_price-input" name="Person[{{index}}][one_way_price]" value="0">
 					<input type="text" class="commission-input" name="Person[{{index}}][commission]" value="0">

@@ -1,20 +1,37 @@
 <?php
 
 /**
- * This is the model class for table "user_section".
+ * This is the model class for table "payment".
  *
- * The followings are the available columns in table "user_section":
+ * The followings are the available columns in table "payment":
+ * @property string $id
  * @property string $user_id
- * @property integer $section_id
+ * @property string $number
+ * @property string $date
+ * @property integer $type_id
  */
-class UserSection extends CActiveRecord
+class Payment extends CActiveRecord
 {
+	public $types = array(
+		1 => "Онлайн оплата",
+		2 => "Безналичный",
+	);
+	public $statuses = array(
+		1 => "Новый",
+		2 => "Не оплачен",
+		3 => "Выставлен счет",
+		4 => "Оплачен",
+		5 => "Подтвержден",
+	);
+	public $type = NULL;
+	public $status = NULL;
+
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
 	{
-		return "user_section";
+		return "payment";
 	}
 
 	/**
@@ -25,12 +42,13 @@ class UserSection extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array("user_id, section_id", "required"),
-			array("section_id", "numerical", "integerOnly" => true),
+			array("user_id, type_id", "required"),
+			array("type_id, status_id", "numerical", "integerOnly" => true),
 			array("user_id", "length", "max" => 10),
+			array("number", "length", "max" => 32),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array("user_id, section_id", "safe", "on" => "search"),
+			array("id, user_id, number, date, type_id, status_id", "safe", "on" => "search"),
 		);
 	}
 
@@ -43,7 +61,7 @@ class UserSection extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			"user" => array(self::BELONGS_TO, "User", "user_id"),
-			"section" => array(self::BELONGS_TO, "Section", "section_id"),
+			"persons" => array(self::HAS_MANY, "PaymentPerson", "payment_id"),
 		);
 	}
 
@@ -53,8 +71,14 @@ class UserSection extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			"user_id" => "User",
-			"section_id" => "Section",
+			"id" => "ID",
+			"user_id" => "Пользователь",
+			"number" => "Счет",
+			"date" => "Дата",
+			"type_id" => "Тип платежа",
+			"persons" => "Пассажиры",
+			"sum" => "Сумма",
+			"status_id" => "Статус",
 		);
 	}
 
@@ -76,15 +100,18 @@ class UserSection extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare("user_id", $this->user_id);
-		$criteria->compare("section_id", $this->section_id);
+		$criteria->addSearchCondition("id", $this->id);
+		$criteria->addSearchCondition("user_id", $this->user_id);
+		$criteria->addSearchCondition("number", $this->number);
+		$criteria->addSearchCondition("date", $this->date);
+		$criteria->compare("type_id", $this->type_id);
 
 		if( $count ){
-			return UserSection::model()->count($criteria);
+			return Payment::model()->count($criteria);
 		}else{
 			return new CActiveDataProvider($this, array(
 				"criteria" => $criteria,
-				"pagination" => array("pageSize" => $pages, "route" => "userSection/adminindex")
+				"pagination" => array("pageSize" => $pages, "route" => "payment/adminindex")
 			));
 		}
 	}
@@ -104,11 +131,41 @@ class UserSection extends CActiveRecord
 		}
 	}
 
+	public function afterFind()
+	{
+		parent::afterFind();
+
+		$this->date = date("d.m.Y H:i", strtotime($this->date));
+
+		$this->type = $this->types[ $this->type_id ];
+		$this->status = $this->statuses[ $this->status_id ];
+	}
+
+	public function getPersonsText(){
+		$tmp = array();
+
+		foreach ($this->persons as $key => $person) {
+			array_push($tmp, $person->person->fio);
+		}
+
+		return "(".count($this->persons).") ".implode(", ", $tmp);
+	}
+
+	public function getTotalSum(){
+		$sum = 0;
+
+		foreach ($this->persons as $key => $person) {
+			$sum = $sum + $person->sum;
+		}
+
+		return $sum;
+	}
+
 	/**
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return UserSection the static model class
+	 * @return Payment the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{

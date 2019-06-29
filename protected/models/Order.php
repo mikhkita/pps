@@ -11,7 +11,8 @@
  * @property string $export_date
  * @property string $start_point_id
  * @property string $end_point_id
- * @property string $flight_id
+ * @property string $to_flight_id
+ * @property string $from_flight_id
  * @property string $comment
  * @property string $to_code_1c
  * @property string $from_code_1c
@@ -42,11 +43,11 @@ class Order extends CActiveRecord
 		return array(
 			array("start_point_id, end_point_id, user_id", "required", "message" => "Поле «{attribute}» не может быть пустым"),
 			array("id, start_point_id, end_point_id, to_code_1c, from_code_1c", "length", "max" => 10, "tooLong" => "Поле «{attribute}» должно содержать не более 10 символов"),
-			array("flight_id, to_date, from_date, create_date, export_date", "length", "max" => 32, "tooLong" => "Поле «{attribute}» должно содержать не более 32 символов"),
+			array("to_flight_id, from_flight_id, to_date, from_date, create_date, export_date", "length", "max" => 32, "tooLong" => "Поле «{attribute}» должно содержать не более 32 символов"),
 			array("comment", "length", "max" => 1024, "tooLong" => "Поле «{attribute}» должно содержать не более 1024 символов"),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array("id, to_date, from_date, create_date, export_date, start_point_id, end_point_id, flight_id, comment, to_code_1c, from_code_1c, user_id", "safe", "on" => "search"),
+			array("id, to_date, from_date, create_date, export_date, start_point_id, end_point_id, to_flight_id, from_flight_id, comment, to_code_1c, from_code_1c, user_id", "safe", "on" => "search"),
 		);
 	}
 
@@ -60,7 +61,8 @@ class Order extends CActiveRecord
 		return array(
 			"startPoint" => array(self::BELONGS_TO, "Point", "start_point_id"),
 			"endPoint" => array(self::BELONGS_TO, "Point", "end_point_id"),
-			"flight" => array(self::BELONGS_TO, "Flight", "flight_id"),
+			"flightTo" => array(self::BELONGS_TO, "Flight", "to_flight_id"),
+			"flightFrom" => array(self::BELONGS_TO, "Flight", "from_flight_id"),
 			"user" => array(self::BELONGS_TO, "User", "user_id"),
 			"persons" => array(self::HAS_MANY, "Person", "order_id"),
 		);
@@ -79,7 +81,8 @@ class Order extends CActiveRecord
 			"export_date" => "Дата выгрузки",
 			"start_point_id" => "Откуда",
 			"end_point_id" => "Куда",
-			"flight_id" => "Рейс",
+			"to_flight_id" => "Рейс «Туда»",
+			"from_flight_id" => "Рейс «Обратно»",
 			"comment" => "Комментарий",
 			"to_code_1c" => "Код 1С заявки «туда»",
 			"from_code_1c" => "Код 1С заявки «обратно»",
@@ -112,7 +115,8 @@ class Order extends CActiveRecord
 		$criteria->addSearchCondition("export_date", $this->export_date);
 		$criteria->addSearchCondition("start_point_id", $this->start_point_id);
 		$criteria->addSearchCondition("end_point_id", $this->end_point_id);
-		$criteria->addSearchCondition("flight_id", $this->flight_id);
+		$criteria->addSearchCondition("to_flight_id", $this->to_flight_id);
+		$criteria->addSearchCondition("from_flight_id", $this->from_flight_id);
 		$criteria->addSearchCondition("comment", $this->comment);
 		$criteria->addSearchCondition("to_code_1c", $this->to_code_1c);
 		$criteria->addSearchCondition("from_code_1c", $this->from_code_1c);
@@ -139,7 +143,8 @@ class Order extends CActiveRecord
 
 		$attributes["to_date"] = ( empty($attributes["to_date"]) )?NULL:date("Y-m-d H:i:s", strtotime($attributes["to_date"]));
 		$attributes["from_date"] = ( empty($attributes["from_date"]) )?NULL:date("Y-m-d H:i:s", strtotime($attributes["from_date"]));
-		$attributes["flight_id"] = ( empty($attributes["flight_id"]) )?NULL:$attributes["flight_id"];
+		$attributes["to_flight_id"] = ( empty($attributes["to_flight_id"]) )?NULL:$attributes["to_flight_id"];
+		$attributes["from_flight_id"] = ( empty($attributes["from_flight_id"]) )?NULL:$attributes["from_flight_id"];
 
 		$this->attributes = $attributes;
 
@@ -150,7 +155,14 @@ class Order extends CActiveRecord
 				foreach ($persons as $key => $person) {
 					$number ++;
 
+					foreach ($person as &$value) {
+				    	$value = trim($value);
+					}
+
 					$model = new Person();
+
+					$person["birthday"] = ( empty($person["birthday"]) )?NULL:date("Y-m-d H:i:s", strtotime($person["birthday"]));
+
 					$model->attributes = $person;
 					$model->order_id = $this->id;
 					$model->number = $number;
@@ -184,7 +196,7 @@ class Order extends CActiveRecord
 			$this->title = $this->startPoint->name." – ".$this->endPoint->name;
 
 			if( !empty($date) ){
-				$this->title = $this->title." ".Controller::getRusDate($date);
+				$this->title = $this->title.", ".Controller::getRusDate($date);
 			}
 
 			$this->title = $this->title." (".count($this->persons)." чел.)";

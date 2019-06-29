@@ -169,8 +169,9 @@ class Controller extends CController
     }
 
     public function getRusDate($time){
-        $date = explode(".", date("j.n.Y", strtotime($time)));
-        return $date[0]."&nbsp;".Controller::getRusMonth($date[1])."&nbsp;".$date[2]."&nbsp;г.";
+        $tmp = explode(" ", $time);
+        $date = explode(".", date("j.n.Y", strtotime($tmp[0])));
+        return $date[0]."&nbsp;".Controller::getRusMonth($date[1])."&nbsp;".$date[2]."&nbsp;г.".( (isset($tmp[1]))?(" ".$tmp[1]):"" );
     }
 
     public function getTime($time){

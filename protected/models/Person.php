@@ -59,7 +59,8 @@ class Person extends CActiveRecord
 			array("is_child, transfer_id, direction_id, price, one_way_price, commission, cash, to_status_id, from_status_id, pay_himself, number", "numerical", "integerOnly" => true),
 			array("name, last_name, third_name", "length", "max" => 64),
 			array("order_id", "length", "max" => 10),
-			array("phone, code_1c", "length", "max" => 32),
+			array("phone, code_1c, birthday", "length", "max" => 32),
+			array("passport", "length", "max" => 14),
 			array("comment, address", "length", "max" => 1024),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
@@ -166,6 +167,8 @@ class Person extends CActiveRecord
 	    	$value = trim($value);
 		}
 
+		$attributes["birthday"] = ( empty($attributes["birthday"]) )?NULL:date("Y-m-d H:i:s", strtotime($attributes["birthday"]));
+
 		$this->attributes = $attributes;
 
 		if($this->save()){
@@ -185,6 +188,10 @@ class Person extends CActiveRecord
 		$this->direction = $this->directions[ $this->direction_id ];
 		$this->transfer = $this->transfers[ $this->transfer_id ];
 		$this->payment = $this->payments[ $this->pay_himself ];
+
+		if( !empty($this->birthday) ){
+			$this->birthday = date("d.m.Y", strtotime($this->birthday));
+		}
 	}
 
 	/**

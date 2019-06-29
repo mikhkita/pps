@@ -27,6 +27,7 @@
                 }
             ],
             buttonId : 'b-progress-bar-container',
+            needCountText : 'Y',
         }, options);
 
         _.extend({
@@ -42,9 +43,13 @@
             },
 
             initHandlers : function(){
-
                 $('#' + _.o.buttonId).prepend('<div id="b-progress-bar" data-complete="false" class="b-progress-bar"></div>');
-                $('#' + _.o.buttonId).after(_.writeInfoBlock(_.total));
+
+                if (_.o.needCountText == 'Y') {
+                    $('#' + _.o.buttonId).after(_.writeInfoBlock(_.total));
+                } else {
+                    $('#' + _.o.buttonId).addClass('no-bottom-text');
+                }
             },
 
             findNeedToFeel : function(){
@@ -103,6 +108,10 @@
             },
 
             checkProgress : function(total, filled) {
+                
+                if( total == 0 ){
+                    total = filled = 1;
+                }
 
                 var percent = (parseInt(filled)/parseInt(total))*100,
                     color = _.rgbColorPercent(percent);
@@ -123,8 +132,10 @@
                     $('#'+_.o.buttonId).find('#b-progress-bar').attr('data-complete', 'false');
                 }
 
-                $('#' + _.o.buttonId).siblings('.b-right-tile-block-bottom-text').remove();
-                $('#' + _.o.buttonId).after(_.writeInfoBlock(needToFill));
+                if (_.o.needCountText == 'Y') {
+                    $('#' + _.o.buttonId).siblings('.b-right-tile-block-bottom-text').remove();
+                    $('#' + _.o.buttonId).after(_.writeInfoBlock(needToFill));
+                }
             },
 
             writeInfoBlock : function(needToFill){

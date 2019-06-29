@@ -1144,10 +1144,12 @@ $(document).ready(function(){
         return ids.join(",");
     }
     // Actions ------------------------------------------------------------ Actions
-
+    
+    var needCountText = $('.b-order-form').hasClass('b-order-form-edit') ? 'Y' : 'N' ;
 
     $('#order-form').progressBtn({
-        buttonId : 'b-progress-bar-container'
+        buttonId : 'b-progress-bar-container',
+        needCountText : needCountText,
     });
 
     $('#b-progress-bar-container').on('click',function(){

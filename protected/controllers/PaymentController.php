@@ -93,7 +93,7 @@ class PaymentController extends Controller
 				$tmp->payment_id = $payment->id;
 				$tmp->person_id = $person->id;
 				$tmp->direction_id = $person->direction_id;
-				$tmp->sum = $person->price;
+				$tmp->sum = $person->price_without_commission;
 
 				$tmp->save();
 			}

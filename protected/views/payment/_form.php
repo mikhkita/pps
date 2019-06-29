@@ -9,6 +9,8 @@
 		)); 
 		$labels = $payment->attributeLabels();
 
+		// $payment->type_id
+
 		$prevOrder = NULL;
 		?>
 
@@ -16,6 +18,7 @@
 
 		<? foreach ($payment->persons as $key => $person):
 			$nextPerson = $payment->persons[$key + 1];
+			// $person->person->price_without_commission
 			?>
 
 		<? if( $prevOrder->id != $person->person->order_id ): ?>	

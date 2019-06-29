@@ -34,6 +34,7 @@ class Person extends CActiveRecord
 	public $direction = NULL;
 	public $transfer = NULL;
 	public $payment = NULL;
+	public $price_without_commission = 0;
 
 	public $ages = array( 0 => "Взрослый", 1 => "Детский" );
 	public $directions = array( 1 => "В обе стороны", 2 => "Туда", 3 => "Обратно" );
@@ -188,6 +189,7 @@ class Person extends CActiveRecord
 		$this->direction = $this->directions[ $this->direction_id ];
 		$this->transfer = $this->transfers[ $this->transfer_id ];
 		$this->payment = $this->payments[ $this->pay_himself ];
+		$this->price_without_commission = $this->price - $this->commission;
 
 		if( !empty($this->birthday) ){
 			$this->birthday = date("d.m.Y", strtotime($this->birthday));

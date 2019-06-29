@@ -1,5 +1,6 @@
 <div class="b-order-form b-payment-form b-order-form-edit">
 	<div class="b-order-form-left">
+		<? $btnText = ($payment->type_id == 1) ? "Оплатить онлайн" : "Выставить счет" ; ?>
 		<?php $form=$this->beginWidget("CActiveForm", array(
 			"id" => "order-form",
 			"enableAjaxValidation" => false,
@@ -8,9 +9,6 @@
 		    ),
 		)); 
 		$labels = $payment->attributeLabels();
-
-		// $payment->type_id
-
 		$prevOrder = NULL;
 		?>
 
@@ -72,8 +70,8 @@
 				</div>
 			</div>
 			<div class="b-right-tile-bottom-block b-right-tile-block">
-				<a href="#" class="b-btn" id="b-progress-bar-container">
-					<span class="icon-check main-text">Оформить заявку</span>
+				<a href="#" class="b-btn b-btn-green">
+					<span class="icon-check main-text"><?=$btnText?></span>
 					<span class="process">Отправка заявки,<br>пожалуйста подождите...</span>
 					<span class="icon-check success">Заявка успешно отправлена</span>
 					<span class="error">Ошибка! Проверьте интернет-соединение и попробуйте ещё раз</span>

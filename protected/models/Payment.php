@@ -4,9 +4,10 @@
  * This is the model class for table "payment".
  *
  * The followings are the available columns in table "payment":
- * @property string $id
+ * @property integer $id
  * @property string $user_id
- * @property string $number
+ * @property integer $number
+ * @property string $filename
  * @property string $date
  * @property integer $type_id
  */
@@ -24,6 +25,7 @@ class Payment extends CActiveRecord
 		5 => "Подтвержден",
 	);
 	public $status = NULL;
+	public $ext = "";
 
 	/**
 	 * @return string the associated database table name
@@ -42,12 +44,12 @@ class Payment extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array("user_id, type_id", "required"),
-			array("type_id, status_id", "numerical", "integerOnly" => true),
+			array("type_id, status_id, number", "numerical", "integerOnly" => true),
 			array("user_id", "length", "max" => 10),
-			array("number", "length", "max" => 32),
+			array("filename", "length", "max" => 1024),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array("id, user_id, number, date, type_id, status_id", "safe", "on" => "search"),
+			array("id, user_id, number, date, type_id, status_id, filename", "safe", "on" => "search"),
 		);
 	}
 
@@ -73,7 +75,8 @@ class Payment extends CActiveRecord
 		return array(
 			"id" => "ID",
 			"user_id" => "Пользователь",
-			"number" => "Счет",
+			"number" => "Номер",
+			"filename" => "Ссылка на файл",
 			"date" => "Дата",
 			"type_id" => "Тип платежа",
 			"persons" => "Пассажиры",
@@ -137,6 +140,10 @@ class Payment extends CActiveRecord
 
 		$this->date = date("d.m.Y H:i", strtotime($this->date));
 
+		if( $this->filename ){
+			$this->ext = substr(array_pop(explode(".", $this->filename)), 0, 3);
+		}
+
 		$this->status = $this->statuses[ $this->status_id ];
 	}
 
@@ -147,7 +154,7 @@ class Payment extends CActiveRecord
 			array_push($tmp, $person->person->fio);
 		}
 
-		return "(".count($this->persons).") ".implode(", ", $tmp);
+		return "<b>(".count($this->persons).")</b> ".implode(", ", $tmp);
 	}
 
 	public function getTotalSum(){
@@ -171,6 +178,19 @@ class Payment extends CActiveRecord
 		}
 
 		return true;
+	}
+
+	public function getNextBillNumber(){
+		$model = Payment::model()->find(array(
+			"condition" => "type_id = '2' AND date > '".date("Y")."-01-01 00:00:00' AND number IS NOT NULL",
+			"order" => "number DESC"
+		));
+
+		if( $model ){
+			return intval($model->number)+1;
+		}else{
+			return 1;
+		}
 	}
 
 	/**

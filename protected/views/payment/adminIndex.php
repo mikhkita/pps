@@ -1,7 +1,12 @@
-<h1><?=$this->adminMenu["cur"]->name?></h1>
-<table class="b-table" border="0">
+<div class="b-section-nav">
+	<div class="b-section-nav-back clearfix">
+		<h1><?=$this->adminMenu["cur"]->name?></h1>
+	</div>
+</div>
+<table class="b-table b-section-content" border="0">
 	<tr>
 		<th><?=$labels["date"]?></th>
+		<th><?=$labels["type_id"]?></th>
 		<th><?=$labels["number"]?></th>
 		<th><?=$labels["persons"]?></th>
 		<th><?=$labels["sum"]?></th>
@@ -20,12 +25,26 @@
 			}
 			?>
 			<tr>
-				<td><?=Controller::getRusDate($item->date)?></td>
-				<td><?=$item->number?></td>
+				<td><?=Controller::getRusDate($item->date, true)?></td>
+				<td><?=$item->type->name?></td>
+				<td><? 
+				if( $item->number ): 
+					switch ($item->type_id):
+						case 2: ?>
+						<? if( $item->filename ): ?><a href="/<?=Yii::app()->params["fileFolder"]?>/<?=$item->filename?>" class="b-file icon-<?=$item->ext?>" target="_blank">№<?=$item->number?> от <?=Controller::getRusDate($item->date)?><? endif ?><? if( $item->filename ): ?></a><? endif ?>
+							<? break;
+						case 3: ?>
+
+							<? break;
+						default: ?>
+						№<?=$item->number?>
+							<? break;
+					endswitch;
+				endif; ?></td>
 				<td><?=$item->getPersonsText()?></td>
 				<td class="tr"><?=$item->getTotalSum()?></td>
 				<td><span class="<?=$statusClass?>"><?=$item->status?></span></td>
-				<td><? if( empty($item->number) ): ?><a href="<?php echo Yii::app()->createUrl('/'.$this->adminMenu["cur"]->code.'/adminupdate',array('id'=>$item->id))?>" class="b-tool b-double-click b-tool-update" title="Редактировать <?=$this->adminMenu["cur"]->vin_name?>"></a><a href="<?php echo Yii::app()->createUrl('/'.$this->adminMenu["cur"]->code.'/adminDelete',array('id'=>$item->id))?>" class="ajax-form ajax-delete b-tool b-tool-delete" data-name="<?=$this->adminMenu["cur"]->vin_name?>" title="Удалить <?=$this->adminMenu["cur"]->vin_name?>"></a><? endif; ?></td>
+				<td><? if( $item->status_id == 1 ): ?><a href="<?php echo Yii::app()->createUrl('/'.$this->adminMenu["cur"]->code.'/adminupdate',array('id'=>$item->id))?>" class="b-tool b-double-click b-tool-update" title="Редактировать <?=$this->adminMenu["cur"]->vin_name?>"></a><a href="<?php echo Yii::app()->createUrl('/'.$this->adminMenu["cur"]->code.'/adminDelete',array('id'=>$item->id))?>" class="ajax-form ajax-delete b-tool b-tool-delete" data-name="<?=$this->adminMenu["cur"]->vin_name?>" title="Удалить <?=$this->adminMenu["cur"]->vin_name?>"></a><? endif; ?></td>
 			</tr>
 		<? endforeach; ?>
 	<? else: ?>

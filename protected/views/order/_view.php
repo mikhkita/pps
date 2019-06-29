@@ -229,7 +229,7 @@
 			</div>
 			<div class="b-right-tile-bottom-block b-right-tile-block">
 				<a href="#" class="b-btn" id="b-progress-bar-container">
-					<span class="icon-check">Оформить заявку</span>
+					<span class="icon-check">Сохранить</span>
 				</a>
 			</div>
 		</div>

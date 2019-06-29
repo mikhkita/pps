@@ -29,6 +29,9 @@ class PaymentController extends Controller
 	public function actionAdminIndex($partial = false){
 		unset($_GET["partial"]);
 
+		// $number = Payment::getNextBillNumber();
+		// var_dump($number);
+
 		if( !$partial ){
 			$this->layout = "admin";
 			$this->pageTitle = $this->adminMenu["cur"]->name;

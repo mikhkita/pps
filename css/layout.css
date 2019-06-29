@@ -3367,7 +3367,22 @@ div.notifyjs-bootstrap-error{
         text-align: right;
         width: 50px !important;
     }
-
+.icon-pdf,
+.icon-xls{
+    padding-left: 28px;   
+    position: relative;
+    text-decoration: underline;
+}
+    .icon-pdf:hover,
+    .icon-xls:hover{
+        text-decoration: none;
+    }
+    .icon-pdf:before,
+    .icon-xls:before{
+        font-size: 20px;
+        left: 0px;
+        position: absolute;
+    }
 
 
 

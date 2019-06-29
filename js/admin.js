@@ -1144,12 +1144,10 @@ $(document).ready(function(){
         return ids.join(",");
     }
     // Actions ------------------------------------------------------------ Actions
-    
-    var needCountText = $('.b-order-form').hasClass('b-order-form-edit') ? 'Y' : 'N' ;
 
     $('#order-form').progressBtn({
         buttonId : 'b-progress-bar-container',
-        needCountText : needCountText,
+        needCountText : $('.b-order-form').hasClass('b-order-form-edit'),
     });
 
     $('#b-progress-bar-container').on('click',function(){
@@ -1339,7 +1337,6 @@ $(document).ready(function(){
     function isAirport(){
         var startPoint = $("#Order_start_point_id").val(),
             endPoint = $("#Order_end_point_id").val();
-
         return ( points[startPoint] == "1" || points[endPoint] == "1" );
     }
 
@@ -1448,6 +1445,18 @@ $(document).ready(function(){
     }
 
     $("body").on("change", ".direction-field", function(){
+        
+        if( $(".b-payment-form").length ){
+
+            var cont = $(this).parents('.b-payment-inputs'),
+                maxPrice = cont.attr('data-max-price')*1,
+                val = $(this).parents('.b-payment-inputs').find('input[type=radio]:checked').val();
+
+            price = (val == 1) ? maxPrice : maxPrice/2 ;
+            cont.find('.b-right-price input').val(price);
+
+            calcTotalPrice();
+        }
         checkTransferAccess();
     });
 
@@ -1460,6 +1469,12 @@ $(document).ready(function(){
         $(this).parents(".b-price-row").find("h3 span").text( value.toLocaleString() );
 
         if( $(".b-payment-form").length ){
+            var maxPrice = $(this).parents('.b-payment-inputs').attr('data-max-price')*1;
+            
+            if($(this).val() > maxPrice || $(this).val() == '' || $(this).val() == 0){
+                $(this).val(maxPrice);
+            }
+
             calcTotalPrice();
         }
     });

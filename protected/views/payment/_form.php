@@ -1,4 +1,4 @@
-<div class="b-order-form b-payment-form b-order-form-edit">
+<div class="b-order-form b-payment-form">
 	<div class="b-order-form-left">
 		<? $btnText = ($payment->type_id == 1) ? "Оплатить онлайн" : "Выставить счет" ; ?>
 		<?php $form=$this->beginWidget("CActiveForm", array(
@@ -29,7 +29,7 @@
 						<div class="b-input b-hor-input-left">
 							<p><?=$person->person->fio?></p>
 						</div>
-						<div class="b-hor-input-right b-payment-inputs clearfix">
+						<div class="b-hor-input-right b-payment-inputs clearfix" data-max-price="<?=$person->person->price_without_commission?>">
 						<? if( $person->person->direction_id == 1 ): ?>
 							<?=CHTML::radioButtonList("PaymentPerson[".$person->person_id."][direction_id]", $person->direction_id, $person->person->directions, array("template" => '<div class="b-radio">{input}{label}</div>', "separator" => "", "container" => "div", "class" => "direction-field", "baseID" => "person_".$person->person_id)); ?>
 						<? else: ?>
@@ -70,7 +70,7 @@
 				</div>
 			</div>
 			<div class="b-right-tile-bottom-block b-right-tile-block">
-				<a href="#" id="b-person-form-btn" class="b-btn b-btn-green">
+				<a href="#" class="b-btn" id="b-progress-bar-container">
 					<span class="icon-check main-text"><?=$btnText?></span>
 					<span class="process">Отправка заявки,<br>пожалуйста подождите...</span>
 					<span class="icon-check success">Заявка успешно отправлена</span>

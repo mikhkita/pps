@@ -23,7 +23,6 @@ class Payment extends CActiveRecord
 		4 => "Оплачен",
 		5 => "Подтвержден",
 	);
-	public $type = NULL;
 	public $status = NULL;
 
 	/**
@@ -62,6 +61,7 @@ class Payment extends CActiveRecord
 		return array(
 			"user" => array(self::BELONGS_TO, "User", "user_id"),
 			"persons" => array(self::HAS_MANY, "PaymentPerson", "payment_id"),
+			"type" => array(self::BELONGS_TO, "PaymentType", "type_id"),
 		);
 	}
 
@@ -137,7 +137,6 @@ class Payment extends CActiveRecord
 
 		$this->date = date("d.m.Y H:i", strtotime($this->date));
 
-		$this->type = $this->types[ $this->type_id ];
 		$this->status = $this->statuses[ $this->status_id ];
 	}
 
@@ -159,6 +158,19 @@ class Payment extends CActiveRecord
 		}
 
 		return $sum;
+	}
+
+	protected function beforeDelete()
+	{
+		if(parent::beforeDelete() === false) {
+			return false;
+		}
+
+		foreach ($this->persons as $key => $person) {
+			$person->delete();
+		}
+
+		return true;
 	}
 
 	/**

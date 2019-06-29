@@ -305,9 +305,9 @@
 			</div>
 			<div class="b-price-row">
 				<div class="b-label-block b-person-price">
-					<input type="text" class="price-input" name="Person[{{index}}][price]" value="0">
-					<input type="text" class="one_way_price-input" name="Person[{{index}}][one_way_price]" value="0">
-					<input type="text" class="commission-input" name="Person[{{index}}][commission]" value="0">
+					<input type="hidden" class="price-input" name="Person[{{index}}][price]" value="0">
+					<input type="hidden" class="one_way_price-input" name="Person[{{index}}][one_way_price]" value="0">
+					<input type="hidden" class="commission-input" name="Person[{{index}}][commission]" value="0">
 					<label>Итого:</label>
 					<h3><span>0</span> ₽</h3>
 				</div>

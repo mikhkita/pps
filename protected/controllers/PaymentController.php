@@ -110,8 +110,15 @@ class PaymentController extends Controller
 				return true;
 			}
 		}else{
+			if( empty($payment->number) ){
+				$title = $payment->type->create_title;
+			}else{
+				$title = $payment->type->item_name." №".$payment->number;
+			}
+
 			$this->render("adminUpdate",array(
-				"payment" => $payment
+				"payment" => $payment,
+				"title" => $title
 			));
 		}
 	}

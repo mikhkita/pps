@@ -100,7 +100,7 @@ $(document).ready(function(){
         return false;
     });
 
-    function jsonHandler(msg){
+    function jsonHandler(msg, $el){
         var json = JSON.parse(msg);
         if( json.result == "success" ){
             switch (json.action) {
@@ -129,6 +129,18 @@ $(document).ready(function(){
                         $('#b-progress-bar-container .error').text(text);
                         progress.end();
                     },3000)
+                }else if( typeof $el != "undefined" ){
+                    $el.notify(json.message,{
+                        globalPosition: 'top center',
+                        showAnimation: 'fadeIn',
+                        hideAnimation: 'fadeOut',
+                        autoHideDelay: 4000,
+                        autoHide: true,
+                        showDuration: 250,
+                        hideDuration: 100
+                    });
+                }else{
+                    alert(json.message);
                 }
             }
         }
@@ -1095,6 +1107,43 @@ $(document).ready(function(){
     }
     // Checkboxes --------------------------------------------------------- Checkboxes
 
+    // Actions ------------------------------------------------------------ Actions
+    $("body").on("click", ".b-pay-action", function(){
+        var ids = getCheckedPersons(),
+            url = $(this).attr("href"),
+            $this = $(this);
+
+        progress.start(3);
+
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: {
+                ids : ids
+            },
+            success: function(msg){
+                progress.end(function(){
+                    if( msg != "" && isValidJSON(msg) ){
+                        jsonHandler(msg, $this);
+                    }
+                });
+            },
+            error: function(){
+                alert("Ошибка создания платежа. Пожалуйста, проверьте интернет-соединение.");
+            }
+        });
+
+        return false;
+    });
+
+    function getCheckedPersons(){
+        var ids = [];
+        $(".b-person-checkbox:checked").each(function(){
+            ids.push( $(this).val() );
+        });
+        return ids.join(",");
+    }
+    // Actions ------------------------------------------------------------ Actions
 
 
     $('#order-form').progressBtn({

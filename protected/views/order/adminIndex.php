@@ -5,8 +5,8 @@
 	</div>
 	<div class="b-section-actions">
 		<div class="b-checkbox"><input type="checkbox" id="all-checkboxes"><label for="all-checkboxes"></label></div>
-		<a href="#" class="b-icon-btn b-action b-pay-action icon-card">Оплатить онлайн</a>
-		<a href="#" class="b-icon-btn b-action b-bill-action icon-bill">Выставить счет</a>
+		<a href="<?php echo Yii::app()->createUrl('/payment/adminCreate',array('type'=>1))?>" class="b-icon-btn b-pay-action b-pay-action icon-card">Оплатить онлайн</a>
+		<a href="<?php echo Yii::app()->createUrl('/payment/adminCreate',array('type'=>2))?>" class="b-icon-btn b-pay-action b-bill-action icon-bill">Выставить счет</a>
 	</div>
 </div>
 
@@ -37,7 +37,7 @@
 			</tr>
 			<? foreach ($order->persons as $key => $person): ?>
 			<tr>
-				<td class="b-checkbox"><input type="checkbox" id="person-<?=$person->id?>"><label for="person-<?=$person->id?>"></label></td>
+				<td class="b-checkbox"><input type="checkbox" class="b-person-checkbox" value="<?=$person->id?>" id="person-<?=$person->id?>"><label for="person-<?=$person->id?>"></label></td>
 				<td><?=$person->fio?></td>
 				<td><nobr><?=$person->phone?></nobr></td>
 				<td><?=$person->address?></td>

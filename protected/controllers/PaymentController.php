@@ -60,13 +60,7 @@ class PaymentController extends Controller
 
 	public function actionAdminCreate($type)
 	{
-		$persons = array(
-			24,
-			25,
-			26,
-			27,
-			28,
-		);
+		$persons = explode(",", $_POST["ids"]);
 
 		if( !count( $persons ) ){
 			throw new CHttpException(404, "Passengers are not selected");
@@ -97,27 +91,13 @@ class PaymentController extends Controller
 
 				$tmp->save();
 			}
+			Controller::returnSuccess( array(
+				"action" => "redirect",
+				"href" => Yii::app()->createUrl("/payment/adminUpdate", array("id" => $payment->id)),
+			) );
+		}else{
+			Controller::returnError("Ошибка создания платежа");
 		}
-
-		
-
-		// if(isset($_POST["Payment"])) {
-		// 	$result = $model->updateObj($_POST["Payment"], $_POST["Person"]);
-		// 	if( $result->result ){
-		// 		Controller::returnSuccess( array(
-		// 			"action" => "redirectDelay",
-		// 			"href" => Yii::app()->createUrl("/payment/adminIndex")
-		// 		) );
-		// 	}else{
-		// 		Controller::returnError("Ошибка: ".$result->message);
-		// 	}
-		// } else {
-		// 	$this->render("adminCreate",array(
-		// 		"model" => $payment,
-		// 		"persons" => $persons,
-		// 		"directions" => Person::model()->directions,
-		// 	));
-		// }
 	}
 
 	public function actionAdminUpdate($id)

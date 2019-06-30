@@ -204,7 +204,8 @@ small.block{
 .fancybox-close:before,
 .b-back:before,
 .b-hor-input .select2-arrow:before,
-.b-checkbox input[type="checkbox"]:not(.any) + label:after{
+.b-checkbox input[type="checkbox"]:not(.any) + label:after,
+.icon-rub-regular:after{
   /* use !important to prevent issues with browser extensions that change fonts */
   font-family: 'icomoon' !important;
   speak: none;

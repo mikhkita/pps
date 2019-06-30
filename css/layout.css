@@ -3150,8 +3150,11 @@ ul.yiiPager .first, ul.yiiPager .last{
                     margin-bottom: 0;
                 }
                 .b-right-tile-bottom-block .b-btn-green{
-                    background: #178803;
+                    background: #1CA004;
                     margin-bottom: 0;
+                }
+                .b-right-tile-bottom-block .b-btn-green:hover{
+                    background: #178803;
                 }
                 .b-right-tile-bottom-block .b-btn-text-cont:before{
                     position: absolute;
@@ -3395,9 +3398,43 @@ div.notifyjs-bootstrap-error{
         left: 0px;
         position: absolute;
     }
-
-
-
+.b-success-payment-popup{
+    max-width: 520px;
+    width: 100%;
+    overflow: hidden;
+    padding: 0;
+}   
+    .b-success-payment-popup h1{
+        padding: 0;
+        margin-bottom: 0;
+    }
+    .b-success-payment-popup h1:before{
+        color: #1CA004;
+        font-size: 30px;
+        margin-right: 18px;
+    }
+    .b-success-payment-popup .b-right-tile-middle-block{
+        padding-bottom: 32px;
+    }
+        .b-popup-payment-text,
+        .b-popup-payment-text span{
+            font-size: 16px;
+            color: #383B3F;
+            line-height: 24px;
+        }
+        .b-popup-payment-text .bold{
+            font-family: 'Roboto-Bold';
+        }
+        .b-right-tile-block-string:not(:last-child).b-popup-payment-text{
+            margin-bottom: 8px;
+        }
+        .b-popup-right-tile-bottom-block{
+            padding: 32px;
+            padding-bottom: 36px;
+        }
+            .b-right-tile-bottom-block .b-btn span.b-btn-popup-text {
+                padding-left: 0;
+            }
 
 
 

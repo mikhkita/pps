@@ -78,7 +78,13 @@
 					<span class="icon-check success">Заявка успешно отправлена</span>
 					<span class="error">Ошибка! Проверьте интернет-соединение и попробуйте ещё раз</span>
 				</div>
+				<a href="#b-success-popup" class="b-popup-link fancy" style="display: none;"></a>
 			</div>
+		</div>
+	</div>
+	<div style="display: none;">
+		<div class="b-success-payment-popup" id="b-success-popup">
+			<?php $this->renderPartial("_popup"); ?>
 		</div>
 	</div>
 

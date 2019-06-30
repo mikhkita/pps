@@ -205,7 +205,8 @@ small.block{
 .b-back:before,
 .b-hor-input .select2-arrow:before,
 .b-checkbox input[type="checkbox"]:not(.any) + label:after,
-.icon-rub-regular:after{
+.icon-rub-regular:after,
+.icon-rub-bold:after{
   /* use !important to prevent issues with browser extensions that change fonts */
   font-family: 'icomoon' !important;
   speak: none;
@@ -256,10 +257,10 @@ small.block{
 .b-checkbox input[type="checkbox"]:not(.any) + label:after{
     content: "\e905" !important;
 }
-.icon-rub-bold:before {
+.icon-rub-bold:after {
     content: "\e908";
 }
-.icon-rub-regular:before {
+.icon-rub-regular:after {
     content: "\e909";
 }
 .icon-search:before {
@@ -733,47 +734,28 @@ h1.b-with-nav{
             /*overflow: hidden;*/
             /*max-width: 150px;*/
         }
-        td.icon-rub-regular{
+        
+        .icon-rub-bold:after,
+        .icon-rub-regular:after{
             position: relative;
-            padding-right: 25px;
+            margin-left: 4px;
+            bottom: 1px;
         }
-        .b-right-price.icon-rub-regular{
-            position: relative;
-            padding-right: 12px;
-        }
-        td.icon-rub-regular:before,
-        .b-right-price.icon-rub-regular:before{
-            position: absolute;
-            font-size: 10px;
-            top: 50%;
-            right: 13px;
-            -webkit-transform: translateY(-50%);
-            -ms-transform: translateY(-50%);
-            -o-transform: translateY(-50%);
-            transform: translateY(-50%);
-        }
-        .b-right-price.icon-rub-regular:before{
-            right: 0;
-        }
-        h4.icon-rub-bold,
-        h3.icon-rub-bold{
-            position: relative;
-            padding-right: 20px;
-        }
-        h4.icon-rub-bold:before,
-        h3.icon-rub-bold:before{
-            position: absolute;
-            font-size: 16px;
-            top: 50%;
-            right: 0;
-            -webkit-transform: translateY(-50%);
-            -ms-transform: translateY(-50%);
-            -o-transform: translateY(-50%);
-            transform: translateY(-50%);
-        }
-        h3.icon-rub-bold:before{
+        h3.icon-rub-bold:after{
             font-size: 19px;
         }
+        h4.icon-rub-bold:after{
+            font-size: 16px;
+        }
+        td.icon-rub-regular:after{
+            font-size: 10px;
+            right: 1px;
+        }
+        .b-right-price.icon-rub-regular:after{
+            font-size: 10px;
+            margin-left: 0;
+        }
+
         .b-table .b-big-row td{
             padding: 12px 14px 16px;
         }

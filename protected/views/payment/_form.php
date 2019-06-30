@@ -37,12 +37,12 @@
 						<? else: ?>
 							<div><?=$person->person->direction?></div>
 						<? endif; ?>
-							<div class="b-right-price">
+							<div class="b-right-price icon-rub-regular">
 								<? if( $payment->isEditable() ): ?>
-								<?=CHTML::textField("PaymentPerson[".$person->person_id."][sum]", $person->sum, array("maxlength" => 32, "disabled" => !$payment->isEditable(), "required" => true, "placeholder" => "...", "class" => "numeric price-input", "title" => "Поле обязательно", "autocomplete" => "off"))?> ₽
+								<?=CHTML::textField("PaymentPerson[".$person->person_id."][sum]", $person->sum, array("maxlength" => 32, "disabled" => !$payment->isEditable(), "required" => true, "placeholder" => "...", "class" => "numeric price-input", "title" => "Поле обязательно", "autocomplete" => "off"))?>
 								<? else: ?>
 									<input type="hidden" class="price-input" value="<?=$person->sum?>">
-									<?=number_format( $person->sum, 0, ',', '&nbsp;' )?> ₽
+									<?=number_format( $person->sum, 0, ',', '&nbsp;' )?>
 								<? endif; ?>
 							</div>
 						</div>
@@ -51,7 +51,7 @@
 					<div class="b-price-row">
 						<div class="b-label-block b-order-price">
 							<label>Итого:</label>
-							<h3><span>0</span> ₽</h3>
+							<h3 class="icon-rub-bold"><span>0</span></h3>
 						</div>
 					</div>
 				</div>

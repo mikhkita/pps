@@ -203,7 +203,7 @@
 					<div class="b-label-block b-person-price">
 						<label>Итого:</label>
 						<input type="hidden" class="price-input" value="<?=$person->price?>">
-						<h3><?=number_format( $person->price, 0, ',', '&nbsp;' )?> ₽</h3>
+						<h3 class="icon-rub-bold"><?=number_format( $person->price, 0, ',', '&nbsp;' )?></h3>
 					</div>
 				</div>
 			</div>

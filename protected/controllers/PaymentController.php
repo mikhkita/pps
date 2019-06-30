@@ -138,7 +138,8 @@ class PaymentController extends Controller
 							"action" => "showPopup",
 							"sum" => $payment->getTotalSum(),
 							"date" => Controller::getRusDate($payment->date),
-							"number" => $payment->number
+							"number" => $payment->number,
+							"message" => "Счет успешно создан",
 						) );
 						break;
 				}

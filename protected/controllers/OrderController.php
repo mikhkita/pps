@@ -71,7 +71,8 @@ class OrderController extends Controller
 			if( $result->result ){
 				Controller::returnSuccess( array(
 					"action" => "redirectDelay",
-					"href" => Yii::app()->createUrl("/order/adminIndex")
+					"href" => Yii::app()->createUrl("/order/adminIndex"),
+					"message" => "Заявка успешно отправлена"
 				) );
 			}else{
 				Controller::returnError("Ошибка: ".$result->message);

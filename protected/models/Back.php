@@ -27,9 +27,8 @@ class Back extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array("date", "required"),
 			array("reason", "length", "max" => 4096),
-			array("export_date", "safe"),
+			array("export_date, date", "safe"),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array("id, date, export_date, reason", "safe", "on" => "search"),

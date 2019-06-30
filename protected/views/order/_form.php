@@ -311,7 +311,7 @@
 					<input type="hidden" class="one_way_price-input" name="Person[{{index}}][one_way_price]" value="0">
 					<input type="hidden" class="commission-input" name="Person[{{index}}][commission]" value="0">
 					<label>Итого:</label>
-					<h3><span>0</span> ₽</h3>
+					<h3 class="icon-rub-bold"><span>0</span></h3>
 				</div>
 			</div>
 		</div>

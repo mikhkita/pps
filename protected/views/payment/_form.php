@@ -35,8 +35,8 @@
 						<? else: ?>
 							<div><?=$person->person->direction?></div>
 						<? endif; ?>
-							<div class="b-right-price">
-								<?=CHTML::textField("PaymentPerson[".$person->person_id."][sum]", $person->sum, array("maxlength" => 32, "required" => true, "placeholder" => "...", "class" => "numeric price-input", "title" => "Поле обязательно", "autocomplete" => "off"))?> ₽
+							<div class="b-right-price icon-rub-regular">
+								<?=CHTML::textField("PaymentPerson[".$person->person_id."][sum]", $person->sum, array("maxlength" => 32, "required" => true, "placeholder" => "...", "class" => "numeric price-input", "title" => "Поле обязательно", "autocomplete" => "off"))?>
 							</div>
 						</div>
 					</div>
@@ -44,7 +44,7 @@
 					<div class="b-price-row">
 						<div class="b-label-block b-order-price">
 							<label>Итого:</label>
-							<h3><span>0</span> ₽</h3>
+							<h3 class="icon-rub-bold"><span>0</span></h3>
 						</div>
 					</div>
 				</div>

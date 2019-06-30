@@ -39,7 +39,7 @@
 					endswitch;
 				endif; ?></td>
 				<td><?=$item->getPersonsText()?></td>
-				<td class="tr"><?=number_format( $item->getTotalSum(), 0, ',', '&nbsp;' )?> ₽</td>
+				<td class="tr icon-rub-regular"><?=number_format( $item->getTotalSum(), 0, ',', '&nbsp;' )?></td>
 				<td><span class="<?=$statusClass?>"><?=$item->status?></span></td>
 				<td><a href="<?php echo Yii::app()->createUrl('/'.$this->adminMenu["cur"]->code.'/adminupdate',array('id'=>$item->id))?>" class="b-tool b-double-click b-tool-update" title="Редактировать <?=$this->adminMenu["cur"]->vin_name?>"></a><? if( $item->isEditable() ): ?><a href="<?php echo Yii::app()->createUrl('/'.$this->adminMenu["cur"]->code.'/adminDelete',array('id'=>$item->id))?>" class="ajax-form ajax-delete b-tool b-tool-delete" data-name="<?=$this->adminMenu["cur"]->vin_name?>" title="Удалить <?=$this->adminMenu["cur"]->vin_name?>"></a><? endif; ?></td>
 			</tr>

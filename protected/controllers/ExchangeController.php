@@ -23,7 +23,85 @@ class ExchangeController extends Controller
 	}
 
 	public function actionExportBack(){
-		echo "string";
+
+	// <Отмена ИД="12">
+	// 	<Заявка Номер="123123123">
+	// 	 <Пассажир ПассажирКод="00-00029283" НомерСтроки="1"/>
+	// 	</Заявка>
+	// </Отмена>
+
+		function getArBack(){
+			
+			$model = Back::model()->findAll("export_date is NULL");
+			$arBack = array();
+			
+			if (!empty($model)) {
+				foreach ($model as $key => $back) {
+					$arBack[$key]["ID"] = $back->id;
+					foreach ($back->persons as $backPerson) {
+
+						if ($backPerson->person->direction_id == 1 || $backPerson->person->direction_id == 2) {
+							$arBack[$key]["ORDERS"][$backPerson->person->order->to_code_1c][] = array(
+								'CODE' => $backPerson->person->code_1c,
+								'NUMBER' => $backPerson->person->number
+							);
+						}
+
+						if ($backPerson->person->direction_id == 1 || $backPerson->person->direction_id == 3) {
+							$arBack[$key]["ORDERS"][$backPerson->person->order->from_code_1c][] = array(
+								'CODE' => $backPerson->person->code_1c,
+								'NUMBER' => $backPerson->person->number
+							);
+						}
+
+					}
+				}
+			}
+
+			echo "<pre>";
+			var_dump($arBack);
+			echo "</pre>";
+
+			return $arBack;
+		}
+
+		function addDocumentToXML(&$xml, $arBack){
+
+			$document = $xml->addChild("Отмена");
+
+			foreach ($arBack as $code => $back) {
+				$document->addAttribute("ИД", $back['ID']);
+				foreach ($back['ORDERS'] as $orderID => $orderInfo) {
+					$order = $document->addChild("Заявка");
+					$order->addAttribute("Номер", $orderID);
+					foreach($orderInfo as $passengers){
+						$passenger = $order->addChild("Пассажир");
+						$passenger->addAttribute("ПассажирКод", $passengers['CODE']);
+						$passenger->addAttribute("НомерСтроки", $passengers['NUMBER']);
+					}
+				}
+			}
+
+			file_put_contents("backs.xml", $xml->asXML());
+			
+			$model = Back::model()->findAll("export_date is NULL");
+
+			$date = date("Y-m-d H:i:s");
+
+			foreach ($model as $key => $back) {
+				$back->export_date = $date;
+				$back->save();
+			}
+		}
+
+		$xml = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><Отмены/>');
+
+		$arBack = getArBack();
+
+		if (!empty($arBack)) {
+			addDocumentToXML($xml, $arBack);
+		}
+
 	}
 
 	public function actionExportOrder(){

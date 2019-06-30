@@ -42,9 +42,9 @@
 				<td><nobr><?=$person->phone?></nobr></td>
 				<td><?=$person->address?></td>
 				<td><nobr><span class="red tooltip" title="Туда">В работе</span> / <span class="green tooltip" title="Обратно">В работе</span></nobr></td>
-				<td class="tr"><?=number_format( $person->price, 0, ',', '&nbsp;' )?> ₽</td>
-				<td class="tr"><?=number_format( $person->cash, 0, ',', '&nbsp;' )?> ₽</td>
-				<td class="tr"><?=number_format( $person->commission, 0, ',', '&nbsp;' )?> ₽</td>
+				<td class="tr icon-rub-regular"><?=number_format( $person->price, 0, ',', '&nbsp;' )?></td>
+				<td class="tr icon-rub-regular"><?=number_format( $person->cash, 0, ',', '&nbsp;' )?></td>
+				<td class="tr icon-rub-regular"><?=number_format( $person->commission, 0, ',', '&nbsp;' )?></td>
 				<td><span class="green">Оплачено</span></td>
 			</tr>
 			<? endforeach; ?>
@@ -54,9 +54,9 @@
 				<td></td>
 				<td></td>
 				<td class="b-label-block tr"><label>Итого:</label></td>
-				<td class="tr"><h4><?=number_format( $order->getTotalPrice(), 0, ',', '&nbsp;' )?> ₽</h4></td>
-				<td class="tr"><h4><?=number_format( $order->getTotalCash(), 0, ',', '&nbsp;' )?> ₽</h4></td>
-				<td class="tr"><h4><?=number_format( $order->getTotalCommission(), 0, ',', '&nbsp;' )?> ₽</h4></td>
+				<td class="tr"><h4 class="icon-rub-bold"><?=number_format( $order->getTotalPrice(), 0, ',', '&nbsp;' )?></h4></td>
+				<td class="tr"><h4 class="icon-rub-bold"><?=number_format( $order->getTotalCash(), 0, ',', '&nbsp;' )?></h4></td>
+				<td class="tr"><h4 class="icon-rub-bold"><?=number_format( $order->getTotalCommission(), 0, ',', '&nbsp;' )?></h4></td>
 				<td><span class="orange">Оплачено частично</span></td>
 			</tr>
 		</table>

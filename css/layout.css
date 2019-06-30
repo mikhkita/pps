@@ -732,6 +732,47 @@ h1.b-with-nav{
             /*overflow: hidden;*/
             /*max-width: 150px;*/
         }
+        td.icon-rub-regular{
+            position: relative;
+            padding-right: 25px;
+        }
+        .b-right-price.icon-rub-regular{
+            position: relative;
+            padding-right: 12px;
+        }
+        td.icon-rub-regular:before,
+        .b-right-price.icon-rub-regular:before{
+            position: absolute;
+            font-size: 10px;
+            top: 50%;
+            right: 13px;
+            -webkit-transform: translateY(-50%);
+            -ms-transform: translateY(-50%);
+            -o-transform: translateY(-50%);
+            transform: translateY(-50%);
+        }
+        .b-right-price.icon-rub-regular:before{
+            right: 0;
+        }
+        h4.icon-rub-bold,
+        h3.icon-rub-bold{
+            position: relative;
+            padding-right: 20px;
+        }
+        h4.icon-rub-bold:before,
+        h3.icon-rub-bold:before{
+            position: absolute;
+            font-size: 16px;
+            top: 50%;
+            right: 0;
+            -webkit-transform: translateY(-50%);
+            -ms-transform: translateY(-50%);
+            -o-transform: translateY(-50%);
+            transform: translateY(-50%);
+        }
+        h3.icon-rub-bold:before{
+            font-size: 19px;
+        }
         .b-table .b-big-row td{
             padding: 12px 14px 16px;
         }
@@ -3097,7 +3138,7 @@ ul.yiiPager .first, ul.yiiPager .last{
 
         }
             .b-right-tile-top-block{
-                font-family: Roboto-Bold;
+                font-family: 'Roboto-Bold';
                 font-size: 32px;
                 color: #383B3F;
                 letter-spacing: 0;
@@ -3116,7 +3157,7 @@ ul.yiiPager .first, ul.yiiPager .last{
                     margin-bottom: 24px;
                 }
                     .b-right-tile-block-string .b-count{
-                        font-family: Roboto-Bold;
+                        font-family: 'Roboto-Bold';
                         font-size: 80px;
                         color: #383B3F;
                         letter-spacing: 0;
@@ -3124,7 +3165,7 @@ ul.yiiPager .first, ul.yiiPager .last{
                         margin-right: 16px;
                     }
                     .b-right-tile-block-string .b-count-text{
-                        font-family: Roboto-Medium;
+                        font-family: 'RobotoMedium';
                         font-size: 32px;
                         color: #C4CCD5;
                         letter-spacing: 0;
@@ -3277,7 +3318,7 @@ ul.yiiPager .first, ul.yiiPager .last{
                         transform: rotate(-45deg) translateY(-50%);
                     }
                     .b-right-tile-bottom-block .b-btn span{
-                        font-family: Roboto-Medium;
+                        font-family: 'RobotoMedium';
                         font-size: 14px;
                         color: #FFFFFF;
                         letter-spacing: 0.5px;
@@ -3294,13 +3335,13 @@ ul.yiiPager .first, ul.yiiPager .last{
                         top: 3px;
                     }
                 .b-right-tile-block-bottom-text{
-                    font-family: Roboto-Regular;
+                    font-family: 'RobotoRegular';
                     font-size: 14px;
                     color: #99A0A9;
                     line-height: 18px;
                 }
                     .b-right-tile-block-bottom-text a{
-                        font-family: Roboto-Regular;
+                        font-family: RobotoRegular;
                         font-size: 14px;
                         color: #99A0A9;
                         line-height: 18px;

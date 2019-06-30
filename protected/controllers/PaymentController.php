@@ -20,25 +20,39 @@ class PaymentController extends Controller
 				"actions" => array("adminUpdate", "adminDelete", "adminCreate"),
 				"roles" => array("updateUser"),
 			),
+			array("allow",
+				"actions" => array("callback"),
+				"users" => array("*"),
+			),
 			array("deny",
 				"users" => array("*"),
 			),
 		);
 	}
 
+	public function actionCallback($payment_id, $orderId, $success)
+	{
+		$payment = Payment::model()->findByPk($payment_id);
+		// var_dump($_GET);
+		// die();
+
+		if( $payment ){
+			$payment->status_id = ( $success == "1" )?4:6;
+			if( $success == "1" ){
+				$payment->transaction = $orderId;
+			}
+			$payment->save();
+
+			$this->redirect( Yii::app()->createUrl("/payment/adminUpdate", array("id" => $payment_id)) );
+		}else{
+			echo "Ошибка оплаты. Не найден платеж";
+			var_dump($_GET);
+			die();
+		}
+	}
+
 	public function actionAdminIndex($partial = false){
 		unset($_GET["partial"]);
-
-		// $sberbank = new Sberbank();
-
-		// $description = "Оплата билетов";
-		// $jsonParams = json_decode(array(
-		// 	// ""
-		// ));
-
-		// $result = $sberbank->requestTicket(7, 3810, $description, $jsonParams );
-		// var_dump($result);
-		// die();
 
 		// $number = Payment::getNextBillNumber();
 		// var_dump($number);
@@ -142,10 +156,23 @@ class PaymentController extends Controller
 						$payment->status_id = 2;
 						$payment->save();
 
-						Controller::returnSuccess( array(
-							"action" => "redirectDelay",
-							"href" => Yii::app()->createUrl("/payment/adminUpdate", array("id" => $id)),
-						) );
+						$sberbank = new Sberbank();
+
+						$description = "Оплата билетов";
+						$jsonParams = json_decode(array(
+							"payment_id" => $payment->id
+						));
+
+						$result = (object) $sberbank->requestTicket($payment->id, $payment->getTotalSum(), $description, $jsonParams );
+
+						if( $result->status == "success" ){
+							Controller::returnSuccess( array(
+								"action" => "redirect",
+								"href" => $result->url,
+							) );
+						}else{
+							Controller::returnError("Ошибка: ". $result->errorMessage);
+						}
 						break;
 					case 2:
 						$payment->status_id = 3;
@@ -173,11 +200,7 @@ class PaymentController extends Controller
 			// 	return true;
 			// }
 		}else{
-			if( empty($payment->number) ){
-				$title = $payment->type->create_title;
-			}else{
-				$title = $payment->type->item_name." №".$payment->number;
-			}
+			$title = $payment->getTitle();
 
 			$this->render("adminUpdate",array(
 				"payment" => $payment,

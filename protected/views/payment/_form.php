@@ -1,6 +1,8 @@
 <div class="b-order-form b-payment-form">
 	<div class="b-order-form-left">
-		<? $btnText = ($payment->type_id == 1) ? "Оплатить онлайн" : "Выставить счет" ; ?>
+		<? 
+		$btnText = ($payment->type_id == 1) ? "Оплатить онлайн" : "Выставить счет" ; 
+		?>
 		<?php $form=$this->beginWidget("CActiveForm", array(
 			"id" => "order-form",
 			"enableAjaxValidation" => false,
@@ -30,13 +32,18 @@
 							<p><?=$person->person->fio?></p>
 						</div>
 						<div class="b-hor-input-right b-payment-inputs clearfix" data-max-price="<?=$person->person->price_without_commission?>">
-						<? if( $person->person->direction_id == 1 ): ?>
+						<? if( $person->person->direction_id == 1 && $payment->isEditable() ): ?>
 							<?=CHTML::radioButtonList("PaymentPerson[".$person->person_id."][direction_id]", $person->direction_id, $person->person->directions, array("template" => '<div class="b-radio">{input}{label}</div>', "separator" => "", "container" => "div", "class" => "direction-field", "baseID" => "person_".$person->person_id)); ?>
 						<? else: ?>
 							<div><?=$person->person->direction?></div>
 						<? endif; ?>
 							<div class="b-right-price icon-rub-regular">
-								<?=CHTML::textField("PaymentPerson[".$person->person_id."][sum]", $person->sum, array("maxlength" => 32, "required" => true, "placeholder" => "...", "class" => "numeric price-input", "title" => "Поле обязательно", "autocomplete" => "off"))?>
+								<? if( $payment->isEditable() ): ?>
+								<?=CHTML::textField("PaymentPerson[".$person->person_id."][sum]", $person->sum, array("maxlength" => 32, "disabled" => !$payment->isEditable(), "required" => true, "placeholder" => "...", "class" => "numeric price-input", "title" => "Поле обязательно", "autocomplete" => "off"))?>
+								<? else: ?>
+									<input type="hidden" class="price-input" value="<?=$person->sum?>">
+									<?=number_format( $person->sum, 0, ',', '&nbsp;' )?>
+								<? endif; ?>
 							</div>
 						</div>
 					</div>
@@ -63,21 +70,26 @@
 			</div>
 			<div class="b-right-tile-middle-block b-right-tile-block">
 				<div class="b-right-tile-block-string b-pass-text-container">
-					<span class="b-count resizable-font-item big-resizable-font-item" id="person_total_count">1</span><span class="b-count-text resizable-font-item" id="totalPassText">пассажир</span>
+					<span class="b-count resizable-font-item big-resizable-font-item" id="person_total_count"><?=count($payment->persons)?></span><span class="b-count-text resizable-font-item" id="totalPassText">пассажир</span>
 				</div>
 				<div class="b-right-tile-block-string b-sum-text-container">
-					<span class="b-count resizable-font-item big-resizable-font-item" id="totalSum">0</span><span class="b-count-text resizable-font-item" id="totalSumText">рублей</span>
+					<span class="b-count resizable-font-item big-resizable-font-item" id="totalSum"><?=number_format( $payment->getTotalSum(), 0, ',', '&nbsp;' )?></span><span class="b-count-text resizable-font-item" id="totalSumText">рублей</span>
 				</div>
 			</div>
 			<div class="b-right-tile-bottom-block b-right-tile-block">
-				<a href="#" class="b-btn" id="b-progress-bar-container">
-					<span class="icon-check main-text"><?=$btnText?></span>
-				</a>
-				<div class="b-btn-text-cont">
-					<span class="process">Отправка заявки,<br>пожалуйста подождите...</span>
-					<span class="icon-check success">Заявка успешно отправлена</span>
-					<span class="error">Ошибка! Проверьте интернет-соединение и попробуйте ещё раз</span>
-				</div>
+				<? if( $payment->status_id == 4 || $payment->status_id == 5 || $payment->status_id == 6 ): ?>
+					<h2 class="<?=$payment->getStatusColor()?>"><?=$payment->status?></h2>
+				<? endif; ?>
+				<? if( $payment->isEditable() ): ?>
+					<a href="#" class="b-btn" id="b-progress-bar-container">
+						<span class="icon-check main-text"><?=$btnText?></span>
+					</a>
+					<div class="b-btn-text-cont">
+						<span class="process">Отправка заявки,<br>пожалуйста подождите...</span>
+						<span class="icon-check success">Заявка успешно отправлена</span>
+						<span class="error">Ошибка! Проверьте интернет-соединение и попробуйте ещё раз</span>
+					</div>
+				<? endif; ?>
 				<a href="#b-success-popup" class="b-popup-link fancy" style="display: none;"></a>
 			</div>
 		</div>

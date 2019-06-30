@@ -8,7 +8,7 @@ Class Sberbank {
     private $backUrl    = "";   //Адрес возврата
     
     function __construct() {
-        $this->backUrl = "http://spp.com/";
+        $this->backUrl = "http://spp.com/payment/callback";
     }
 
     public function requestTicket($id, $amount, $desc, $json_params = []) {
@@ -60,10 +60,10 @@ Class Sberbank {
 
         $data = array(
             'token' => $this->token,
-            'orderNumber' => $id,
+            'orderNumber' => md5($id.time().rand()),
             'amount' => $amount,
-            'returnUrl' => $this->backUrl . '?success=1' . ($fromPartners ? "&partners=1" : ""),
-            'failUrl' => $this->backUrl . '?fail=1' . ($fromPartners ? "&partners=1" : ""),
+            'returnUrl' => $this->backUrl . '?success=1&payment_id=' . $id,
+            'failUrl' => $this->backUrl . '?fail=1&payment_id=' . $id,
             'description' => $desc,
         );
         if ($json_params) {

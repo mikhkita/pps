@@ -328,6 +328,16 @@ class Controller extends CController
         );
     }
 
+    public function accessFilter(&$filter){
+        if( Yii::app()->user->checkAccess('accessAll') ){
+            
+        }else if( Yii::app()->user->checkAccess('accessAgency') ){
+            $filter->agency_id = $this->user->agency_id;
+        }else if( Yii::app()->user->checkAccess('accessOnlyHis') ){
+            $filter->user_id = Yii::app()->user->id;
+        }
+    }
+
     public function getUser(){
         return User::model()->with("roles.role")->findByPk(Yii::app()->user->id);
     }

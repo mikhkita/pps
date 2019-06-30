@@ -131,7 +131,7 @@ class User extends CActiveRecord
 	 * @return CActiveDataProvider the data provider that can return the models
 	 * based on the search/filter conditions.
 	 */
-	public function search()
+	public function search($pages, $count = false)
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
@@ -144,9 +144,14 @@ class User extends CActiveRecord
 		$criteria->compare("email", $this->email, true);
 		$criteria->compare("active", $this->active);
 
-		return new CActiveDataProvider($this, array(
-			"criteria"=>$criteria,
-		));
+		if( $count ){
+			return User::model()->count($criteria);
+		}else{
+			return new CActiveDataProvider($this, array(
+				"criteria" => $criteria,
+				"pagination" => array("pageSize" => $pages, "route" => "User/adminindex")
+			));
+		}
 	}
 
 	public function afterFind()

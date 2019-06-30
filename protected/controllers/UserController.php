@@ -120,18 +120,27 @@ class UserController extends Controller
 			$this->pageTitle = $this->adminMenu["cur"]->name;
 		}
 
-        $model = User::model()->findAll();
+        $filter = new User('filter');
+
+		if (isset($_GET['User'])){
+            $filter->attributes = $_GET['User'];
+        }
+
+        $dataProvider = $filter->search(50);
+		$count = $filter->search(50, true);
+
+		$params = array(
+			"data" => $dataProvider->getData(),
+			"pages" => $dataProvider->getPagination(),
+			"filter" => $filter,
+			"count" => $count,
+			"labels" => User::attributeLabels(),
+		);
 
 		if( !$partial ){
-			$this->render("adminIndex".(($this->isMobile)?"Mobile":""),array(
-				"data" => $model,
-				"labels" => User::attributeLabels()
-			));
+			$this->render("adminIndex".(($this->isMobile)?"Mobile":""), $params);
 		}else{
-			$this->renderPartial("adminIndex".(($this->isMobile)?"Mobile":""),array(
-				"data" => $model,
-				"labels" => User::attributeLabels()
-			));
+			$this->renderPartial("adminIndex".(($this->isMobile)?"Mobile":""), $params);
 		}
 	}
 

@@ -68,6 +68,8 @@ class PaymentController extends Controller
             $filter->attributes = $_GET['Payment'];
         }
 
+        Controller::accessFilter($filter);
+
         $dataProvider = $filter->search(50);
 		$count = $filter->search(50, true);
 

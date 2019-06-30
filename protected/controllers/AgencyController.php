@@ -14,11 +14,11 @@ class AgencyController extends Controller
 		return array(
 			array("allow",
 				"actions" => array("adminIndex"),
-				"roles" => array("readUser"),
+				"roles" => array("readAgency"),
 			),
 			array("allow",
 				"actions" => array("adminUpdate", "adminDelete", "adminCreate"),
-				"roles" => array("updateUser"),
+				"roles" => array("updateAgency"),
 			),
 			array("deny",
 				"users" => array("*"),

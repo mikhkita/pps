@@ -109,7 +109,12 @@ class Order extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->addSearchCondition("id", $this->id);
+		if( !empty($this->agency_id) ){
+			$criteria->with = "user";
+			$criteria->addSearchCondition("user.agency_id", $this->agency_id);
+		}
+
+		$criteria->addSearchCondition("t.id", $this->id);
 		$criteria->addSearchCondition("to_date", $this->to_date);
 		$criteria->addSearchCondition("from_date", $this->from_date);
 		$criteria->addSearchCondition("create_date", $this->create_date);
@@ -123,7 +128,7 @@ class Order extends CActiveRecord
 		$criteria->addSearchCondition("from_code_1c", $this->from_code_1c);
 		$criteria->addSearchCondition("user_id", $this->user_id);
 
-		$criteria->order = "id DESC";
+		$criteria->order = "t.id DESC";
 
 		if( $count ){
 			return Order::model()->count($criteria);

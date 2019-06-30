@@ -2476,9 +2476,9 @@ ul.yiiPager .first, ul.yiiPager .last{
     position: fixed;
     top: 0px;
     left: 0px;
-    padding-left: 91px;
+    margin-left: 91px;
     box-sizing: border-box;
-    width: 100%;
+    width: calc( 100% - 91px );
     min-width: 1113px;
     z-index: 999;
     padding-right: 16px;

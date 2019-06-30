@@ -40,11 +40,7 @@ class OrderController extends Controller
             $filter->attributes = $_GET['Order'];
         }
 
-        if( Yii::app()->user->checkAccess('director') ){
-        	$filter->agency_id = $this->user->agency_id;
-        }else if( Yii::app()->user->checkAccess('manager') ){
-        	$filter->user_id = Yii::app()->user->id;
-        }
+        Controller::accessFilter($filter);
 
         $dataProvider = $filter->search(50);
 		$count = $filter->search(50, true);

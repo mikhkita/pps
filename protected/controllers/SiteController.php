@@ -327,6 +327,11 @@ class SiteController extends Controller
         $auth->createOperation("readAgency", "Просмотр агентств");
         $auth->createOperation("updateAgency", "Создание/изменение/удаление агентств");
 
+        // Общее
+        $auth->createOperation("accessOnlyHis", "Доступ только к своему");
+        $auth->createOperation("accessAgency", "Доступ ко всему внутри турагентства");
+        $auth->createOperation("accessAll", "Доступ ко всему");
+
     // Права --------------------------------------------------- Права
 
         // Управление пользователями (полный доступ к пользователям)
@@ -357,18 +362,23 @@ class SiteController extends Controller
 
         // Менеджер
         $role = $auth->createRole("manager");
+        $role->addChild("accessOnlyHis");
         $role->addChild("orderAdmin");
 
         // Директор
         $role = $auth->createRole("director");
         $role->addChild("manager");
+        $role->addChild("userAdmin");
+        $role->addChild("accessAgency");
         $role->addChild("paymentAdmin");
 
         // Админ
         $role = $auth->createRole("admin");
+        $role->addChild("director");
+        $role->addChild("accessAll");
         $role->addChild("readDictionary");
         $role->addChild("updatePoint");
-        $role->addChild("director");
+        $role->addChild("agencyAdmin");
         $role->addChild("userAdmin");
 
         // Root

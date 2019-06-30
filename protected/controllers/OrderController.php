@@ -14,11 +14,11 @@ class OrderController extends Controller
 		return array(
 			array("allow",
 				"actions" => array("adminIndex"),
-				"roles" => array("readUser"),
+				"roles" => array("readOrder"),
 			),
 			array("allow",
 				"actions" => array("adminUpdate", "adminDelete", "adminCreate"),
-				"roles" => array("updateUser"),
+				"roles" => array("updateOrder"),
 			),
 			array("deny",
 				"users" => array("*"),
@@ -38,6 +38,12 @@ class OrderController extends Controller
 
 		if (isset($_GET['Order'])){
             $filter->attributes = $_GET['Order'];
+        }
+
+        if( Yii::app()->user->checkAccess('director') ){
+        	$filter->agency_id = $this->user->agency_id;
+        }else if( Yii::app()->user->checkAccess('manager') ){
+        	$filter->user_id = Yii::app()->user->id;
         }
 
         $dataProvider = $filter->search(50);
@@ -89,10 +95,16 @@ class OrderController extends Controller
 	{
 		$model = $this->loadModel($id);
 
-		if(isset($_POST["Order"])) {
-			if( $model->updateObj($_POST["Order"], $_POST["Person"]) ){
-				$this->actionAdminIndex();
-				return true;
+		if(isset($_POST["Person"])) {
+			$result = $model->updateObj(NULL, $_POST["Person"]);
+			if( $result->result ){
+				Controller::returnSuccess( array(
+					"action" => "redirectDelay",
+					"href" => Yii::app()->createUrl("/order/adminIndex"),
+					"message" => "Заявка успешно сохранена"
+				) );
+			}else{
+				Controller::returnError("Ошибка: ".$result->message);
 			}
 		}else{
 			$this->render("adminUpdate",array(

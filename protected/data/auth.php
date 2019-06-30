@@ -14,107 +14,66 @@ return array (
     'bizRule' => NULL,
     'data' => NULL,
   ),
-  'readSection' => 
+  'readOrder' => 
   array (
     'type' => 0,
-    'description' => 'Просмотр групп бизнеса',
+    'description' => 'Просмотр заявок',
     'bizRule' => NULL,
     'data' => NULL,
   ),
-  'updateSection' => 
+  'updateOrder' => 
   array (
     'type' => 0,
-    'description' => 'Создание/изменение/удаление групп бизнеса',
+    'description' => 'Создание/изменение заявок',
     'bizRule' => NULL,
     'data' => NULL,
   ),
-  'readDept' => 
+  'readPayment' => 
   array (
     'type' => 0,
-    'description' => 'Просмотр подразделений',
+    'description' => 'Просмотр платежей',
     'bizRule' => NULL,
     'data' => NULL,
   ),
-  'updateDept' => 
+  'updatePayment' => 
   array (
     'type' => 0,
-    'description' => 'Создание/изменение/удаление подразделений',
+    'description' => 'Создание/изменение/удаление платежей',
     'bizRule' => NULL,
     'data' => NULL,
   ),
-  'readAll' => 
+  'readDictionary' => 
   array (
     'type' => 0,
-    'description' => 'Только редактирование',
-    'bizRule' => NULL,
-    'data' => NULL,
-    'assignments' => 
-    array (
-      1 => 
-      array (
-        'bizRule' => NULL,
-        'data' => NULL,
-      ),
-      2 => 
-      array (
-        'bizRule' => NULL,
-        'data' => NULL,
-      ),
-      8 => 
-      array (
-        'bizRule' => NULL,
-        'data' => NULL,
-      ),
-      9 => 
-      array (
-        'bizRule' => NULL,
-        'data' => NULL,
-      ),
-      17 => 
-      array (
-        'bizRule' => NULL,
-        'data' => NULL,
-      ),
-    ),
-  ),
-  'updateAll' => 
-  array (
-    'type' => 0,
-    'description' => 'Создание/изменение/удаление',
-    'bizRule' => NULL,
-    'data' => NULL,
-    'assignments' => 
-    array (
-      2 => 
-      array (
-        'bizRule' => NULL,
-        'data' => NULL,
-      ),
-      8 => 
-      array (
-        'bizRule' => NULL,
-        'data' => NULL,
-      ),
-    ),
-  ),
-  'getNotify' => 
-  array (
-    'type' => 0,
-    'description' => 'Получение уведомлений',
+    'description' => 'Просмотр справочников',
     'bizRule' => NULL,
     'data' => NULL,
   ),
-  'readLog' => 
+  'updatePoint' => 
   array (
     'type' => 0,
-    'description' => 'Просмотр журнала',
+    'description' => 'Создание/изменение точек маршрута',
     'bizRule' => NULL,
     'data' => NULL,
   ),
-  'debug' => 
+  'updateDictionary' => 
   array (
     'type' => 0,
-    'description' => 'Отладка',
+    'description' => 'Создание/изменение справочников',
+    'bizRule' => NULL,
+    'data' => NULL,
+  ),
+  'readAgency' => 
+  array (
+    'type' => 0,
+    'description' => 'Просмотр агентств',
+    'bizRule' => NULL,
+    'data' => NULL,
+  ),
+  'updateAgency' => 
+  array (
+    'type' => 0,
+    'description' => 'Создание/изменение/удаление агентств',
     'bizRule' => NULL,
     'data' => NULL,
   ),
@@ -129,16 +88,8 @@ return array (
       0 => 'readUser',
       1 => 'updateUser',
     ),
-    'assignments' => 
-    array (
-      2 => 
-      array (
-        'bizRule' => NULL,
-        'data' => NULL,
-      ),
-    ),
   ),
-  'sectionAdmin' => 
+  'orderAdmin' => 
   array (
     'type' => 2,
     'description' => '',
@@ -146,24 +97,11 @@ return array (
     'data' => NULL,
     'children' => 
     array (
-      0 => 'readSection',
-      1 => 'updateSection',
-    ),
-    'assignments' => 
-    array (
-      2 => 
-      array (
-        'bizRule' => NULL,
-        'data' => NULL,
-      ),
-      17 => 
-      array (
-        'bizRule' => NULL,
-        'data' => NULL,
-      ),
+      0 => 'readOrder',
+      1 => 'updateOrder',
     ),
   ),
-  'deptAdmin' => 
+  'paymentAdmin' => 
   array (
     'type' => 2,
     'description' => '',
@@ -171,24 +109,11 @@ return array (
     'data' => NULL,
     'children' => 
     array (
-      0 => 'readDept',
-      1 => 'updateDept',
-    ),
-    'assignments' => 
-    array (
-      2 => 
-      array (
-        'bizRule' => NULL,
-        'data' => NULL,
-      ),
-      17 => 
-      array (
-        'bizRule' => NULL,
-        'data' => NULL,
-      ),
+      0 => 'readPayment',
+      1 => 'updatePayment',
     ),
   ),
-  'notify' => 
+  'dictionaryAdmin' => 
   array (
     'type' => 2,
     'description' => '',
@@ -196,15 +121,65 @@ return array (
     'data' => NULL,
     'children' => 
     array (
-      0 => 'getNotify',
+      0 => 'readDictionary',
+      1 => 'updateDictionary',
+    ),
+  ),
+  'agencyAdmin' => 
+  array (
+    'type' => 2,
+    'description' => '',
+    'bizRule' => NULL,
+    'data' => NULL,
+    'children' => 
+    array (
+      0 => 'readAgency',
+      1 => 'updateAgency',
+    ),
+  ),
+  'manager' => 
+  array (
+    'type' => 2,
+    'description' => '',
+    'bizRule' => NULL,
+    'data' => NULL,
+    'children' => 
+    array (
+      0 => 'orderAdmin',
     ),
     'assignments' => 
     array (
-      2 => 
+      18 => 
       array (
         'bizRule' => NULL,
         'data' => NULL,
       ),
+    ),
+  ),
+  'director' => 
+  array (
+    'type' => 2,
+    'description' => '',
+    'bizRule' => NULL,
+    'data' => NULL,
+    'children' => 
+    array (
+      0 => 'manager',
+      1 => 'paymentAdmin',
+    ),
+  ),
+  'admin' => 
+  array (
+    'type' => 2,
+    'description' => '',
+    'bizRule' => NULL,
+    'data' => NULL,
+    'children' => 
+    array (
+      0 => 'readDictionary',
+      1 => 'updatePoint',
+      2 => 'director',
+      3 => 'userAdmin',
     ),
   ),
   'root' => 
@@ -215,14 +190,8 @@ return array (
     'data' => NULL,
     'children' => 
     array (
-      0 => 'readLog',
-      1 => 'debug',
-      2 => 'userAdmin',
-      3 => 'sectionAdmin',
-      4 => 'deptAdmin',
-      5 => 'notify',
-      6 => 'updateAll',
-      7 => 'readAll',
+      0 => 'admin',
+      1 => 'dictionaryAdmin',
     ),
     'assignments' => 
     array (

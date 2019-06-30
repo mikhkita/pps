@@ -18,7 +18,7 @@
 			<tr>
 				<td><?=Controller::getRusDate($item->date, true)?></td>
 				<td><?=$item->type->name?></td>
-				<td><?=$item->getTitle(true)?></td>
+				<td><? if( $item->filename ): ?><a href="/<?=Yii::app()->params["fileFolder"]?>/<?=$item->filename?>" class="b-file icon-<?=$item->ext?>" target="_blank"><? endif ?><?=$item->getTitle(true)?><? if( $item->filename ): ?></a><? endif ?></td>
 				<td><?=$item->getPersonsText()?></td>
 				<td class="tr"><?=number_format( $item->getTotalSum(), 0, ',', '&nbsp;' )?> ₽</td>
 				<td><span class="<?=$item->getStatusColor()?>"><?=$item->status?></span></td>

@@ -196,7 +196,7 @@
 						<?php echo $form->labelEx($person, "cash"); ?>
 					</div>
 					<div class="b-hor-input-right b-to-datepicker">
-						<?=CHTML::textField("Person[<?=$person->id?>][cash]", $person->cash, array("maxlength" => 32, "placeholder" => "...", "class" => "numeric"))?>
+						<?=CHTML::textField("Person[".$person->id."][cash]", $person->cash, array("maxlength" => 32, "placeholder" => "...", "class" => "numeric"))?>
 					</div>
 				</div>
 				<div class="b-price-row">

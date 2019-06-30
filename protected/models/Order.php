@@ -24,6 +24,7 @@ class Order extends CActiveRecord
 	public $price = NULL;
 	public $cash = NULL;
 	public $commission = NULL;
+	public $agency_id = NULL;
 
 	/**
 	 * @return string the associated database table name
@@ -139,37 +140,51 @@ class Order extends CActiveRecord
 	    	$value = trim($value);
 		}
 
-		$attributes["user_id"] = Yii::app()->user->id;
+		$isNewRecord = $this->isNewRecord;
 
-		$attributes["to_date"] = ( empty($attributes["to_date"]) )?NULL:date("Y-m-d H:i:s", strtotime($attributes["to_date"]));
-		$attributes["from_date"] = ( empty($attributes["from_date"]) )?NULL:date("Y-m-d H:i:s", strtotime($attributes["from_date"]));
-		$attributes["to_flight_id"] = ( empty($attributes["to_flight_id"]) )?NULL:$attributes["to_flight_id"];
-		$attributes["from_flight_id"] = ( empty($attributes["from_flight_id"]) )?NULL:$attributes["from_flight_id"];
+		if( $isNewRecord ){
+			$attributes["user_id"] = Yii::app()->user->id;
+			$attributes["from_flight_id"] = ( empty($attributes["from_flight_id"]) )?NULL:$attributes["from_flight_id"];
+			$attributes["to_flight_id"] = ( empty($attributes["to_flight_id"]) )?NULL:$attributes["to_flight_id"];
 
-		$this->attributes = $attributes;
+			$this->attributes = $attributes;
+		}
 
 		$errors = array();
 		if($this->save()){
 			if( count($persons) ){
-				$number = 0;
-				foreach ($persons as $key => $person) {
-					$number ++;
+				if( $isNewRecord ){
+					$number = 0;
+					foreach ($persons as $key => $person) {
+						$number ++;
 
-					foreach ($person as &$value) {
-				    	$value = trim($value);
+						foreach ($person as &$value) {
+					    	$value = trim($value);
+						}
+
+						$model = new Person();
+
+						$person["birthday"] = ( empty($person["birthday"]) )?NULL:date("Y-m-d H:i:s", strtotime($person["birthday"]));
+
+						$model->attributes = $person;
+						$model->order_id = $this->id;
+						$model->number = $number;
+
+						$model->to_status_id = ( $model->direction_id == 1 || $model->direction_id == 2 )?1:NULL;
+						$model->from_status_id = ( $model->direction_id == 1 || $model->direction_id == 3 )?1:NULL;
+
+						if( !$model->save() ){
+							array_push($errors, Controller::implodeErrors($model->getErrors()) );
+						}
 					}
-
-					$model = new Person();
-
-					$person["birthday"] = ( empty($person["birthday"]) )?NULL:date("Y-m-d H:i:s", strtotime($person["birthday"]));
-
-					$model->attributes = $person;
-					$model->order_id = $this->id;
-					$model->number = $number;
-
-					if( !$model->save() ){
-						array_push($errors, Controller::implodeErrors($this->getErrors()) );
-						// die();
+				}else{
+					foreach ($persons as $key => $person){
+						if( $model = Person::model()->findByPk($key) ){
+							$model->attributes = $person;
+							if( !$model->save() ){
+								array_push($errors, Controller::implodeErrors($model->getErrors()) );
+							}
+						}
 					}
 				}
 			}
@@ -260,6 +275,19 @@ class Order extends CActiveRecord
 			$this->export_date = date("d.m.Y H:i:s", strtotime($this->export_date));
 		}
 	}
+
+	protected function beforeSave() {
+        if (!parent::beforeSave()) {
+            return false;
+        }
+
+        $this->to_date = ( empty($this->to_date) )?NULL:date("Y-m-d H:i:s", strtotime($this->to_date));
+		$this->from_date = ( empty($this->from_date) )?NULL:date("Y-m-d H:i:s", strtotime($this->from_date));
+		$this->create_date = ( empty($this->create_date) )?NULL:date("Y-m-d H:i:s", strtotime($this->create_date));
+		$this->export_date = ( empty($this->export_date) )?NULL:date("Y-m-d H:i:s", strtotime($this->export_date));
+
+        return true;
+    }  
 
 	/**
 	 * Returns the static model of the specified AR class.

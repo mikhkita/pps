@@ -35,11 +35,20 @@ class Person extends CActiveRecord
 	public $transfer = NULL;
 	public $payment = NULL;
 	public $price_without_commission = 0;
+	public $to_status = NULL;
+	public $from_status = NULL;
 
 	public $ages = array( 0 => "Взрослый", 1 => "Детский" );
 	public $directions = array( 1 => "В обе стороны", 2 => "Туда", 3 => "Обратно" );
 	public $transfers = array( 1 => "На такси", 0 => "Самостоятельно" );
 	public $payments = array( 0 => "Через турагентство", 1 => "Напрямую водителю" );
+	public $statuses = array(
+		1 => "В работе",
+		2 => "Оформлен",
+		3 => "Бронь",
+		4 => "Исполнен",
+		5 => "Отменен",
+	);
 	/**
 	 * @return string the associated database table name
 	 */
@@ -181,6 +190,17 @@ class Person extends CActiveRecord
 		}
 	}
 
+	public function getStatusColor($field){
+    	$colors = array(
+    		1 => "blue",
+    		2 => "orange",
+    		3 => "blue",
+    		4 => "grey",
+    		5 => "red",
+    	);
+		return $colors[ $field ];
+    }
+
 	public function afterFind()
 	{
 		parent::afterFind();
@@ -191,6 +211,14 @@ class Person extends CActiveRecord
 		$this->transfer = $this->transfers[ $this->transfer_id ];
 		$this->payment = $this->payments[ $this->pay_himself ];
 		$this->price_without_commission = $this->price - $this->commission;
+
+		if( !empty($this->to_status_id) ){
+			$this->to_status = $this->statuses[ $this->to_status_id ];
+		}
+
+		if( !empty($this->from_status_id) ){
+			$this->from_status = $this->statuses[ $this->from_status_id ];
+		}
 
 		if( !empty($this->birthday) ){
 			$this->birthday = date("d.m.Y", strtotime($this->birthday));

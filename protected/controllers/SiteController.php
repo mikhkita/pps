@@ -22,65 +22,18 @@ class SiteController extends Controller
                 "actions" => array("download", "viewFile"),
                 "roles" => array("readAll"),
             ),
+            // array("allow",
+            //     "actions" => array("upload", "install"),
+            //     "roles" => array("root"),
+            // ),
             array("allow",
-                "actions" => array("upload", "install"),
-                "roles" => array("updateAll"),
-            ),
-            array("allow",
-                "actions" => array("error", "index", "login", "logout"),
+                "actions" => array("error", "index", "login", "logout", "install"),
                 "users" => array("*"),
             ),
             array("deny",
                 "users" => array("*"),
             ),
         );
-    }
-
-    public function actionNotifications(){
-        $pretensions = Pretension::model()->findAll("archive != '1' && notified != '1'");
-
-        $count = 0;
-        foreach ($pretensions as $key => $item) {
-            // echo $item->id." ".$item->is_expired."<br>";
-            if( $item->is_expired ){
-                if( $item->manager->email ){
-                    $attrs = array(
-                        "Наименование контрагента" => $item->contractor,
-                        "" => "<a href='http://".$_SERVER["HTTP_HOST"].Yii::app()->createUrl('/pretension/adminview',array('id' => $item->id))."'>Ссылка на претензию</a>"
-                    );
-                    
-                    if($this->sendMail("Истек срок ответа на претензию", $attrs, $item->manager->email)){
-                        $count++;
-                        $item->notified = 1;
-                        $item->save();
-                    }
-
-                }
-            }
-        }
-        echo "Отправлено писем по претензиям: ".$count."<br>";
-
-        $executions = Execution::model()->findAll("state_id = '2' && notified != '1'");
-
-        $count = 0;
-        foreach ($executions as $key => $item) {
-            if( $item->is_ending ){
-                if( $item->manager->email ){
-                    $attrs = array(
-                        "Наименование должника" => $item->debtor,
-                        "" => "<a href='http://".$_SERVER["HTTP_HOST"].Yii::app()->createUrl('/execution/adminview',array('id' => $item->id))."'>Ссылка на дело</a>"
-                    );
-                    
-                    if($this->sendMail("Прошло 11 месяцев с даты прекращения испол. производства", $attrs, $item->manager->email)){
-                        $count++;
-                        $item->notified = 1;
-                        $item->save();
-                    }
-
-                }
-            }
-        }
-        echo "Отправлено писем по делам: ".$count;
     }
 
 	/**
@@ -352,34 +305,27 @@ class SiteController extends Controller
         
         //сбрасываем все существующие правила
         $auth->clearAll();
-        
-        //Операции управления пользователями.
-        // $bizRule="return Yii::app()->user->id == $params["id"];";
 
         // Пользователи
         $auth->createOperation("readUser", "Просмотр пользователей");
         $auth->createOperation("updateUser", "Создание/изменение/удаление пользователей");
 
-        // Группы бизнеса
-        $auth->createOperation("readSection", "Просмотр групп бизнеса");
-        $auth->createOperation("updateSection", "Создание/изменение/удаление групп бизнеса");
+        // Заявки
+        $auth->createOperation("readOrder", "Просмотр заявок");
+        $auth->createOperation("updateOrder", "Создание/изменение заявок");
 
-        // Подразделения
-        $auth->createOperation("readDept", "Просмотр подразделений");
-        $auth->createOperation("updateDept", "Создание/изменение/удаление подразделений");
+        // Платежи
+        $auth->createOperation("readPayment", "Просмотр платежей");
+        $auth->createOperation("updatePayment", "Создание/изменение/удаление платежей");
 
-        // Права
-        $auth->createOperation("readAll", "Только редактирование");
-        $auth->createOperation("updateAll", "Создание/изменение/удаление");
+        // Справочники
+        $auth->createOperation("readDictionary", "Просмотр справочников");
+        $auth->createOperation("updatePoint", "Создание/изменение точек маршрута");
+        $auth->createOperation("updateDictionary", "Создание/изменение справочников");
 
-        // Получение уведомлений
-        $auth->createOperation("getNotify", "Получение уведомлений");
-
-        // Журнал
-        $auth->createOperation("readLog", "Просмотр журнала");
-
-        // Отладка
-        $auth->createOperation("debug", "Отладка");
+        // Турагентства
+        $auth->createOperation("readAgency", "Просмотр агентств");
+        $auth->createOperation("updateAgency", "Создание/изменение/удаление агентств");
 
     // Права --------------------------------------------------- Права
 
@@ -388,36 +334,53 @@ class SiteController extends Controller
         $role->addChild("readUser");
         $role->addChild("updateUser");
 
-        // Управление группами бизнеса
-        $role = $auth->createRole("sectionAdmin");
-        $role->addChild("readSection");
-        $role->addChild("updateSection");
+        // Управление заявками
+        $role = $auth->createRole("orderAdmin");
+        $role->addChild("readOrder");
+        $role->addChild("updateOrder");
 
-        // Управление подразделениями
-        $role = $auth->createRole("deptAdmin");
-        $role->addChild("readDept");
-        $role->addChild("updateDept");
+        // Управление платежами
+        $role = $auth->createRole("paymentAdmin");
+        $role->addChild("readPayment");
+        $role->addChild("updatePayment");
 
-        // Получение уведомлений
-        $role = $auth->createRole("notify");
-        $role->addChild("getNotify"); 
+        // Управление справочниками
+        $role = $auth->createRole("dictionaryAdmin");
+        $role->addChild("readDictionary");
+        $role->addChild("updateDictionary");
 
-        $role = $auth->createRole("root");
-        $role->addChild("readLog");
-        $role->addChild("debug");
+        // Управление турагентствами
+        $role = $auth->createRole("agencyAdmin");
+        $role->addChild("readAgency");
+        $role->addChild("updateAgency");
+
+
+        // Менеджер
+        $role = $auth->createRole("manager");
+        $role->addChild("orderAdmin");
+
+        // Директор
+        $role = $auth->createRole("director");
+        $role->addChild("manager");
+        $role->addChild("paymentAdmin");
+
+        // Админ
+        $role = $auth->createRole("admin");
+        $role->addChild("readDictionary");
+        $role->addChild("updatePoint");
+        $role->addChild("director");
         $role->addChild("userAdmin");
-        $role->addChild("sectionAdmin");
-        $role->addChild("deptAdmin");
-        $role->addChild("notify");
-        $role->addChild("updateAll");
-        $role->addChild("readAll");
+
+        // Root
+        $role = $auth->createRole("root");
+        $role->addChild("admin");
+        $role->addChild("dictionaryAdmin");
 
     // Роли --------------------------------------------------- Роли
         
         // Связываем пользователей с ролями
         $users = User::model()->with("roles.role")->findAll();
         foreach ($users as $i => $user) {
-            $auth->assign("readAll", $user->id);
 
             foreach ($user->roles as $j => $role) {
                 $auth->assign($role->role->code, $user->id);

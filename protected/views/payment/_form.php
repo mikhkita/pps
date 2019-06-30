@@ -77,7 +77,7 @@
 				</div>
 			</div>
 			<div class="b-right-tile-bottom-block b-right-tile-block">
-				<? if( $payment->status_id == 4 || $payment->status_id == 5 || $payment->status_id == 6 ): ?>
+				<? if( $payment->status_id >= 3 ): ?>
 					<h2 class="<?=$payment->getStatusColor()?>"><?=$payment->status?></h2>
 				<? endif; ?>
 				<? if( $payment->isEditable() ): ?>

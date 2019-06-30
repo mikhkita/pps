@@ -119,7 +119,7 @@ $(document).ready(function(){
                     }
                     setTimeout(function(){
                         window.location.href = json.href;
-                    }, 2000);
+                    }, 1500);
                 break;
                 case "showPopup":
                     if('#b-progress-bar-container'.length != 0){
@@ -1231,7 +1231,7 @@ $(document).ready(function(){
         var price = 0;
         $('.b-order-form-person .price-input').each(function(){
             price += $(this).val()*1;
-        })
+        });
 
         $('#totalSum').text(price.toLocaleString());
         $('#totalSumText').text(pluralForm(price, 'рубль', 'рубля', 'рублей'));
@@ -1364,6 +1364,8 @@ $(document).ready(function(){
         }
 
         checkTransferAccess();
+
+        checkPrices();
     }
 
     function isAirport(){
@@ -1485,7 +1487,7 @@ $(document).ready(function(){
                 val = $(this).parents('.b-payment-inputs').find('input[type=radio]:checked').val();
 
             price = (val == 1) ? maxPrice : maxPrice/2 ;
-            cont.find('.price-input').val(price);
+            cont.find('.price-input').val(price).change();
 
             calcTotalPrice();
         }
@@ -1508,6 +1510,8 @@ $(document).ready(function(){
             }
 
             calcTotalPrice();
+
+            calcOrdersPrice();
         }
     });
 

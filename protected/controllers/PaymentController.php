@@ -14,11 +14,11 @@ class PaymentController extends Controller
 		return array(
 			array("allow",
 				"actions" => array("adminIndex"),
-				"roles" => array("readUser"),
+				"roles" => array("readPayment"),
 			),
 			array("allow",
 				"actions" => array("adminUpdate", "adminDelete", "adminCreate"),
-				"roles" => array("updateUser"),
+				"roles" => array("updatePayment"),
 			),
 			array("allow",
 				"actions" => array("callback"),

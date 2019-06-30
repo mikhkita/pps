@@ -1,12 +1,14 @@
 <div class="b-section-nav">
 	<div class="b-section-nav-back clearfix">
 		<h1><?=$this->adminMenu["cur"]->name?></h1>
-		<? if( Yii::app()->user->checkAccess('updateSection') ): ?><a href="<?php echo $this->createUrl("/".$this->adminMenu["cur"]->code."/admincreate")?>" class="b-butt icon-add b-top-butt">Добавить заявку</a><? endif; ?>
+		<? if( Yii::app()->user->checkAccess('updateOrder') ): ?><a href="<?php echo $this->createUrl("/".$this->adminMenu["cur"]->code."/admincreate")?>" class="b-butt icon-add b-top-butt">Добавить заявку</a><? endif; ?>
 	</div>
 	<div class="b-section-actions">
 		<div class="b-checkbox"><input type="checkbox" id="all-checkboxes"><label for="all-checkboxes"></label></div>
+		<? if( Yii::app()->user->checkAccess('updatePayment') ): ?>
 		<a href="<?php echo Yii::app()->createUrl('/payment/adminCreate',array('type'=>1))?>" class="b-icon-btn b-pay-action b-pay-action icon-card">Оплатить онлайн</a>
 		<a href="<?php echo Yii::app()->createUrl('/payment/adminCreate',array('type'=>2))?>" class="b-icon-btn b-pay-action b-bill-action icon-bill">Выставить счет</a>
+		<? endif; ?>
 	</div>
 </div>
 
@@ -16,12 +18,6 @@
 	<div class="b-tile">
 		<div class="b-tile-header clearfix">
 			<a href="<?php echo Yii::app()->createUrl('/'.$this->adminMenu["cur"]->code.'/adminupdate',array('id'=>$order->id))?>"><h3 class="b-tile-title"><?=$order->getTitle()?></h3></a>
-			<!-- <div class="b-tile-header-right">
-				<div class="b-label-block">
-					<label>Итого:</label>
-					<h3>4 500 ₽</h3>
-				</div>
-			</div> -->
 		</div>
 		<table class="b-table b-overflow-table" border="0">
 			<tr>
@@ -41,7 +37,7 @@
 				<td><?=$person->fio?></td>
 				<td><nobr><?=$person->phone?></nobr></td>
 				<td><?=$person->address?></td>
-				<td><nobr><span class="red tooltip" title="Туда">В работе</span> / <span class="green tooltip" title="Обратно">В работе</span></nobr></td>
+				<td><nobr><? if( $person->to_status_id ): ?><span class="<?=$person->getStatusColor($person->to_status_id)?> tooltip" title="Туда"><?=$person->to_status?></span><? if( $person->from_status_id ): ?> / <? endif ?><? endif ?><? if( $person->from_status_id ): ?><span class="<?=$person->getStatusColor($person->from_status_id)?> tooltip" title="Обратно"><?=$person->from_status?></span><? endif ?></nobr></td>
 				<td class="tr"><?=number_format( $person->price, 0, ',', '&nbsp;' )?> ₽</td>
 				<td class="tr"><?=number_format( $person->cash, 0, ',', '&nbsp;' )?> ₽</td>
 				<td class="tr"><?=number_format( $person->commission, 0, ',', '&nbsp;' )?> ₽</td>

@@ -180,6 +180,20 @@ class Payment extends CActiveRecord
 		return true;
 	}
 
+	protected function beforeSave() {
+        if (!parent::beforeSave()) {
+            return false;
+        }
+
+        $this->date = date("Y-m-d H:i:s", strtotime($this->date));
+
+        return true;
+    }  
+
+    public function isEditable(){
+    	return ( empty($this->number) );
+    }
+
 	public function getNextBillNumber(){
 		$model = Payment::model()->find(array(
 			"condition" => "type_id = '2' AND date > '".date("Y")."-01-01 00:00:00' AND number IS NOT NULL",

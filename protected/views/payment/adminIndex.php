@@ -31,10 +31,7 @@
 				if( $item->number ): 
 					switch ($item->type_id):
 						case 2: ?>
-						<? if( $item->filename ): ?><a href="/<?=Yii::app()->params["fileFolder"]?>/<?=$item->filename?>" class="b-file icon-<?=$item->ext?>" target="_blank">№<?=$item->number?> от <?=Controller::getRusDate($item->date)?><? endif ?><? if( $item->filename ): ?></a><? endif ?>
-							<? break;
-						case 3: ?>
-
+						<? if( $item->filename ): ?><a href="/<?=Yii::app()->params["fileFolder"]?>/<?=$item->filename?>" class="b-file icon-<?=$item->ext?>" target="_blank"><? endif ?>№<?=$item->number?> от <?=Controller::getRusDate($item->date)?><? if( $item->filename ): ?></a><? endif ?>
 							<? break;
 						default: ?>
 						№<?=$item->number?>
@@ -44,7 +41,7 @@
 				<td><?=$item->getPersonsText()?></td>
 				<td class="tr"><?=number_format( $item->getTotalSum(), 0, ',', '&nbsp;' )?> ₽</td>
 				<td><span class="<?=$statusClass?>"><?=$item->status?></span></td>
-				<td><? if( $item->status_id == 1 ): ?><a href="<?php echo Yii::app()->createUrl('/'.$this->adminMenu["cur"]->code.'/adminupdate',array('id'=>$item->id))?>" class="b-tool b-double-click b-tool-update" title="Редактировать <?=$this->adminMenu["cur"]->vin_name?>"></a><a href="<?php echo Yii::app()->createUrl('/'.$this->adminMenu["cur"]->code.'/adminDelete',array('id'=>$item->id))?>" class="ajax-form ajax-delete b-tool b-tool-delete" data-name="<?=$this->adminMenu["cur"]->vin_name?>" title="Удалить <?=$this->adminMenu["cur"]->vin_name?>"></a><? endif; ?></td>
+				<td><? if( $item->isEditable() ): ?><a href="<?php echo Yii::app()->createUrl('/'.$this->adminMenu["cur"]->code.'/adminupdate',array('id'=>$item->id))?>" class="b-tool b-double-click b-tool-update" title="Редактировать <?=$this->adminMenu["cur"]->vin_name?>"></a><a href="<?php echo Yii::app()->createUrl('/'.$this->adminMenu["cur"]->code.'/adminDelete',array('id'=>$item->id))?>" class="ajax-form ajax-delete b-tool b-tool-delete" data-name="<?=$this->adminMenu["cur"]->vin_name?>" title="Удалить <?=$this->adminMenu["cur"]->vin_name?>"></a><? endif; ?></td>
 			</tr>
 		<? endforeach; ?>
 	<? else: ?>

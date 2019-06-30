@@ -17,7 +17,7 @@ class PaymentController extends Controller
 				"roles" => array("readUser"),
 			),
 			array("allow",
-				"actions" => array("adminUpdate", "adminDelete", "adminCreate"),
+				"actions" => array("adminUpdate", "adminDelete", "adminCreate", "callback"),
 				"roles" => array("updateUser"),
 			),
 			array("deny",
@@ -28,17 +28,6 @@ class PaymentController extends Controller
 
 	public function actionAdminIndex($partial = false){
 		unset($_GET["partial"]);
-
-		// $sberbank = new Sberbank();
-
-		// $description = "Оплата билетов";
-		// $jsonParams = json_decode(array(
-		// 	// ""
-		// ));
-
-		// $result = $sberbank->requestTicket(7, 3810, $description, $jsonParams );
-		// var_dump($result);
-		// die();
 
 		// $number = Payment::getNextBillNumber();
 		// var_dump($number);
@@ -70,6 +59,12 @@ class PaymentController extends Controller
 		}else{
 			$this->renderPartial("adminIndex".(($this->isMobile)?"Mobile":""), $params);
 		}
+	}
+
+	public function actionCallback()
+	{
+		var_dump($_GET);
+		var_dump($_POST);
 	}
 
 	public function actionAdminCreate($type)
@@ -142,10 +137,23 @@ class PaymentController extends Controller
 						$payment->status_id = 2;
 						$payment->save();
 
-						Controller::returnSuccess( array(
-							"action" => "redirectDelay",
-							"href" => Yii::app()->createUrl("/payment/adminUpdate", array("id" => $id)),
-						) );
+						$sberbank = new Sberbank();
+
+						$description = "Оплата билетов";
+						$jsonParams = json_decode(array(
+							"payment_id" => $payment->id
+						));
+
+						$result = (object) $sberbank->requestTicket($payment->id, $payment->getTotalSum(), $description, $jsonParams );
+
+						if( $result->status == "success" ){
+							Controller::returnSuccess( array(
+								"action" => "redirect",
+								"href" => $result->url,
+							) );
+						}else{
+							Controller::returnError("Ошибка: ". $result->errorMessage);
+						}
 						break;
 					case 2:
 						$payment->status_id = 3;

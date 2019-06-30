@@ -69,7 +69,7 @@ class BackController extends Controller
 
 		$persons = Person::model()->findAll(array(
 			"condition" => "id IN (".implode(",", $persons).")",
-			"order" => "order_id DESC"
+			"order" => "order_id DESC",
 		));
 
 		if( !$persons ){

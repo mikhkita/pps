@@ -5,20 +5,20 @@ Class Sberbank {
     private $password = 'avtobus';  //Пароль 
     private $token = 'vfehaf30es58m1bpogulgrh9vi'; // token
     private $apiEndpoint = 'https://3dsec.sberbank.ru/payment/rest'; // endpoint
-    private $backUrl    = 'https://avtobus.atkgroup.pro/sber/pay/callback.php';   //Адрес возврата
+    private $backUrl    = "";   //Адрес возврата
     
     function __construct() {
-
+        $this->backUrl = "http://spp.com/";
     }
 
-    public function requestTicket($id, $amount, $desc, $ip, $json_params = []) {
-        $data = $this->makeRequestFields($id, $amount, $desc, $ip, $json_params, true);
+    public function requestTicket($id, $amount, $desc, $json_params = []) {
+        $data = $this->makeRequestFields($id, $amount, $desc, $json_params, true);
 
         $result = $this->sendSberRequest('/register.do', $id, $data);
         if ($result === false) {
             Log::debug( print_r(array(
                 "rest_url" => '/register.do',
-                "request_params" => compact('id', 'fullname', 'phone', 'amount', 'desc', 'ip'),
+                "request_params" => compact('id', 'fullname', 'phone', 'amount', 'desc'),
                 "response_message" => $result['response']['errorMessage'],
                 "response_code" => $result['response']['errorCode'],
                 "response" => $result['response'],
@@ -28,7 +28,7 @@ Class Sberbank {
         return $result;
     }
 
-    public function sendSberRequest($url, $orderId, $data) {
+    private function sendSberRequest($url, $orderId, $data) {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $this->apiEndpoint . $url);
         curl_setopt($ch, CURLOPT_HEADER, false);
@@ -55,7 +55,7 @@ Class Sberbank {
         return array('status' => 'error', 'response' => $result, 'data' => $data);
     }
 
-    public function makeRequestFields($id, $amount, $desc, $ip, $json_params = [], $fromPartners = false) {
+    private function makeRequestFields($id, $amount, $desc, $json_params = [], $fromPartners = false) {
         $amount = (int) ($amount * 100);
 
         $data = array(

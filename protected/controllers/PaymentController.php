@@ -29,6 +29,17 @@ class PaymentController extends Controller
 	public function actionAdminIndex($partial = false){
 		unset($_GET["partial"]);
 
+		// $sberbank = new Sberbank();
+
+		// $description = "Оплата билетов";
+		// $jsonParams = json_decode(array(
+		// 	// ""
+		// ));
+
+		// $result = $sberbank->requestTicket(7, 3810, $description, $jsonParams );
+		// var_dump($result);
+		// die();
+
 		// $number = Payment::getNextBillNumber();
 		// var_dump($number);
 
@@ -75,7 +86,7 @@ class PaymentController extends Controller
 		));
 
 		if( !$model ){
-
+			throw new CHttpException(404, "Passengers are not found");
 		}
 
 		$payment = new Payment;

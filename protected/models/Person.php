@@ -78,6 +78,7 @@ class Person extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			"order" => array(self::BELONGS_TO, "Order", "order_id"),
+			"back" => array(self::HAS_MANY, "BackPerson", "person_id"),
 		);
 	}
 

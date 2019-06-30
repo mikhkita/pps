@@ -13,13 +13,17 @@ class ExchangeController extends Controller
 	{
 		return array(
 			array("allow",
-				"actions" => array("importDictionaries", "exportOrder"),
+				"actions" => array("importDictionaries", "exportOrder", "exportBack"),
 				"users" => array("*"),
 			),
 			array("deny",
 				"users" => array("*"),
 			),
 		);
+	}
+
+	public function actionExportBack(){
+		echo "string";
 	}
 
 	public function actionExportOrder(){
@@ -165,7 +169,7 @@ class ExchangeController extends Controller
 		$order = Order::model()->findByPk(16);
 		$order = addOrderToXML($xml, $order);
 
-		$order = Order::model()->findByPk(17);
+		$order = Order::model()->findByPk(17	);
 		$order = addOrderToXML($xml, $order);
 		
 

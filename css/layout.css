@@ -3133,6 +3133,9 @@ ul.yiiPager .first, ul.yiiPager .last{
             .b-right-tile-bottom-block{
                 padding: 32px;
             }
+                .b-success-payment-popup .b-right-tile-bottom-block{
+                    text-align: center;
+                }
                 .b-right-tile-bottom-block .b-btn{
                     display: inline-block;
                     text-decoration: none;
@@ -3424,6 +3427,12 @@ div.notifyjs-bootstrap-error{
         }
         .b-popup-payment-text .bold{
             font-family: 'Roboto-Bold';
+        }
+        .b-right-tile-block h2{
+            margin-top: 0;
+        }
+        .b-right-tile-block h2+.b-btn{
+            margin-top: 16px;
         }
         .b-right-tile-block-string:not(:last-child).b-popup-payment-text{
             margin-bottom: 8px;

@@ -7,6 +7,7 @@
  * @property integer $id
  * @property string $user_id
  * @property integer $number
+ * @property integer $transaction
  * @property string $filename
  * @property string $date
  * @property integer $type_id
@@ -21,8 +22,9 @@ class Payment extends CActiveRecord
 		1 => "Новый",
 		2 => "Не оплачен",
 		3 => "Выставлен счет",
-		4 => "Оплачен",
+		4 => "Оплачено",
 		5 => "Подтвержден",
+		6 => "Ошибка оплаты",
 	);
 	public $status = NULL;
 	public $ext = "";
@@ -47,9 +49,10 @@ class Payment extends CActiveRecord
 			array("type_id, status_id, number", "numerical", "integerOnly" => true),
 			array("user_id", "length", "max" => 10),
 			array("filename", "length", "max" => 1024),
+			array("transaction", "length", "max" => 64),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array("id, user_id, number, date, type_id, status_id, filename", "safe", "on" => "search"),
+			array("id, user_id, number, date, type_id, status_id, filename, transaction", "safe", "on" => "search"),
 		);
 	}
 
@@ -76,6 +79,7 @@ class Payment extends CActiveRecord
 			"id" => "ID",
 			"user_id" => "Пользователь",
 			"number" => "Номер",
+			"transaction" => "Номер транзакции",
 			"filename" => "Ссылка на файл",
 			"date" => "Дата",
 			"type_id" => "Тип платежа",
@@ -102,6 +106,7 @@ class Payment extends CActiveRecord
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
 		$criteria=new CDbCriteria;
+		$criteria->order = "id DESC";
 
 		$criteria->addSearchCondition("id", $this->id);
 		$criteria->addSearchCondition("user_id", $this->user_id);
@@ -167,6 +172,30 @@ class Payment extends CActiveRecord
 		return $sum;
 	}
 
+	public function getTitle($onlyNumber = false){
+		if( empty($this->number) && empty($this->transaction) ){
+			$title = ( !$onlyNumber )?$this->type->create_title:"";
+		}else{
+			if( !$onlyNumber ){
+				$title = $this->type->item_name." ";
+			}
+			switch ($this->type_id) {
+				case 1:
+					$title = $title."№".$this->transaction;
+					break;
+				case 2:
+					$title = $title."№".$this->number." от ".Controller::getRusDate($this->date);
+					break;
+				
+				default:
+					$title = $title."№".$this->number;
+					break;
+			}
+		}
+
+		return $title;
+	}
+
 	protected function beforeDelete()
 	{
 		if(parent::beforeDelete() === false) {
@@ -185,13 +214,43 @@ class Payment extends CActiveRecord
             return false;
         }
 
-        $this->date = date("Y-m-d H:i:s", strtotime($this->date));
+        if( !empty($this->date) ){
+        	$this->date = date("Y-m-d H:i:s", strtotime($this->date));
+        }
 
         return true;
     }  
 
+    public function getStatusColor(){
+    	$statusClass = "blue";
+
+		if( $this->status_id == 2 || $this->status_id == 3 ){
+			$statusClass = "orange";
+		}else if( $this->status_id == 4 || $this->status_id == 5 ){
+			$statusClass = "green";
+		} if( $this->status_id == 6 ){
+			$statusClass = "red";
+		}
+
+		return $statusClass;
+    }
+
     public function isEditable(){
-    	return ( empty($this->number) );
+  //   	switch ($payment->type_id) {
+		// 	case 1:
+		// 		$showButton = ($payment->status_id != 4 && $payment->status_id != 6);
+		// 		break;
+		// 	case 2:
+		// 		$showButton = ($payment->status_id == 1);
+		// 		break;
+			
+		// 	default:
+		// 		$showButton = true;
+		// 		break;
+		// }
+
+
+    	return ( empty($this->number) && empty($this->transaction) );
     }
 
 	public function getNextBillNumber(){

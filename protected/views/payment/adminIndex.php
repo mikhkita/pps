@@ -15,32 +15,13 @@
 	</tr>
 	<? if(count($data)): ?>
 		<? foreach ($data as $i => $item): ?>
-			<? 
-			$statusClass = "blue";
-
-			if( $item->status_id == 2 || $item->status_id == 3 ){
-				$statusClass = "orange";
-			}else if( $item->status_id == 4 || $item->status_id == 5 ){
-				$statusClass = "green";
-			}
-			?>
 			<tr>
 				<td><?=Controller::getRusDate($item->date, true)?></td>
 				<td><?=$item->type->name?></td>
-				<td><? 
-				if( $item->number ): 
-					switch ($item->type_id):
-						case 2: ?>
-						<? if( $item->filename ): ?><a href="/<?=Yii::app()->params["fileFolder"]?>/<?=$item->filename?>" class="b-file icon-<?=$item->ext?>" target="_blank"><? endif ?>№<?=$item->number?> от <?=Controller::getRusDate($item->date)?><? if( $item->filename ): ?></a><? endif ?>
-							<? break;
-						default: ?>
-						№<?=$item->number?>
-							<? break;
-					endswitch;
-				endif; ?></td>
+				<td><?=$item->getTitle(true)?></td>
 				<td><?=$item->getPersonsText()?></td>
 				<td class="tr"><?=number_format( $item->getTotalSum(), 0, ',', '&nbsp;' )?> ₽</td>
-				<td><span class="<?=$statusClass?>"><?=$item->status?></span></td>
+				<td><span class="<?=$item->getStatusColor()?>"><?=$item->status?></span></td>
 				<td><a href="<?php echo Yii::app()->createUrl('/'.$this->adminMenu["cur"]->code.'/adminupdate',array('id'=>$item->id))?>" class="b-tool b-double-click b-tool-update" title="Редактировать <?=$this->adminMenu["cur"]->vin_name?>"></a><? if( $item->isEditable() ): ?><a href="<?php echo Yii::app()->createUrl('/'.$this->adminMenu["cur"]->code.'/adminDelete',array('id'=>$item->id))?>" class="ajax-form ajax-delete b-tool b-tool-delete" data-name="<?=$this->adminMenu["cur"]->vin_name?>" title="Удалить <?=$this->adminMenu["cur"]->vin_name?>"></a><? endif; ?></td>
 			</tr>
 		<? endforeach; ?>

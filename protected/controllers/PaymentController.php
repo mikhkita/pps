@@ -17,13 +17,38 @@ class PaymentController extends Controller
 				"roles" => array("readUser"),
 			),
 			array("allow",
-				"actions" => array("adminUpdate", "adminDelete", "adminCreate", "callback"),
+				"actions" => array("adminUpdate", "adminDelete", "adminCreate"),
 				"roles" => array("updateUser"),
+			),
+			array("allow",
+				"actions" => array("callback"),
+				"users" => array("*"),
 			),
 			array("deny",
 				"users" => array("*"),
 			),
 		);
+	}
+
+	public function actionCallback($payment_id, $orderId, $success)
+	{
+		$payment = Payment::model()->findByPk($payment_id);
+		// var_dump($_GET);
+		// die();
+
+		if( $payment ){
+			$payment->status_id = ( $success == "1" )?4:6;
+			if( $success == "1" ){
+				$payment->transaction = $orderId;
+			}
+			$payment->save();
+
+			$this->redirect( Yii::app()->createUrl("/payment/adminUpdate", array("id" => $payment_id)) );
+		}else{
+			echo "Ошибка оплаты. Не найден платеж";
+			var_dump($_GET);
+			die();
+		}
 	}
 
 	public function actionAdminIndex($partial = false){
@@ -59,12 +84,6 @@ class PaymentController extends Controller
 		}else{
 			$this->renderPartial("adminIndex".(($this->isMobile)?"Mobile":""), $params);
 		}
-	}
-
-	public function actionCallback()
-	{
-		var_dump($_GET);
-		var_dump($_POST);
 	}
 
 	public function actionAdminCreate($type)
@@ -181,11 +200,7 @@ class PaymentController extends Controller
 			// 	return true;
 			// }
 		}else{
-			if( empty($payment->number) ){
-				$title = $payment->type->create_title;
-			}else{
-				$title = $payment->type->item_name." №".$payment->number;
-			}
+			$title = $payment->getTitle();
 
 			$this->render("adminUpdate",array(
 				"payment" => $payment,

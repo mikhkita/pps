@@ -193,10 +193,12 @@
 			<div class="b-right-tile-bottom-block b-right-tile-block">
 				<a href="#" class="b-btn" id="b-progress-bar-container">
 					<span class="icon-check main-text">Оформить заявку</span>
+				</a>
+				<div class="b-btn-text-cont">
 					<span class="process">Отправка заявки,<br>пожалуйста подождите...</span>
 					<span class="icon-check success">Заявка успешно отправлена</span>
 					<span class="error">Ошибка! Проверьте интернет-соединение и попробуйте ещё раз</span>
-				</a>
+				</div>
 			</div>
 		</div>
 	</div>

@@ -897,10 +897,10 @@ h1.b-with-nav{
     }
 .fancybox-slide .b-popup-delete{
     max-width: 660px;
-    padding: 30px !important;
+    padding: 30px 44px !important;
 }
 .fancybox-slide .b-popup-delete h1{
-    padding: 0px 30px;
+    padding: 0px 30px 0px 0px;
 }
 .fancybox-wrap{
     margin-bottom: 30px;
@@ -927,7 +927,7 @@ h1.b-with-nav{
             background-color: #383B3F;
         }
     .fancybox-slide h1{
-        text-align: center;
+        /* text-align: center; */
         padding: 10px 0px 6px;
     }
     .fancybox-slide h2{
@@ -1060,7 +1060,7 @@ h1.b-with-nav{
             /*width: 800px;*/
         }
     .fancybox-slide .buttons{
-        text-align: center;
+         text-align: center; 
         margin-top: 32px;
         font-size: 0px;
     }

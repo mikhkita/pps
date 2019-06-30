@@ -107,11 +107,52 @@ class PaymentController extends Controller
 	{
 		$payment = $this->loadModel($id);
 
-		if(isset($_POST["Payment"])) {
-			if( $model->updateObj($_POST["Payment"], $_POST["Person"]) ){
-				$this->actionAdminIndex();
-				return true;
+		if(isset($_POST["PaymentPerson"])) {
+			$paymentPersons = $_POST["PaymentPerson"];
+
+			if( count($paymentPersons) ){
+				foreach ($payment->persons as $key => $person) {
+					$paymentPerson = $paymentPersons[ $person->person_id ];
+					if( isset($paymentPerson) ){
+						if( isset($paymentPerson["sum"]) ){
+							$person->sum = $paymentPerson["sum"];
+						}
+
+						if( isset($paymentPerson["direction_id"]) ){
+							$person->direction_id = $paymentPerson["direction_id"];
+						}
+
+						$person->save();
+					}
+				}
+
+				switch ($payment->type_id) {
+					case 1:
+						Controller::returnSuccess( array(
+							"action" => "redirectDelay",
+							"href" => Yii::app()->createUrl("/payment/adminUpdate", array("id" => $id)),
+						) );
+						break;
+					case 2:
+						Controller::returnSuccess( array(
+							"action" => "showPopup",
+							"sum" => $payment->getTotalSum(),
+							"date" => Controller::getRusDate($payment->date),
+							"number" => $payment->number
+						) );
+						break;
+				}
+			}else{
+				Controller::returnError("Ошибка: не выбраны пассажиры");
 			}
+			// foreach ($variable as $key => $value) {
+			// 	# code...
+			// }
+
+			// if( $model->updateObj($_POST["Payment"], $_POST["Person"]) ){
+			// 	$this->actionAdminIndex();
+			// 	return true;
+			// }
 		}else{
 			if( empty($payment->number) ){
 				$title = $payment->type->create_title;

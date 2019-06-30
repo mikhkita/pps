@@ -107,7 +107,7 @@ class PaymentController extends Controller
 	{
 		$payment = $this->loadModel($id);
 
-		if(isset($_POST["PaymentPerson"])) {
+		if( isset($_POST["PaymentPerson"]) && $payment->isEditable() ) {
 			$paymentPersons = $_POST["PaymentPerson"];
 
 			if( count($paymentPersons) ){
@@ -128,15 +128,22 @@ class PaymentController extends Controller
 
 				switch ($payment->type_id) {
 					case 1:
+						$payment->status_id = 2;
+						$payment->save();
+
 						Controller::returnSuccess( array(
 							"action" => "redirectDelay",
 							"href" => Yii::app()->createUrl("/payment/adminUpdate", array("id" => $id)),
 						) );
 						break;
 					case 2:
+						$payment->status_id = 3;
+						$payment->number = $payment->getNextBillNumber();
+						$payment->save();
+
 						Controller::returnSuccess( array(
 							"action" => "showPopup",
-							"sum" => $payment->getTotalSum(),
+							"sum" => number_format( $payment->getTotalSum(), 0, ',', '&nbsp;' )." руб.",
 							"date" => Controller::getRusDate($payment->date),
 							"number" => $payment->number,
 							"message" => "Счет успешно создан",

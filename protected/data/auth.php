@@ -77,6 +77,27 @@ return array (
     'bizRule' => NULL,
     'data' => NULL,
   ),
+  'accessOnlyHis' => 
+  array (
+    'type' => 0,
+    'description' => 'Доступ только к своему',
+    'bizRule' => NULL,
+    'data' => NULL,
+  ),
+  'accessAgency' => 
+  array (
+    'type' => 0,
+    'description' => 'Доступ ко всему внутри турагентства',
+    'bizRule' => NULL,
+    'data' => NULL,
+  ),
+  'accessAll' => 
+  array (
+    'type' => 0,
+    'description' => 'Доступ ко всему',
+    'bizRule' => NULL,
+    'data' => NULL,
+  ),
   'userAdmin' => 
   array (
     'type' => 2,
@@ -112,6 +133,19 @@ return array (
       0 => 'readPayment',
       1 => 'updatePayment',
     ),
+    'assignments' => 
+    array (
+      18 => 
+      array (
+        'bizRule' => NULL,
+        'data' => NULL,
+      ),
+      23 => 
+      array (
+        'bizRule' => NULL,
+        'data' => NULL,
+      ),
+    ),
   ),
   'dictionaryAdmin' => 
   array (
@@ -145,11 +179,22 @@ return array (
     'data' => NULL,
     'children' => 
     array (
-      0 => 'orderAdmin',
+      0 => 'accessOnlyHis',
+      1 => 'orderAdmin',
     ),
     'assignments' => 
     array (
       18 => 
+      array (
+        'bizRule' => NULL,
+        'data' => NULL,
+      ),
+      22 => 
+      array (
+        'bizRule' => NULL,
+        'data' => NULL,
+      ),
+      23 => 
       array (
         'bizRule' => NULL,
         'data' => NULL,
@@ -165,7 +210,17 @@ return array (
     'children' => 
     array (
       0 => 'manager',
-      1 => 'paymentAdmin',
+      1 => 'userAdmin',
+      2 => 'accessAgency',
+      3 => 'paymentAdmin',
+    ),
+    'assignments' => 
+    array (
+      21 => 
+      array (
+        'bizRule' => NULL,
+        'data' => NULL,
+      ),
     ),
   ),
   'admin' => 
@@ -176,10 +231,12 @@ return array (
     'data' => NULL,
     'children' => 
     array (
-      0 => 'readDictionary',
-      1 => 'updatePoint',
-      2 => 'director',
-      3 => 'userAdmin',
+      0 => 'director',
+      1 => 'accessAll',
+      2 => 'readDictionary',
+      3 => 'updatePoint',
+      4 => 'agencyAdmin',
+      5 => 'userAdmin',
     ),
   ),
   'root' => 

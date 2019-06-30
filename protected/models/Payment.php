@@ -28,6 +28,8 @@ class Payment extends CActiveRecord
 	);
 	public $status = NULL;
 	public $ext = "";
+	public $agency_id = NULL;
+	public $prefix = "S";
 
 	/**
 	 * @return string the associated database table name
@@ -106,9 +108,14 @@ class Payment extends CActiveRecord
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
 		$criteria=new CDbCriteria;
-		$criteria->order = "id DESC";
+		$criteria->order = "t.id DESC";
 
-		$criteria->addSearchCondition("id", $this->id);
+		if( !empty($this->agency_id) ){
+			$criteria->with = "user";
+			$criteria->addSearchCondition("user.agency_id", $this->agency_id);
+		}
+
+		$criteria->addSearchCondition("t.id", $this->id);
 		$criteria->addSearchCondition("user_id", $this->user_id);
 		$criteria->addSearchCondition("number", $this->number);
 		$criteria->addSearchCondition("date", $this->date);
@@ -184,7 +191,7 @@ class Payment extends CActiveRecord
 					$title = $title."№".$this->transaction;
 					break;
 				case 2:
-					$title = $title."№".$this->number." от ".Controller::getRusDate($this->date);
+					$title = $title."№".$this->prefix.$this->number." от ".Controller::getRusDate($this->date);
 					break;
 				
 				default:

@@ -8,6 +8,7 @@
  * @property string $name
  * @property string $create_title
  * @property string $item_name
+ * @property string $name_1c
  */
 class PaymentType extends CActiveRecord
 {
@@ -30,10 +31,10 @@ class PaymentType extends CActiveRecord
 			array("name", "required"),
 			array("name", "length", "max" => 16),
 			array("create_title", "length", "max" => 64),
-			array("item_name", "length", "max" => 32),
+			array("item_name, name_1c", "length", "max" => 32),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array("id, name, create_title, item_name", "safe", "on" => "search"),
+			array("id, name, create_title, item_name, name_1c", "safe", "on" => "search"),
 		);
 	}
 
@@ -59,6 +60,7 @@ class PaymentType extends CActiveRecord
 			"name" => "Наименование",
 			"create_title" => "Заголовок на странице создания",
 			"item_name" => "Наименование платежа",
+			"name_1c" => "Наименование для 1С",
 		);
 	}
 

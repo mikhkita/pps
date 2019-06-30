@@ -14,11 +14,11 @@ class DictionaryController extends Controller
 		return array(
 			array("allow",
 				"actions" => array("adminIndex", "adminList"),
-				"roles" => array("readUser"),
+				"roles" => array("readDictionary"),
 			),
 			array("allow",
 				"actions" => array("adminUpdate", "adminDelete", "adminCreate"),
-				"roles" => array("updateUser"),
+				"roles" => array("updateDictionary"),
 			),
 			array("deny",
 				"users" => array("*"),

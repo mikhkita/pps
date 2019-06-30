@@ -1,5 +1,5 @@
 <h1><?=$this->adminMenu["cur"]->name?></h1>
-<? if( Yii::app()->user->checkAccess('updateSection') ): ?><a href="<?php echo $this->createUrl("/".$this->adminMenu["cur"]->code."/adminCreate")?>" class="ajax-form ajax-create b-butt b-top-butt">Добавить</a><? endif; ?>
+<? if( Yii::app()->user->checkAccess('updateDictionary') ): ?><a href="<?php echo $this->createUrl("/".$this->adminMenu["cur"]->code."/adminCreate")?>" class="ajax-form ajax-create b-butt b-top-butt">Добавить</a><? endif; ?>
 <?php $form=$this->beginWidget('CActiveForm'); ?>
 <table class="b-table" border="0">
 	<tr>
@@ -24,7 +24,7 @@
 				<td class="align-left"><? echo $item->code_1c; ?></td>
 				<td class="align-left"><? echo $item->defaultStartPoint->name; ?></td>
 				<td>
-					<? if( Yii::app()->user->checkAccess('updateSection') ): ?><a href="<?php echo Yii::app()->createUrl('/'.$this->adminMenu["cur"]->code.'/adminupdate',array('id'=>$item->id))?>" class="ajax-form ajax-update b-tool b-tool-update" title="Редактировать <?=$this->adminMenu["cur"]->vin_name?>"></a>
+					<? if( Yii::app()->user->checkAccess('updateDictionary') ): ?><a href="<?php echo Yii::app()->createUrl('/'.$this->adminMenu["cur"]->code.'/adminupdate',array('id'=>$item->id))?>" class="ajax-form ajax-update b-tool b-tool-update" title="Редактировать <?=$this->adminMenu["cur"]->vin_name?>"></a>
 					<a href="<?=Yii::app()->createUrl('/'.$this->adminMenu["cur"]->code.'/admindelete',array('id'=>$item->id))?>" data-name="<?=$this->adminMenu["cur"]->vin_name?>" class="ajax-form ajax-delete b-tool b-tool-delete" title="Удалить <?=$this->adminMenu["cur"]->vin_name?>"></a><? endif; ?>
 				</td>
 			</tr>
@@ -45,5 +45,5 @@
         'prevPageLabel' => '< назад',
         'nextPageLabel' => 'далее >'
     )) ?>
-    <div class="b-lot-count">Всего групп: <?=$count?></div>
+    <div class="b-lot-count">Всего агентств: <?=$count?></div>
 </div>

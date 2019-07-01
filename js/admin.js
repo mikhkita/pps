@@ -292,6 +292,10 @@ $(document).ready(function(){
         if( $(this).find(".b-double-click").length ){
             window.location.href = $(this).find(".b-double-click").attr("href");
         }
+
+        if( $(this).find(".b-double-click-click").length ){
+            $(this).find(".b-double-click-click").click();
+        }
     });
 
     function filterSubmit($form){
@@ -325,7 +329,7 @@ $(document).ready(function(){
         // date = day+"."+month+"."+date.getFullYear()+" "+hours+":"+minutes;
         // if(!$("#Event_start_time").val()) $("#Event_start_time").val(date);
 
-        $form.find(".select2").select2({
+        $form.find(".select2:not(.binded)").addClass("binded").select2({
             placeholder: "",
             allowClear: true
         });
@@ -349,6 +353,10 @@ $(document).ready(function(){
 
         $form.find("input[type='text'], input[type='tel'], input[type='email'], textarea, select").keyup(function(){
            // $(this).valid();
+        });
+
+        $form.find("textarea").keyup(function(){
+           $(this).valid();
         });
 
         $form.on("change", "input[type='text'], input[type='tel'], input[type='email'], textarea, select", function(){
@@ -1136,6 +1144,9 @@ $(document).ready(function(){
         function hideActions(){
             $(".b-section-actions").removeClass("show");
         }
+
+        checkedHandler();
+        checkGlobalCheckbox();
     }
     // Checkboxes --------------------------------------------------------- Checkboxes
 
@@ -1168,6 +1179,35 @@ $(document).ready(function(){
         return false;
     });
 
+    $("body").on("click", ".b-return-action", function(){
+        var ids = getCheckedPersons(),
+            url = $(this).attr("href"),
+            $this = $(this);
+
+        window.location.href = url+"?ids="+ids;
+        // progress.start(3);
+
+        // $.ajax({
+        //     type: "POST",
+        //     url: url,
+        //     data: {
+        //         ids : ids
+        //     },
+        //     success: function(msg){
+        //         progress.end(function(){
+        //             if( msg != "" && isValidJSON(msg) ){
+        //                 jsonHandler(msg, $this);
+        //             }
+        //         });
+        //     },
+        //     error: function(){
+        //         alert("Ошибка создания платежа. Пожалуйста, проверьте интернет-соединение.");
+        //     }
+        // });
+
+        return false;
+    });
+
     function getCheckedPersons(){
         var ids = [];
         $(".b-person-checkbox:checked").each(function(){
@@ -1176,10 +1216,9 @@ $(document).ready(function(){
         return ids.join(",");
     }
     // Actions ------------------------------------------------------------ Actions
-
     $('#order-form').progressBtn({
         buttonId : 'b-progress-bar-container',
-        needCountText : $('.b-order-form').hasClass('b-order-form-edit'),
+        needCountText : ( $('.b-order-form').hasClass('b-order-form-edit') || $('.b-order-form').hasClass('b-back-form') ),
     });
 
     $('#b-progress-bar-container').on('click',function(){
@@ -1221,7 +1260,7 @@ $(document).ready(function(){
     function calcTotalPrice(){
         var personCount = $('#person_count').val();
 
-        if( $(".b-payment-form").length ){
+        if( $(".b-payment-form, .b-back-form").length ){
             personCount = $(".price-input").length;
         }
 
@@ -1362,6 +1401,11 @@ $(document).ready(function(){
 
             bindFields($("#order-form"));
         }
+
+        $(".select2:not(.binded)").addClass("binded").select2({
+            placeholder: "",
+            allowClear: true
+        });
 
         checkTransferAccess();
 

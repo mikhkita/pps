@@ -20,7 +20,7 @@
 				</div>
 				<?break;
 			case "select": ?>
-				<div class="row checkbox-row clearfix">
+				<div class="row checkbox-row clearfix b-input">
 					<?php echo $form->labelEx($model, $code); ?>
 					<?php echo $form->dropDownList($model, $code, array(0 => "Не выбрано") + CHtml::listData($field->model::model()->sorted()->findAll(), "id", "name"), array("class" => "select2")); ?>
 					<?php echo $form->error($model, $code); ?>
@@ -28,11 +28,13 @@
 				<?break;?>
 			
 			<? default: ?>
-				<div class="row clearfix">
+				<? if( Yii::app()->user->checkAccess('root') || $code != "code_1c" ): ?>
+				<div class="row clearfix b-input">
 					<?php echo $form->labelEx($model, $code); ?>
 					<?php echo $form->textField($model, $code, array("maxlength" => ( (in_array($code, $maxlength))?$maxlength[$code]:4096 ), "required" => in_array($code, $required), "class" => $field->class )); ?>
 					<?php echo $form->error($model, $code); ?>
 				</div>
+				<? endif; ?>
 				<? break; ?>
 		<? endswitch; ?>
 	<? endforeach; ?>

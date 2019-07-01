@@ -35,6 +35,15 @@ class Role extends CActiveRecord
 		);
 	}
 
+	public function scopes()
+    {
+        return array(
+            "toDirector" => array(
+                "condition" => "t.id IN ('6','7')",
+            ),
+        );
+    }
+
 	/**
 	 * @return array relational rules.
 	 */

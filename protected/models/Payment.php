@@ -188,14 +188,14 @@ class Payment extends CActiveRecord
 			}
 			switch ($this->type_id) {
 				case 1:
-					$title = $title."№".$this->transaction;
+					$title = $title." ".$this->transaction;
 					break;
 				case 2:
-					$title = $title."№".$this->prefix.$this->number." от ".Controller::getRusDate($this->date);
+					$title = $title." ".$this->prefix.$this->number." от ".Controller::getRusDate($this->date);
 					break;
 				
 				default:
-					$title = $title."№".$this->number;
+					$title = $title." ".$this->number;
 					break;
 			}
 		}

@@ -135,10 +135,10 @@
 				</div>
 				<div class="b-hor-input">
 					<div class="b-input b-hor-input-left">
-						<?php echo $form->labelEx($person, "pay_himself"); ?>
+						<?php echo $form->labelEx($person, "payment_type_id"); ?>
 					</div>
 					<div class="b-hor-input-right">
-						<?=$person->payment?>
+						<?=$person->paymentType?>
 					</div>
 				</div>
 				<div class="b-hor-input">

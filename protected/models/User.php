@@ -86,7 +86,7 @@ class User extends CActiveRecord
 			"name" => "Имя",
 			"fio" => "ФИО",
 			"email" => "E-mail",
-			"roles" => "Роли",
+			"roles" => "Доступ",
 			"active" => "Активность",
 			"agency_id" => "Агентство",
 			"token" => "Токен",
@@ -143,6 +143,7 @@ class User extends CActiveRecord
 		$criteria->compare("name", $this->name, true);
 		$criteria->compare("email", $this->email, true);
 		$criteria->compare("active", $this->active);
+		$criteria->compare("agency_id", $this->agency_id);
 
 		if( $count ){
 			return User::model()->count($criteria);

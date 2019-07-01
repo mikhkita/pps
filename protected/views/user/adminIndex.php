@@ -17,8 +17,8 @@
 		<td><?php echo CHtml::activeTextField($filter, 'login', array('tabindex' => 1, "placeholder" => "Поиск по логину")); ?></td>
 		<td><?php echo CHtml::activeTextField($filter, 'email', array('tabindex' => 2, "placeholder" => "Поиск по email")); ?></td>
 		<td></td>
-		<td></td>
-		<td><a href="#" class="b-clear-filter">Сбросить</a></td>
+		<td><? if( Yii::app()->user->checkAccess('accessAll') ): ?><?php echo CHtml::activeDropDownList($filter, 'agency_id', CHtml::listData(Agency::model()->sorted()->findAll(), 'id', 'name'), array("class" => "select2", "empty" => "Все агентства", "tabindex" => 1, "placeholder" => "Поиск по породе")); ?><? endif; ?></td>
+		<td class="tc"><a href="#" class="b-clear-filter">Сбросить</a></td>
 	</tr>
 	<? if(count($data)): ?>
 		<? foreach ($data as $i => $item): ?>
@@ -29,7 +29,7 @@
 			<td class="align-left"><?=$item->email?></td>
 			<td><?=implode(", ", $item->getRoleNames())?></td>
 			<td><?=$item->agency->name?></td>
-			<td><a href="<?=Yii::app()->createUrl("/user/adminUpdate",array("id"=>$item->id))?>" class="ajax-form ajax-update b-tool b-tool-update" title="Редактировать <?=$this->adminMenu["cur"]->vin_name?>"></a><a href="<?=Yii::app()->createUrl("/user/adminDelete",array("id"=>$item->id))?>" class="ajax-form ajax-delete b-tool b-tool-delete" title="Удалить <?=$this->adminMenu["cur"]->vin_name?>" data-name="<?=$this->adminMenu["cur"]->vin_name?>"></a></td>
+			<td><a href="<?=Yii::app()->createUrl("/user/adminUpdate",array("id"=>$item->id))?>" class="ajax-form b-double-click-click ajax-update b-tool b-tool-update" title="Редактировать <?=$this->adminMenu["cur"]->vin_name?>"></a><a href="<?=Yii::app()->createUrl("/user/adminDelete",array("id"=>$item->id))?>" class="ajax-form ajax-delete b-tool b-tool-delete" title="Удалить <?=$this->adminMenu["cur"]->vin_name?>" data-name="<?=$this->adminMenu["cur"]->vin_name?>"></a></td>
 		</tr>
 	<? endforeach; ?>
 	<? else: ?>

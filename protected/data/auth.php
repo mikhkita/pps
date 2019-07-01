@@ -90,6 +90,19 @@ return array (
     'description' => 'Доступ ко всему внутри турагентства',
     'bizRule' => NULL,
     'data' => NULL,
+    'assignments' => 
+    array (
+      21 => 
+      array (
+        'bizRule' => NULL,
+        'data' => NULL,
+      ),
+      22 => 
+      array (
+        'bizRule' => NULL,
+        'data' => NULL,
+      ),
+    ),
   ),
   'accessAll' => 
   array (
@@ -136,6 +149,16 @@ return array (
     'assignments' => 
     array (
       18 => 
+      array (
+        'bizRule' => NULL,
+        'data' => NULL,
+      ),
+      21 => 
+      array (
+        'bizRule' => NULL,
+        'data' => NULL,
+      ),
+      22 => 
       array (
         'bizRule' => NULL,
         'data' => NULL,
@@ -189,11 +212,6 @@ return array (
         'bizRule' => NULL,
         'data' => NULL,
       ),
-      22 => 
-      array (
-        'bizRule' => NULL,
-        'data' => NULL,
-      ),
       23 => 
       array (
         'bizRule' => NULL,
@@ -214,14 +232,6 @@ return array (
       2 => 'accessAgency',
       3 => 'paymentAdmin',
     ),
-    'assignments' => 
-    array (
-      21 => 
-      array (
-        'bizRule' => NULL,
-        'data' => NULL,
-      ),
-    ),
   ),
   'admin' => 
   array (
@@ -233,10 +243,18 @@ return array (
     array (
       0 => 'director',
       1 => 'accessAll',
-      2 => 'readDictionary',
+      2 => 'dictionaryAdmin',
       3 => 'updatePoint',
       4 => 'agencyAdmin',
       5 => 'userAdmin',
+    ),
+    'assignments' => 
+    array (
+      24 => 
+      array (
+        'bizRule' => NULL,
+        'data' => NULL,
+      ),
     ),
   ),
   'root' => 
@@ -248,7 +266,6 @@ return array (
     'children' => 
     array (
       0 => 'admin',
-      1 => 'dictionaryAdmin',
     ),
     'assignments' => 
     array (

@@ -161,9 +161,9 @@ class PaymentController extends Controller
 						$sberbank = new Sberbank();
 
 						$description = "Оплата билетов";
-						$jsonParams = json_decode(array(
+						$jsonParams = array(
 							"payment_id" => $payment->id
-						));
+						);
 
 						$result = (object) $sberbank->requestTicket($payment->id, $payment->getTotalSum(), $description, $jsonParams );
 
@@ -185,7 +185,7 @@ class PaymentController extends Controller
 							"action" => "showPopup",
 							"sum" => number_format( $payment->getTotalSum(), 0, ',', '&nbsp;' )." руб.",
 							"date" => Controller::getRusDate($payment->date),
-							"number" => $payment->number,
+							"number" => $payment->prefix.$payment->number,
 							"message" => "Счет успешно создан",
 						) );
 						break;

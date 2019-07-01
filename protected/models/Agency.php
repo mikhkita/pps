@@ -9,17 +9,25 @@
  * @property string $code_1c
  * @property integer $sort
  * @property integer $default_start_point_id
+ * @property integer $default_payment_type_id
  */
 class Agency extends CActiveRecord
 {
 	public $items = array();
+	public $defaultPaymentType = NULL;
+	public $payments = array( 
+		1 => "Оплата по карте",
+		2 => "Безналичный", 
+		3 => "Наличный",
+		4 => "На руки водителю",
+	);
 
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
 	{
-		return "Agency";
+		return "agency";
 	}
 
 	/**
@@ -31,11 +39,11 @@ class Agency extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array("name", "required"),
-			array("default_start_point_id", "numerical", "integerOnly" => true),
+			array("default_start_point_id, default_payment_type_id", "numerical", "integerOnly" => true),
 			array("name", "length", "max" => 64),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array("id, name, code_1c, default_start_point_id", "safe", "on" => "search"),
+			array("id, name, code_1c, default_start_point_id, default_payment_type_id", "safe", "on" => "search"),
 		);
 	}
 
@@ -74,6 +82,7 @@ class Agency extends CActiveRecord
 			"name" => "Наименование",
 			"code_1c" => "Код 1С",
 			"default_start_point_id" => "Точка отправления по умолчанию",
+			"default_payment_type_id" => "Способ оплаты по умолчанию",
 		);
 	}
 
@@ -143,6 +152,15 @@ class Agency extends CActiveRecord
 		Log::add(14, $this->id, $this->name." (".$this->id.")", 4);
 
 		return true;
+	}
+
+	public function afterFind()
+	{
+		parent::afterFind();
+
+		if( $this->default_payment_type_id ){
+			$this->defaultPaymentType = $this->payments[$this->default_payment_type_id];
+		}
 	}
 
 	/**

@@ -27,6 +27,7 @@ class Back extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
+			array("reason", "required"),
 			array("reason", "length", "max" => 4096),
 			array("export_date, date", "safe"),
 			// The following rule is used by search().
@@ -93,12 +94,57 @@ class Back extends CActiveRecord
 		}
 	}
 
-	public function updateObj($attributes){
+	public function updateObj($attributes, $backPersons){
 		foreach ($attributes as &$value) {
 	    	$value = trim($value);
 		}
 
+		$isNewRecord = $this->isNewRecord;
+
 		$this->attributes = $attributes;
+
+		$errors = array();
+		if($this->save()){
+			if( count($backPersons) ){
+				if( $isNewRecord ){
+					foreach ($backPersons as $key => $person) {
+						foreach ($person as &$value) {
+					    	$value = trim($value);
+						}
+
+						$model = new BackPerson();
+
+						$model->attributes = $person;
+
+						$model->back_id = $this->id;
+						$model->person_id = intval($key);
+
+						if( !$model->save() ){
+							array_push($errors, Controller::implodeErrors($model->getErrors()) );
+						}
+					}
+				}else{
+					
+				}
+			}
+		}else{
+			array_push($errors, Controller::implodeErrors($this->getErrors()) );
+		}
+
+		if( !count($errors) ){
+			return (object) array(
+				"result" => true
+			);
+		}else{
+			return (object) array(
+				"result" => false,
+				"message" => implode("<br>", $errors)
+			);
+		}
+
+
+
+
 
 		if($this->save()){
 			return true;

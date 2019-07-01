@@ -23,7 +23,7 @@
  * @property integer $from_status_id
  * @property integer $passport
  * @property string $birthday
- * @property integer $pay_himself
+ * @property integer $payment_type_id
  * @property string $code_1c
  * @property integer $number
  */
@@ -33,15 +33,30 @@ class Person extends CActiveRecord
 	public $age = NULL;
 	public $direction = NULL;
 	public $transfer = NULL;
-	public $payment = NULL;
+	public $paymentType = NULL;
 	public $price_without_commission = 0;
 	public $to_status = NULL;
 	public $from_status = NULL;
 
-	public $ages = array( 0 => "Взрослый", 1 => "Детский" );
-	public $directions = array( 1 => "В обе стороны", 2 => "Туда", 3 => "Обратно" );
-	public $transfers = array( 1 => "На такси", 0 => "Самостоятельно" );
-	public $payments = array( 0 => "Через турагентство", 1 => "Напрямую водителю" );
+	public $ages = array( 
+		0 => "Взрослый",
+		1 => "Детский" 
+	);
+	public $directions = array( 
+		1 => "В обе стороны",
+		2 => "Туда",
+		3 => "Обратно"
+	);
+	public $transfers = array( 
+		1 => "На такси",
+		0 => "Самостоятельно"
+	);
+	public $payments = array(  // Продублировано в Agency для способа оплаты по умолчанию
+		1 => "Оплата по карте",
+		2 => "Безналичный", 
+		3 => "Наличный",
+		4 => "На руки водителю",
+	);
 	public $statuses = array(
 		1 => "В работе",
 		2 => "Оформлен",
@@ -66,7 +81,7 @@ class Person extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array("name, last_name, order_id, phone, address", "required"),
-			array("is_child, transfer_id, direction_id, price, one_way_price, commission, cash, to_status_id, from_status_id, pay_himself, number", "numerical", "integerOnly" => true),
+			array("is_child, transfer_id, direction_id, price, one_way_price, commission, cash, to_status_id, from_status_id, payment_type_id, number", "numerical", "integerOnly" => true),
 			array("name, last_name, third_name", "length", "max" => 64),
 			array("order_id", "length", "max" => 10),
 			array("phone, code_1c, birthday", "length", "max" => 32),
@@ -74,7 +89,7 @@ class Person extends CActiveRecord
 			array("comment, address", "length", "max" => 1024),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array("id, name, last_name, third_name, order_id, is_child, phone, comment, address, transfer_id, direction_id, price, one_way_price, commission, cash, to_status_id, from_status_id, passport, birthday, pay_himself, code_1c, number", "safe", "on" => "search"),
+			array("id, name, last_name, third_name, order_id, is_child, phone, comment, address, transfer_id, direction_id, price, one_way_price, commission, cash, to_status_id, from_status_id, passport, birthday, payment_type_id, code_1c, number", "safe", "on" => "search"),
 		);
 	}
 
@@ -117,7 +132,7 @@ class Person extends CActiveRecord
 			"status" => "Статус",
 			"passport" => "Серия и номер паспорта",
 			"birthday" => "День рождения",
-			"pay_himself" => "Клиент оплачивает",
+			"payment_type_id" => "Способ оплаты",
 			"code_1c" => "Код 1С",
 			"number" => "Номер строки (для 1С)",
 			"fio" => "ФИО",
@@ -209,7 +224,7 @@ class Person extends CActiveRecord
 		$this->age = $this->ages[ $this->is_child ];
 		$this->direction = $this->directions[ $this->direction_id ];
 		$this->transfer = $this->transfers[ $this->transfer_id ];
-		$this->payment = $this->payments[ $this->pay_himself ];
+		$this->paymentType = $this->payments[ $this->payment_type_id ];
 		$this->price_without_commission = $this->price - $this->commission;
 
 		if( !empty($this->to_status_id) ){

@@ -1,7 +1,7 @@
 <a href="<?php echo $this->createUrl("/".$this->adminMenu["cur"]->code."/adminIndex")?>" class="b-back">Назад</a>
 <h1><?=$this->adminMenu["items"][ $_GET["class"] ]->name?></h1>
 
-<? if( Yii::app()->user->checkAccess('updateDictionary') ): ?><a href="<?php echo $this->createUrl("/".$this->adminMenu["cur"]->code."/adminCreate", array('class' => $_GET["class"]))?>" class="ajax-form ajax-create b-butt b-top-butt">Добавить</a><? endif; ?>
+<? if( Yii::app()->user->checkAccess('root') ): ?><a href="<?php echo $this->createUrl("/".$this->adminMenu["cur"]->code."/adminCreate", array('class' => $_GET["class"]))?>" class="ajax-form ajax-create b-butt b-top-butt">Добавить</a><? endif; ?>
 <?php $form=$this->beginWidget('CActiveForm'); ?>
 <table class="b-table" border="0">
 	<tr>
@@ -50,8 +50,8 @@
 					</td>
 				<? endforeach; ?>
 				<td>
-					<? if( Yii::app()->user->checkAccess('updateDictionary') ): ?><a href="<?php echo Yii::app()->createUrl('/'.$this->adminMenu["cur"]->code.'/adminupdate',array('id'=>$item->id, 'class' => $_GET["class"]))?>" class="ajax-form ajax-update b-tool b-tool-update" title="Редактировать <?=$this->adminMenu["items"][ $_GET["class"] ]->vin_name?>"></a>
-					<a href="<?=Yii::app()->createUrl('/'.$this->adminMenu["cur"]->code.'/admindelete',array('id'=>$item->id, 'class' => $_GET["class"]))?>" class="ajax-form ajax-delete b-tool b-tool-delete" title="Удалить <?=$this->adminMenu["items"][ $_GET["class"] ]->vin_name?>" data-name="<?=$this->adminMenu["items"][ $_GET["class"] ]->vin_name?>"></a><? endif; ?>
+					<? if( Yii::app()->user->checkAccess('updateDictionary') ): ?><a href="<?php echo Yii::app()->createUrl('/'.$this->adminMenu["cur"]->code.'/adminupdate',array('id'=>$item->id, 'class' => $_GET["class"]))?>" class="ajax-form b-double-click-click ajax-update b-tool b-tool-update" title="Редактировать <?=$this->adminMenu["items"][ $_GET["class"] ]->vin_name?>"></a>
+					<? if( Yii::app()->user->checkAccess('root') ): ?><a href="<?=Yii::app()->createUrl('/'.$this->adminMenu["cur"]->code.'/admindelete',array('id'=>$item->id, 'class' => $_GET["class"]))?>" class="ajax-form ajax-delete b-tool b-tool-delete" title="Удалить <?=$this->adminMenu["items"][ $_GET["class"] ]->vin_name?>" data-name="<?=$this->adminMenu["items"][ $_GET["class"] ]->vin_name?>"></a><? endif; ?><? endif; ?>
 				</td>
 			</tr>
 		<? endforeach; ?>

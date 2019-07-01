@@ -43,14 +43,18 @@
 	<div class="row clearfix">
 		<div class="row-half b-input">
 			<?php echo $form->labelEx($model, "roles"); ?>
-			<?=CHTML::checkBoxList("Roles", $roles, CHtml::listData(Role::model()->findAll(), "id", "name"), array()); ?>
+			<?=CHTML::checkBoxList("Roles", $roles, CHtml::listData($roleList, "id", "name"), array()); ?>
 			<?php echo $form->error($model, "Roles"); ?>
 		</div>
+		<? if( Yii::app()->user->checkAccess('accessAll') ): ?>
 		<div class="row-half b-input">
 			<?php echo $form->labelEx($model, "agency_id"); ?>
 			<?php echo $form->dropDownList($model, "agency_id", array(0 => "Не выбрано") + CHtml::listData(Agency::model()->sorted()->findAll(), "id", "name"), array("class" => "select2")); ?>
 			<?php echo $form->error($model, "agency_id"); ?>
 		</div>
+		<? elseif( Yii::app()->user->checkAccess('accessAgency') ): ?>
+			<?php echo $form->hiddenField($model, "agency_id", array("maxlength" => 255, "required" => true)); ?>
+		<? endif; ?>
 	</div>
 
 	<div class="row buttons">

@@ -158,7 +158,7 @@ class ExchangeController extends Controller
 			foreach ($order->persons as $key => $person) {
 				$personFields = array(
 					"Серия" => "",
-					"Номер" => "",
+					"НомерПаспорта" => "",
 					"ВидДокумента" => "",
 					"ФИО" => $person->fio,
 					"ИДПассажира" => $person->id,
@@ -169,16 +169,16 @@ class ExchangeController extends Controller
 					"ТипПассажира" => ($person->is_child)?"Детский":"Взрослый",
 					"Цена" => "",
 					"Комментарий" => $person->comment,
-					"СпособОплаты" => "",
-					// "СостояниеИсполнения" => "",
-					// "СтатусОплаты" => "",
+					"СпособОплаты" => "Безналичный",
+					"СостояниеИсполнения" => "В работе",
+					"СтатусОплаты" => "Не оплачен",
 				);
 
 				if( !empty($person->passport) ){
 					$tmp = explode(" ", $person->passport);
 					if( count( $tmp ) == 3 ){
 						$personFields["Серия"] = $tmp[0]." ".$tmp[1];
-						$personFields["Номер"] = $tmp[2];
+						$personFields["НомерПаспорта"] = $tmp[2];
 						$personFields["ВидДокумента"] = "Паспорт гражданина РФ";
 					}
 				}
@@ -211,6 +211,7 @@ class ExchangeController extends Controller
 				$orderFieldsTo["ИсходТочка"] = $order->startPoint->code_1c;
 				$orderFieldsTo["КонТочка"] = $order->endPoint->code_1c;
 				$orderFieldsTo["ТипЗаказа"] = "Вылет";
+				$orderFieldsTo["ИД"] = $orderFieldsTo["ИД"]."-1";
 
 				if( !empty($order->flightTo) ){
 					$orderFieldsTo["Рейс"] = $order->flightTo->code_1c;
@@ -229,6 +230,7 @@ class ExchangeController extends Controller
 				$orderFieldsFrom["ИсходТочка"] = $order->endPoint->code_1c;
 				$orderFieldsFrom["КонТочка"] = $order->startPoint->code_1c;
 				$orderFieldsFrom["ТипЗаказа"] = "Прилет";
+				$orderFieldsFrom["ИД"] = $orderFieldsFrom["ИД"]."-2";
 
 				if( !empty($order->flightFrom) ){
 					$orderFieldsFrom["Рейс"] = $order->flightFrom->code_1c;
@@ -244,10 +246,10 @@ class ExchangeController extends Controller
 
 		$xml = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><Документы/>');
 
-		$order = Order::model()->findByPk(16);
+		$order = Order::model()->findByPk(1);
 		$order = addOrderToXML($xml, $order);
 
-		$order = Order::model()->findByPk(17	);
+		$order = Order::model()->findByPk(2);
 		$order = addOrderToXML($xml, $order);
 		
 

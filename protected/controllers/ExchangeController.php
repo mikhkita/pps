@@ -13,7 +13,7 @@ class ExchangeController extends Controller
 	{
 		return array(
 			array("allow",
-				"actions" => array("importDictionaries", "exportOrder", "exportBack"),
+				"actions" => array("importDictionaries", "exportOrder", "exportBack", "exportPayments"),
 				"users" => array("*"),
 			),
 			array("deny",
@@ -30,11 +30,11 @@ class ExchangeController extends Controller
 	// 	</Заявка>
 	// </Отмена>
 
-		function getArBack(){
+		function getarBack(){
 			
 			$model = Back::model()->findAll("export_date is NULL");
 			$arBack = array();
-			
+
 			if (!empty($model)) {
 				foreach ($model as $key => $back) {
 					$arBack[$key]["ID"] = $back->id;
@@ -72,7 +72,7 @@ class ExchangeController extends Controller
 			foreach ($arBack as $code => $back) {
 				$document->addAttribute("ИД", $back['ID']);
 				foreach ($back['ORDERS'] as $orderID => $orderInfo) {
-					$order = $document->addChild("Заявка");
+					$order = $document->addChild("Заказ");
 					$order->addAttribute("Номер", $orderID);
 					foreach($orderInfo as $passengers){
 						$passenger = $order->addChild("Пассажир");
@@ -96,12 +96,94 @@ class ExchangeController extends Controller
 
 		$xml = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><Отмены/>');
 
-		$arBack = getArBack();
+		$arBack = getarBack();
 
 		if (!empty($arBack)) {
 			addDocumentToXML($xml, $arBack);
 		}
 
+	}
+
+	public function actionExportPayments(){
+		
+		function getArPayments(){
+			
+			$model = Payments::model()->findAll();
+			$arPayments = array();
+
+			if (!empty($model)) {
+				foreach ($model as $key => $payment) {
+					
+					$arPayments[$key]["ID"] = $payment->id;
+					$arPayments[$key]["AGENCY_ID"] = $payment->user->agency->id;
+					$arPayments[$key]["NUMBER"] = $payment->number;
+					$arPayments[$key]["DATE"] = $payment->date;
+					$arPayments[$key]["TRANSACTION"] = $payment->transaction;
+					$arPayments[$key]["TYPE"] = $payment->payments->name_1c;
+
+					foreach ($back->persons as $backPerson) {
+
+						if ($backPerson->person->direction_id == 1 || $backPerson->person->direction_id == 2) {
+							$arPayments[$key]["ORDERS"][$backPerson->person->order->to_code_1c][] = array(
+								'CODE' => $backPerson->person->code_1c,
+								'NUMBER' => $backPerson->person->number
+							);
+						}
+
+						if ($backPerson->person->direction_id == 1 || $backPerson->person->direction_id == 3) {
+							$arPayments[$key]["ORDERS"][$backPerson->person->order->from_code_1c][] = array(
+								'CODE' => $backPerson->person->code_1c,
+								'NUMBER' => $backPerson->person->number
+							);
+						}
+
+					}
+				}
+			}
+
+			echo "<pre>";
+			var_dump($arPayments);
+			echo "</pre>";
+
+			return $arPayments;
+		}
+
+		function addDocumentToXML(&$xml, $arPayments){
+
+			$document = $xml->addChild("Отмена");
+
+			foreach ($arBack as $code => $back) {
+				$document->addAttribute("ИД", $back['ID']);
+				foreach ($back['ORDERS'] as $orderID => $orderInfo) {
+					$order = $document->addChild("Заказ");
+					$order->addAttribute("Номер", $orderID);
+					foreach($orderInfo as $passengers){
+						$passenger = $order->addChild("Пассажир");
+						$passenger->addAttribute("ПассажирКод", $passengers['CODE']);
+						$passenger->addAttribute("НомерСтроки", $passengers['NUMBER']);
+					}
+				}
+			}
+
+			file_put_contents("backs.xml", $xml->asXML());
+			
+			$model = Back::model()->findAll("export_date is NULL");
+
+			$date = date("Y-m-d H:i:s");
+
+			foreach ($model as $key => $back) {
+				$back->export_date = $date;
+				$back->save();
+			}
+		}
+
+		$xml = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><Отмены/>');
+
+		$arBack = getarBack();
+
+		if (!empty($arBack)) {
+			addDocumentToXML($xml, $arBack);
+		}
 	}
 
 	public function actionExportOrder(){

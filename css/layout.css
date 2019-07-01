@@ -737,7 +737,7 @@ h1.b-with-nav{
             /*overflow: hidden;*/
             /*max-width: 150px;*/
         }
-        
+
         .icon-rub-bold:after,
         .icon-rub-regular:after{
             position: relative;
@@ -3135,7 +3135,7 @@ ul.yiiPager .first, ul.yiiPager .last{
 
         }
             .b-right-tile-top-block{
-                font-family: 'Roboto-Bold';
+                font-family: 'RobotoBold';
                 font-size: 32px;
                 color: #383B3F;
                 letter-spacing: 0;
@@ -3154,7 +3154,7 @@ ul.yiiPager .first, ul.yiiPager .last{
                     margin-bottom: 24px;
                 }
                     .b-right-tile-block-string .b-count{
-                        font-family: 'Roboto-Bold';
+                        font-family: 'RobotoBold';
                         font-size: 80px;
                         color: #383B3F;
                         letter-spacing: 0;
@@ -3469,7 +3469,7 @@ div.notifyjs-bootstrap-error{
             line-height: 24px;
         }
         .b-popup-payment-text .bold{
-            font-family: 'Roboto-Bold';
+            font-family: 'RobotoBold';
         }
         .b-right-tile-block h2{
             margin-top: 0;

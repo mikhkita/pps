@@ -42,8 +42,8 @@ class OrderController extends Controller
 
         Controller::accessFilter($filter);
 
-        $dataProvider = $filter->search(50);
-		$count = $filter->search(50, true);
+        $dataProvider = $filter->search(20);
+		$count = $filter->search(20, true);
 
 		$params = array(
 			"data" => $dataProvider->getData(),
@@ -83,6 +83,7 @@ class OrderController extends Controller
 			$this->render("adminCreate",array(
 				"model" => $model,
 				"person" => new Person,
+				"default_payment_type_id" => ($this->user->agency->default_payment_type_id)?$this->user->agency->default_payment_type_id:1
 			));
 		}
 	}

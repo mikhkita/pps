@@ -141,9 +141,11 @@ class Order extends CActiveRecord
 	}
 
 	public function updateObj($attributes, $persons){
-		foreach ($attributes as &$value) {
-	    	$value = trim($value);
-		}
+		if( count($attributes) ){
+			foreach ($attributes as &$value) {
+		    	$value = trim($value);
+			}
+		}	
 
 		$isNewRecord = $this->isNewRecord;
 

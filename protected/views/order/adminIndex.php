@@ -6,9 +6,10 @@
 	<div class="b-section-actions">
 		<div class="b-checkbox"><input type="checkbox" id="all-checkboxes"><label for="all-checkboxes"></label></div>
 		<? if( Yii::app()->user->checkAccess('updatePayment') ): ?>
-		<a href="<?php echo Yii::app()->createUrl('/payment/adminCreate',array('type'=>1))?>" class="b-icon-btn b-pay-action b-pay-action icon-card">Оплатить онлайн</a>
-		<a href="<?php echo Yii::app()->createUrl('/payment/adminCreate',array('type'=>2))?>" class="b-icon-btn b-pay-action b-bill-action icon-bill">Выставить счет</a>
+		<a href="<?php echo Yii::app()->createUrl('/payment/adminCreate',array('type'=>1))?>" class="b-icon-btn b-pay-action icon-card">Оплатить онлайн</a>
+		<a href="<?php echo Yii::app()->createUrl('/payment/adminCreate',array('type'=>2))?>" class="b-icon-btn b-pay-action icon-bill">Выставить счет</a>
 		<? endif; ?>
+		<a href="<?php echo Yii::app()->createUrl('/back/adminCreate')?>" class="b-icon-btn b-return-action icon-return">Оформить отмену</a>
 	</div>
 </div>
 
@@ -61,6 +62,17 @@
 <? else: ?>
 	<p class="tc">У вас пока нет заявок</p>
 <? endif; ?>
+</div>
+<div class="b-pagination-cont clearfix">
+    <?php $this->widget('CLinkPager', array(
+        'header' => '',
+        'lastPageLabel' => 'последняя &raquo;',
+        'firstPageLabel' => '&laquo; первая', 
+        'pages' => $pages,
+        'prevPageLabel' => '< назад',
+        'nextPageLabel' => 'далее >'
+    )) ?>
+    <div class="b-lot-count">Всего заявок: <?=$count?></div>
 </div>
 <?php /* $form=$this->beginWidget('CActiveForm'); ?>
 <table class="b-table" border="0">

@@ -8,7 +8,7 @@ Class Sberbank {
     private $backUrl    = "";   //Адрес возврата
     
     function __construct() {
-        $this->backUrl = "http://spp.com/payment/callback";
+        $this->backUrl = Yii::app()->params["basePath"]."/payment/callback";
     }
 
     public function requestTicket($id, $amount, $desc, $json_params = []) {

@@ -109,9 +109,9 @@ class SiteController extends Controller
         $this->layout="service";
 	    if($error=Yii::app()->errorHandler->error)
 	    {
-	    	if(Yii::app()->request->isAjaxRequest)
-	    		echo $error["message"];
-	    	else
+	    	// if(Yii::app()->request->isAjaxRequest)
+	    		// echo $error["message"];
+	    	// else
 	        	$this->render("error", $error);
 	    }
 	}
@@ -376,7 +376,7 @@ class SiteController extends Controller
         $role = $auth->createRole("admin");
         $role->addChild("director");
         $role->addChild("accessAll");
-        $role->addChild("readDictionary");
+        $role->addChild("dictionaryAdmin");
         $role->addChild("updatePoint");
         $role->addChild("agencyAdmin");
         $role->addChild("userAdmin");
@@ -384,7 +384,6 @@ class SiteController extends Controller
         // Root
         $role = $auth->createRole("root");
         $role->addChild("admin");
-        $role->addChild("dictionaryAdmin");
 
     // Роли --------------------------------------------------- Роли
         

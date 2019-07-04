@@ -225,6 +225,9 @@ small.block{
     text-decoration: none;
 }
 
+.icon-return:before {
+    content: "\e91a";
+}
 .icon-dictionary:before {
     content: "\e919";
 }
@@ -2613,7 +2616,7 @@ ul.yiiPager .first, ul.yiiPager .last{
             }
         .b-section-actions .b-icon-btn{
             display: inline-block;
-            vertical-align: middle;
+            vertical-align: top;
             margin-top: 1px;
             margin-left: 5px;
             margin-right: 15px;
@@ -2639,6 +2642,17 @@ ul.yiiPager .first, ul.yiiPager .last{
             }
                 .b-icon-btn.icon-bill:hover{
                     color: #EC8F1E;
+                }
+            .b-icon-btn.icon-return:before{
+                margin-right: 8px;
+                font-size: 18px;
+                vertical-align: middle;
+                position: relative;
+                top: -2px;
+                color: #C80909;
+            }
+                .b-icon-btn.icon-return:hover{
+                    color: #C80909;
                 }
 .b-section-content{
     margin-top: 46px;
@@ -3169,7 +3183,7 @@ ul.yiiPager .first, ul.yiiPager .last{
                     position: relative;
                 }
                 .b-btn-text-cont{
-                    display: inline-block;
+                    display: none;
                     text-decoration: none;
                     position: relative;
                 }
@@ -3233,6 +3247,11 @@ ul.yiiPager .first, ul.yiiPager .last{
                     }
                         .b-right-tile-bottom-block .b-btn-text-cont span{
                             display: none;
+                        }
+                        .b-right-tile-bottom-block.preloader .b-btn-text-cont,
+                        .b-right-tile-bottom-block.success .b-btn-text-cont,
+                        .b-right-tile-bottom-block.error .b-btn-text-cont{
+                            display: inline-block;
                         }
                         .b-right-tile-bottom-block.preloader .b-btn-text-cont span.process,
                         .b-right-tile-bottom-block.success .b-btn-text-cont span.success,

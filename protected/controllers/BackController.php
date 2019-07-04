@@ -14,11 +14,11 @@ class BackController extends Controller
 		return array(
 			array("allow",
 				"actions" => array("adminIndex"),
-				"roles" => array("readUser"),
+				"roles" => array("readOrder"),
 			),
 			array("allow",
 				"actions" => array("adminUpdate", "adminDelete", "adminCreate"),
-				"roles" => array("updateUser"),
+				"roles" => array("updateOrder"),
 			),
 			array("deny",
 				"users" => array("*"),
@@ -26,42 +26,42 @@ class BackController extends Controller
 		);
 	}
 
-	public function actionAdminIndex($partial = false){
-		unset($_GET["partial"]);
-		if( !$partial ){
-			$this->layout = "admin";
-			$this->pageTitle = $this->adminMenu["cur"]->name;
-		}
+	// public function actionAdminIndex($partial = false){
+	// 	unset($_GET["partial"]);
+	// 	if( !$partial ){
+	// 		$this->layout = "admin";
+	// 		$this->pageTitle = $this->adminMenu["cur"]->name;
+	// 	}
 
-        $filter = new Back('filter');
+ //        $filter = new Back('filter');
 
-		if (isset($_GET['Back'])){
-            $filter->attributes = $_GET['Back'];
-        }
+	// 	if (isset($_GET['Back'])){
+ //            $filter->attributes = $_GET['Back'];
+ //        }
 
-        $dataProvider = $filter->search(50);
-		$count = $filter->search(50, true);
+ //        $dataProvider = $filter->search(50);
+	// 	$count = $filter->search(50, true);
 
-		$params = array(
-			"data" => $dataProvider->getData(),
-			"pages" => $dataProvider->getPagination(),
-			"filter" => $filter,
-			"count" => $count,
-			"labels" => Back::attributeLabels(),
-		);
+	// 	$params = array(
+	// 		"data" => $dataProvider->getData(),
+	// 		"pages" => $dataProvider->getPagination(),
+	// 		"filter" => $filter,
+	// 		"count" => $count,
+	// 		"labels" => Back::attributeLabels(),
+	// 	);
 
-		if( !$partial ){
-			$this->render("adminIndex".(($this->isMobile)?"Mobile":""), $params);
-		}else{
-			$this->renderPartial("adminIndex".(($this->isMobile)?"Mobile":""), $params);
-		}
-	}
+	// 	if( !$partial ){
+	// 		$this->render("adminIndex".(($this->isMobile)?"Mobile":""), $params);
+	// 	}else{
+	// 		$this->renderPartial("adminIndex".(($this->isMobile)?"Mobile":""), $params);
+	// 	}
+	// }
 
 	public function actionAdminCreate()
 	{
-		$model = new Back();
+		$back = new Back();
 
-		$persons = explode(",", $_POST["ids"]);
+		$persons = explode(",", $_GET["ids"]);
 
 		if( !count( $persons ) ){
 			throw new CHttpException(404, "Passengers are not selected");
@@ -77,13 +77,19 @@ class BackController extends Controller
 		}
 
 		if(isset($_POST["Back"])) {
-			if( $model->updateObj($_POST["Back"]) ){
-				$this->actionAdminIndex(true);
-				return true;
+			$result = $back->updateObj($_POST["Back"], $_POST["BackPerson"]);
+			if( $result->result ){
+				Controller::returnSuccess( array(
+					"action" => "redirectDelay",
+					"href" => Yii::app()->createUrl("/order/adminIndex"),
+					"message" => "Заявка успешно отправлена"
+				) );
+			}else{
+				Controller::returnError("Ошибка: ".$result->message);
 			}
 		} else {
-			$this->renderPartial("adminCreate",array(
-				"model" => $model,
+			$this->render("adminCreate",array(
+				"back" => $back,
 				"persons" => $persons,
 			));
 		}

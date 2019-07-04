@@ -90,91 +90,6 @@
 		<div class="b-add-person-cont">
 			<a href="#" class="b-add-btn icon-add" id="b-add-person-btn">Добавить пассажира</a>
 		</div>
-
-		<? /* for( $index = 0; $index < 0; $index ++ ): ?>
-		<div class="b-form b-order-form-person">
-			<h5 class="grey">Пассажир №1</h5>
-			<div class="b-tile">
-				<div class="b-order-form-fio">
-					<div class="b-resize-input">
-						<div class="input-buffer"></div>
-						<input type="text" required name="Person[<?=$index?>][last_name]" autocomplete="off" placeholder="Фамилия" title="ФИО обязательно для заполнения">
-					</div>
-					<div class="b-resize-input">
-						<div class="input-buffer"></div>
-						<input type="text" required name="Person[<?=$index?>][name]" autocomplete="off" placeholder="Имя" title="ФИО обязательно для заполнения">
-					</div>
-					<div class="b-resize-input">
-						<div class="input-buffer"></div>
-						<input type="text" name="Person[<?=$index?>][third_name]" autocomplete="off" placeholder="Отчество">
-					</div>
-				</div>
-				<div class="b-hor-input">
-					<div class="b-input b-hor-input-left">
-						<?php echo $form->labelEx($person, "is_child"); ?>
-					</div>
-					<div class="b-hor-input-right">
-						<?=CHTML::radioButtonList("Person[".$index."][is_child]", 0, array( 0 => "Старше 10 лет", 1 => "Младше 10 лет" ), array("template" => '<div class="b-radio">{input}{label}</div>', "separator" => "", "container" => "div", "baseID" => "child_".$index)); ?>
-					</div>
-				</div>
-				<div class="b-hor-input">
-					<div class="b-input b-hor-input-left">
-						<?php echo $form->labelEx($person, "direction_id"); ?>
-					</div>
-					<div class="b-hor-input-right">
-						<?=CHTML::radioButtonList("Person[".$index."][direction_id]", 0, array( 0 => "В обе стороны", 1 => "Туда", 2 => "Обратно" ), array("template" => '<div class="b-radio">{input}{label}</div>', "separator" => "", "container" => "div", "baseID" => "person_".$index)); ?>
-					</div>
-				</div>
-				<div class="b-hor-input">
-					<div class="b-input b-hor-input-left">
-						<?php echo $form->labelEx($person, "phone"); ?>
-					</div>
-					<div class="b-hor-input-right b-to-datepicker">
-						<?=CHTML::textField("Person[".$index."][phone]", "", array("maxlength" => 32, "autocomplete" => "off", "required" => true, "placeholder" => "...", "class" => "phone", "title" => "Поле обязательно"))?>
-					</div>
-				</div>
-				<div class="b-hor-input">
-					<div class="b-input b-hor-input-left">
-						<?php echo $form->labelEx($person, "transfer_id"); ?>
-					</div>
-					<div class="b-hor-input-right">
-						<?=CHTML::radioButtonList("Person[".$index."][transfer_id]", 0, array( 0 => "Самостоятельно", 1 => "На такси" ), array("template" => '<div class="b-radio">{input}{label}</div>', "separator" => "", "container" => "div", "baseID" => "transfer_".$index)); ?>
-					</div>
-				</div>
-				<div class="b-hor-input">
-					<div class="b-input b-hor-input-left">
-						<?php echo $form->labelEx($person, "address"); ?>
-					</div>
-					<div class="b-hor-input-right">
-						<?=CHTML::textArea("Person[".$index."][address]", "", array("maxlength" => 1024, "autocomplete" => "off", "placeholder" => "...", "rows" => 1, "required" => true))?>
-					</div>
-				</div>
-				<div class="b-hor-input">
-					<div class="b-input b-hor-input-left">
-						<?php echo $form->labelEx($person, "comment"); ?>
-					</div>
-					<div class="b-hor-input-right">
-						<?=CHTML::textArea("Person[".$index."][comment]", "", array("maxlength" => 1024, "placeholder" => "...", "rows" => 1))?>
-					</div>
-				</div>
-				<div class="b-hor-input">
-					<div class="b-input b-hor-input-left">
-						<?php echo $form->labelEx($person, "cash"); ?>
-					</div>
-					<div class="b-hor-input-right b-to-datepicker">
-						<?=CHTML::textField("Person[".$index."][cash]", "", array("maxlength" => 32, "placeholder" => "...", "class" => "numeric"))?>
-					</div>
-				</div>
-				<div class="b-price-row">
-					<div class="b-label-block b-person-price" data-price="4500">
-						<label>Итого:</label>
-						<h3>4 500 ₽</h3>
-					</div>
-				</div>
-			</div>
-		</div>
-		<? endfor; */ ?>
-
 	<?php $this->endWidget(); ?>		
 	</div>
 	<div class="b-order-form-right">
@@ -251,10 +166,10 @@
 			</div>
 			<div class="b-hor-input">
 				<div class="b-input b-hor-input-left">
-					<?php echo $form->labelEx($person, "pay_himself"); ?>
+					<?php echo $form->labelEx($person, "payment_type_id"); ?>
 				</div>
 				<div class="b-hor-input-right">
-					<?=CHTML::radioButtonList("Person[{{index}}][pay_himself]", 0, $person->payments, array("template" => '<div class="b-radio not-remove">{input}{label}</div>', "separator" => "", "container" => "div", "baseID" => "pay_himself_{{index}}")); ?>
+					<?=CHTML::dropDownList("Person[{{index}}][payment_type_id]", $default_payment_type_id, $person->payments, array("class" => "select2")); ?>
 				</div>
 			</div>
 			<div class="b-hor-input">

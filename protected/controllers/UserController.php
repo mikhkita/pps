@@ -44,6 +44,10 @@ class UserController extends Controller
 	{
 		$model=new User;
 
+		if( $this->user->agency_id ){
+			$model->agency_id = $this->user->agency_id;
+		}
+
 		if(isset($_POST["User"]))
 		{
 			$model->attributes=$_POST["User"];
@@ -63,8 +67,15 @@ class UserController extends Controller
 			}
 		}
 
+		if( Yii::app()->user->checkAccess('accessAll') ){
+			$roleList = Role::model()->findAll();
+		}else{
+			$roleList = Role::model()->toDirector()->findAll();
+		}
+
 		$this->renderPartial("adminCreate",array(
 			"model" => $model,
+			"roleList" => $roleList
 		));
 
 	}
@@ -99,9 +110,16 @@ class UserController extends Controller
 				array_push($roles, $role->role_id);
 			}
 
+			if( Yii::app()->user->checkAccess('accessAll') ){
+				$roleList = Role::model()->findAll();
+			}else{
+				$roleList = Role::model()->toDirector()->findAll();
+			}
+
 			$this->renderPartial("adminUpdate",array(
 				"model" => $model,
 				"roles" => $roles,
+				"roleList" => $roleList
 			));
 		}
 	}
@@ -125,6 +143,8 @@ class UserController extends Controller
 		if (isset($_GET['User'])){
             $filter->attributes = $_GET['User'];
         }
+
+        Controller::accessFilter($filter);
 
         $dataProvider = $filter->search(50);
 		$count = $filter->search(50, true);

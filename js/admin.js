@@ -347,15 +347,15 @@ $(document).ready(function(){
             }
         });
 
-        $form.find("input[type='text'], input[type='tel'], input[type='email'], textarea, select").blur(function(){
-           // $(this).valid();
-        });
+        // $form.find("input[type='text'], input[type='tel'], input[type='email'], textarea, select").blur(function(){
+        //    // $(this).valid();
+        // });
 
-        $form.find("input[type='text'], input[type='tel'], input[type='email'], textarea, select").keyup(function(){
-           // $(this).valid();
-        });
+        // $form.find("input[type='text'], input[type='tel'], input[type='email'], textarea, select").keyup(function(){
+        //    // $(this).valid();
+        // });
 
-        $form.find("textarea").keyup(function(){
+        $form.find("textarea, input[type='text']").keyup(function(){
            $(this).valid();
         });
 
@@ -1483,7 +1483,7 @@ $(document).ready(function(){
         var prices = getPrices();
 
         if( !prices ){
-            prices = [[0, 0], [0, 0]];
+            prices = [[0, 0, 0, 0], [0, 0, 0, 0]];
 
             if( $input ){
                 $input.notify("По данному маршруту нет цен. Пожалуйста, обратитесь к диспетчеру СПП.", {
@@ -1499,6 +1499,27 @@ $(document).ready(function(){
                     $input.val("").change();
                 },10);
             }
+        }else{
+            for( var i in prices ){
+                if( !prices[i][3] ){
+                    $input.notify("По данному маршруту не определена комиссия. Пожалуйста, обратитесь к диспетчеру СПП.", {
+                        globalPosition: 'top center',
+                        showAnimation: 'fadeIn',
+                        hideAnimation: 'fadeOut',
+                        autoHideDelay: 4000,
+                        autoHide: true,
+                        showDuration: 250,
+                        hideDuration: 100
+                    });
+                    setTimeout(function(){
+                        $input.val("").change();
+                    },10);
+
+                    return false;
+                }
+            }
+
+            $(".notifyjs-wrapper").remove();
         }
 
         $(".b-order-form-person").each(function(){

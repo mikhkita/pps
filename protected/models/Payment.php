@@ -79,7 +79,7 @@ class Payment extends CActiveRecord
 	{
 		return array(
 			"id" => "ID",
-			"user_id" => "Пользователь",
+			"user_id" => "Ответственный",
 			"number" => "Номер",
 			"transaction" => "Номер транзакции",
 			"filename" => "Ссылка на файл",

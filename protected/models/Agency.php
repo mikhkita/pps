@@ -15,7 +15,7 @@ class Agency extends CActiveRecord
 {
 	public $items = array();
 	public $defaultPaymentType = NULL;
-	public $payments = array( 
+	public $paymentTypes = array( 
 		1 => "Оплата по карте",
 		2 => "Безналичный", 
 		3 => "Наличный",
@@ -159,7 +159,7 @@ class Agency extends CActiveRecord
 		parent::afterFind();
 
 		if( $this->default_payment_type_id ){
-			$this->defaultPaymentType = $this->payments[$this->default_payment_type_id];
+			$this->defaultPaymentType = $this->paymentTypes[$this->default_payment_type_id];
 		}
 	}
 

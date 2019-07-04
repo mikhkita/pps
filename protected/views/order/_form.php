@@ -169,7 +169,7 @@
 					<?php echo $form->labelEx($person, "payment_type_id"); ?>
 				</div>
 				<div class="b-hor-input-right">
-					<?=CHTML::dropDownList("Person[{{index}}][payment_type_id]", $default_payment_type_id, $person->payments, array("class" => "select2")); ?>
+					<?=CHTML::dropDownList("Person[{{index}}][payment_type_id]", $default_payment_type_id, $person->paymentTypes, array("class" => "select2")); ?>
 				</div>
 			</div>
 			<div class="b-hor-input">

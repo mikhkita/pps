@@ -25,6 +25,14 @@ class Order extends CActiveRecord
 	public $cash = NULL;
 	public $commission = NULL;
 	public $agency_id = NULL;
+	public $payment_status_id = NULL;
+
+	public $paymentStatuses = array(  // Продублировано в Person для статуса оплаты у пассажира
+		1 => "Не оплачено",
+		2 => "Выставлен счет",
+		3 => "Оплачено частично",
+		4 => "Оплачено",
+	);
 
 	/**
 	 * @return string the associated database table name
@@ -43,8 +51,8 @@ class Order extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array("start_point_id, end_point_id, user_id", "required", "message" => "Поле «{attribute}» не может быть пустым"),
-			array("id, start_point_id, end_point_id, to_code_1c, from_code_1c", "length", "max" => 10, "tooLong" => "Поле «{attribute}» должно содержать не более 10 символов"),
-			array("to_flight_id, from_flight_id, to_date, from_date, create_date, export_date", "length", "max" => 32, "tooLong" => "Поле «{attribute}» должно содержать не более 32 символов"),
+			array("id, start_point_id, end_point_id", "length", "max" => 10, "tooLong" => "Поле «{attribute}» должно содержать не более 10 символов"),
+			array("to_flight_id, from_flight_id, to_date, from_date, create_date, export_date, to_code_1c, from_code_1c", "length", "max" => 32, "tooLong" => "Поле «{attribute}» должно содержать не более 32 символов"),
 			array("comment", "length", "max" => 1024, "tooLong" => "Поле «{attribute}» должно содержать не более 1024 символов"),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
@@ -282,6 +290,54 @@ class Order extends CActiveRecord
 			$this->export_date = date("d.m.Y H:i:s", strtotime($this->export_date));
 		}
 	}
+
+	public function getPaymentStatusId(){
+		$statuses = array(
+			1 => 0,
+			2 => 0,
+			3 => 0,
+			4 => 0,
+		);
+		$count = count($this->persons);
+
+		foreach ($this->persons as $key => $person) {
+			$statuses[ $person->getPaymentStatusId() ] += 1;
+		}
+
+		if( $statuses[ 4 ] == $count ){
+			$this->payment_status_id = 4;
+		}else if( $statuses[ 3 ] > 0 || $statuses[ 4 ] > 0 ){
+			$this->payment_status_id = 3;
+		}else if( $statuses[ 2 ] == $count ){
+			$this->payment_status_id = 2;
+		}else{
+			$this->payment_status_id = 1;
+		}
+
+		return $this->payment_status_id;
+	}
+
+	public function getPaymentStatus(){
+		if( $this->payment_status_id == NULL ){
+			$this->getPaymentStatusId();
+		}
+
+		return $this->paymentStatuses[ $this->payment_status_id ];
+	}
+
+	public function getPaymentStatusColor(){
+		if( $this->payment_status_id == NULL ){
+			$this->getPaymentStatusId();
+		}
+
+    	$colors = array(
+    		1 => "grey",
+    		2 => "blue",
+    		3 => "orange",
+    		4 => "green",
+    	);
+		return $colors[ $this->payment_status_id ];
+    }
 
 	protected function beforeSave() {
         if (!parent::beforeSave()) {

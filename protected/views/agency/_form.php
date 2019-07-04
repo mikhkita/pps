@@ -16,7 +16,7 @@
 	<div class="row clearfix">
 		<div class="row-half b-input">
 			<?php echo $form->labelEx($model, "default_payment_type_id"); ?>
-			<?php echo $form->dropDownList($model, "default_payment_type_id", array(0 => "Не выбрано") + $model->payments, array("class" => "select2")); ?>
+			<?php echo $form->dropDownList($model, "default_payment_type_id", array(0 => "Не выбрано") + $model->paymentTypes, array("class" => "select2")); ?>
 			<?php echo $form->error($model, "default_payment_type_id"); ?>
 		</div>
 		<div class="row-half b-input">

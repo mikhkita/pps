@@ -19,6 +19,11 @@
 	<div class="b-tile">
 		<div class="b-tile-header clearfix">
 			<a href="<?php echo Yii::app()->createUrl('/'.$this->adminMenu["cur"]->code.'/adminupdate',array('id'=>$order->id))?>"><h3 class="b-tile-title"><?=$order->getTitle()?></h3></a>
+			<? if( Yii::app()->user->checkAccess('accessAgency') ): ?>
+			<div class="b-tile-header-right">
+				<h4><?=$order->user->fio?></h4>
+			</div>
+			<? endif; ?>
 		</div>
 		<table class="b-table b-overflow-table" border="0">
 			<tr>
@@ -30,7 +35,7 @@
 				<th style="width: 111px;"><?=$labels["price"]?></th>
 				<th style="width: 102px;"><?=$labels["cash"]?></th>
 				<th style="width: 103px;"><?=$labels["commission"]?></th>
-				<th style="width: 123px;"><?=$labels["payment_status"]?></th>
+				<th style="width: 140px;"><?=$labels["payment_status"]?></th>
 			</tr>
 			<? foreach ($order->persons as $key => $person): ?>
 			<tr>
@@ -42,7 +47,7 @@
 				<td class="tr icon-rub-regular"><?=number_format( $person->price, 0, ',', '&nbsp;' )?></td>
 				<td class="tr icon-rub-regular"><?=number_format( $person->cash, 0, ',', '&nbsp;' )?></td>
 				<td class="tr icon-rub-regular"><?=number_format( $person->commission, 0, ',', '&nbsp;' )?></td>
-				<td><span class="green">Оплачено</span></td>
+				<td><span class="<?=$person->getPaymentStatusColor()?>"><?=$person->getPaymentStatus()?></span></td>
 			</tr>
 			<? endforeach; ?>
 			<tr class="b-big-row">
@@ -54,7 +59,7 @@
 				<td class="tr"><h4 class="icon-rub-bold"><?=number_format( $order->getTotalPrice(), 0, ',', '&nbsp;' )?></h4></td>
 				<td class="tr"><h4 class="icon-rub-bold"><?=number_format( $order->getTotalCash(), 0, ',', '&nbsp;' )?></h4></td>
 				<td class="tr"><h4 class="icon-rub-bold"><?=number_format( $order->getTotalCommission(), 0, ',', '&nbsp;' )?></h4></td>
-				<td><span class="orange">Оплачено частично</span></td>
+				<td><span class="<?=$order->getPaymentStatusColor()?>"><?=$order->getPaymentStatus()?></span></td>
 			</tr>
 		</table>
 	</div>

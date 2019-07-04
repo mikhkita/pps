@@ -16,6 +16,8 @@
  * @property integer $transfer_id
  * @property integer $direction_id
  * @property integer $price
+ * @property integer $to_price
+ * @property integer $from_price
  * @property integer $one_way_price
  * @property integer $commission
  * @property integer $cash
@@ -37,6 +39,7 @@ class Person extends CActiveRecord
 	public $price_without_commission = 0;
 	public $to_status = NULL;
 	public $from_status = NULL;
+	public $payment_status_id = NULL;
 
 	public $ages = array( 
 		0 => "Взрослый",
@@ -51,7 +54,7 @@ class Person extends CActiveRecord
 		1 => "На такси",
 		0 => "Самостоятельно"
 	);
-	public $payments = array(  // Продублировано в Agency для способа оплаты по умолчанию
+	public $paymentTypes = array(  // Продублировано в Agency для способа оплаты по умолчанию
 		1 => "Оплата по карте",
 		2 => "Безналичный", 
 		3 => "Наличный",
@@ -64,6 +67,13 @@ class Person extends CActiveRecord
 		4 => "Исполнен",
 		5 => "Отменен",
 	);
+	public $paymentStatuses = array(  // Продублировано в Order для статуса оплаты у заказа
+		1 => "Не оплачено",
+		2 => "Выставлен счет",
+		3 => "Оплачено частично",
+		4 => "Оплачено",
+	);
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -81,7 +91,7 @@ class Person extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array("name, last_name, order_id, phone, address", "required"),
-			array("is_child, transfer_id, direction_id, price, one_way_price, commission, cash, to_status_id, from_status_id, payment_type_id, number", "numerical", "integerOnly" => true),
+			array("is_child, transfer_id, direction_id, price, to_price, from_price, one_way_price, commission, cash, to_status_id, from_status_id, payment_type_id, number", "numerical", "integerOnly" => true),
 			array("name, last_name, third_name", "length", "max" => 64),
 			array("order_id", "length", "max" => 10),
 			array("phone, code_1c, birthday", "length", "max" => 32),
@@ -89,7 +99,7 @@ class Person extends CActiveRecord
 			array("comment, address", "length", "max" => 1024),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array("id, name, last_name, third_name, order_id, is_child, phone, comment, address, transfer_id, direction_id, price, one_way_price, commission, cash, to_status_id, from_status_id, passport, birthday, payment_type_id, code_1c, number", "safe", "on" => "search"),
+			array("id, name, last_name, third_name, order_id, is_child, phone, comment, address, transfer_id, direction_id, price, to_price, from_price, one_way_price, commission, cash, to_status_id, from_status_id, passport, birthday, payment_type_id, code_1c, number", "safe", "on" => "search"),
 		);
 	}
 
@@ -102,7 +112,8 @@ class Person extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			"order" => array(self::BELONGS_TO, "Order", "order_id"),
-			"back" => array(self::HAS_MANY, "BackPerson", "person_id"),
+			"backs" => array(self::HAS_MANY, "BackPerson", "person_id"),
+			"payments" => array(self::HAS_MANY, "PaymentPerson", "person_id"),
 		);
 	}
 
@@ -124,6 +135,8 @@ class Person extends CActiveRecord
 			"transfer_id" => "Добирается до посадки",
 			"direction_id" => "Направление",
 			"price" => "Стоимость",
+			"to_price" => "Стоимость туда (для 1С)",
+			"from_price" => "Стоимость обратно (для 1С)",
 			"one_way_price" => "Стоимость в одну сторону",
 			"commission" => "Комиссия",
 			"cash" => "Получено",
@@ -136,7 +149,6 @@ class Person extends CActiveRecord
 			"code_1c" => "Код 1С",
 			"number" => "Номер строки (для 1С)",
 			"fio" => "ФИО",
-			"commission" => "Комиссия",
 			"payment_status" => "Оплата",
 		);
 	}
@@ -193,8 +205,6 @@ class Person extends CActiveRecord
 	    	$value = trim($value);
 		}
 
-		$attributes["birthday"] = ( empty($attributes["birthday"]) )?NULL:date("Y-m-d H:i:s", strtotime($attributes["birthday"]));
-
 		$this->attributes = $attributes;
 
 		if($this->save()){
@@ -224,7 +234,7 @@ class Person extends CActiveRecord
 		$this->age = $this->ages[ $this->is_child ];
 		$this->direction = $this->directions[ $this->direction_id ];
 		$this->transfer = $this->transfers[ $this->transfer_id ];
-		$this->paymentType = $this->payments[ $this->payment_type_id ];
+		$this->paymentType = $this->paymentTypes[ $this->payment_type_id ];
 		$this->price_without_commission = $this->price - $this->commission;
 
 		if( !empty($this->to_status_id) ){
@@ -239,6 +249,72 @@ class Person extends CActiveRecord
 			$this->birthday = date("d.m.Y", strtotime($this->birthday));
 		}
 	}
+
+	public function getPaymentStatusId(){
+		$payed = 0;
+		$isBill = false;
+
+		foreach ($this->payments as $key => $paymentPerson) {
+			$payment = $paymentPerson->payment;
+
+			if( $payment->status_id == 4 || $payment->status_id == 5 ){
+				$payed = $payed + $paymentPerson->sum;
+			}
+
+			if( $payment->status_id == 3 ){
+				$isBill = true;
+			}
+		}
+
+		if( $payed > 0 ){
+			if( $payed == $this->price - $this->commission ){
+				$this->payment_status_id = 4;
+			}else{
+				$this->payment_status_id = 3;
+			}
+		}else{
+			if( $isBill ){
+				$this->payment_status_id = 2;
+			}else{
+				$this->payment_status_id = 1;
+				
+			}
+		}
+
+		return $this->payment_status_id;
+	}
+
+	public function getPaymentStatus(){
+		if( $this->payment_status_id == NULL ){
+			$this->getPaymentStatusId();
+		}
+
+		return $this->paymentStatuses[ $this->payment_status_id ];
+	}
+
+	public function getPaymentStatusColor(){
+		if( $this->payment_status_id == NULL ){
+			$this->getPaymentStatusId();
+		}
+
+    	$colors = array(
+    		1 => "grey",
+    		2 => "blue",
+    		3 => "orange",
+    		4 => "green",
+    	);
+		return $colors[ $this->payment_status_id ];
+    }
+
+    protected function beforeSave() {
+        if (!parent::beforeSave()) {
+            return false;
+        }
+
+        $this->birthday = ( empty($this->birthday) )?NULL:date("Y-m-d H:i:s", strtotime($this->birthday));
+
+        return true;
+    }  
 
 	/**
 	 * Returns the static model of the specified AR class.

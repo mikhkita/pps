@@ -148,17 +148,17 @@ return array (
     ),
     'assignments' => 
     array (
-      18 => 
-      array (
-        'bizRule' => NULL,
-        'data' => NULL,
-      ),
       21 => 
       array (
         'bizRule' => NULL,
         'data' => NULL,
       ),
       22 => 
+      array (
+        'bizRule' => NULL,
+        'data' => NULL,
+      ),
+      18 => 
       array (
         'bizRule' => NULL,
         'data' => NULL,
@@ -231,6 +231,14 @@ return array (
       1 => 'userAdmin',
       2 => 'accessAgency',
       3 => 'paymentAdmin',
+    ),
+    'assignments' => 
+    array (
+      21 => 
+      array (
+        'bizRule' => NULL,
+        'data' => NULL,
+      ),
     ),
   ),
   'admin' => 

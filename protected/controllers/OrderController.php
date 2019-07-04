@@ -34,6 +34,9 @@ class OrderController extends Controller
 			$this->pageTitle = $this->adminMenu["cur"]->name;
 		}
 
+		// $mailer = new Mailer();
+		// $mailer->send();
+
         $filter = new Order('filter');
 
 		if (isset($_GET['Order'])){

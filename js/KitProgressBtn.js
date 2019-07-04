@@ -177,6 +177,8 @@
 
         _.on('change', 'input[required], select[required], textarea[required]', _.findNeedToFeel);
 
+        _.on('keyup', 'input[required], textarea[required]', _.findNeedToFeel);
+
         _.on('updateState', _.findNeedToFeel);
 
         $('#'+_.o.buttonId).parent().on('click', '#b-need-to-fill-inputs-text', function(){

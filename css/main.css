@@ -95,17 +95,26 @@ body
 			}
 				.b-form-cont input{
 					/* margin-left: 10px; */
-					padding: 7px 10px;
-					width: 100%;
-					font-size: 16px;
-					border-radius: 5px;
+					background-color: #FFF;
 					border: 1px solid #e6e6e6;
+					padding: 10px 16px;
+					font-size: 14px;
+					display: block;
+					width: 100%;
+					line-height: 20px;
 				}
 				.b-form-cont label{
 					/* text-align: right; */
-					padding: 0px;
-					display: block;
-					margin-bottom: 10px;
+					cursor: pointer;
+                    font-size: 12px;
+                    text-transform: uppercase;
+                    font-family: "RobotoBold", Arial;
+                    color: #C4CCD5;
+                    text-align: left;
+                    letter-spacing: 1px;
+                    padding-left: 16px;
+                    margin-bottom: 5px;
+                    display: inline-block;
 				}
 					.b-form-cont label span{
 						display: none;
@@ -124,17 +133,20 @@ body
 					font-size: 16px;
 					/* margin-right: 45px; */
 					margin-top: 20px;
-					border-radius: 5px;
-					background-color: #4c8bf7;
+					border-radius: 0px;
+					background-color: #EC8F1E;
 					display: inline-block;
 					color: #FFF;
-					border: 1px solid #4077d6;
+					border: none;
 					text-decoration: none;
 				}
 				.b-form-cont .row input[type="submit"]:hover{
 					cursor: pointer;
-					background-color: #4d85e6;
+					background-color: #E1820E;
+				}
+				.b-form-cont .row input[type="submit"]:active{
 					cursor: pointer;
+					background-color: #CD7408;
 				}
 input[type="text"],
 input[type="password"],

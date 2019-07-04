@@ -13,7 +13,7 @@ class ExchangeController extends Controller
 	{
 		return array(
 			array("allow",
-				"actions" => array("importDictionaries", "exportOrder", "exportBack", "exportPayments"),
+				"actions" => array("importDictionaries", "exportOrder", "exportBack", "exportPayments", "importOrders"),
 				"users" => array("*"),
 			),
 			array("deny",
@@ -233,6 +233,7 @@ class ExchangeController extends Controller
 				"ДатаВыезда" => "",
 				"ДатаПриезда" => "",
 				"ТипЗаказа" => "",
+				"Комментарий" => $order->comment,
 			);
 
 			$personsTo = array();
@@ -479,5 +480,207 @@ class ExchangeController extends Controller
 				print_r($model->getErrors());
 			}
 		}
+	}
+
+	public function actionImportOrders($partial = false){
+		$filename = Yii::app()->basePath."/../1c_exchange/orders.xml";
+
+		$xml = simplexml_load_file($filename);
+
+		// Импорт заказов
+		$result = array();
+		foreach( $xml->Документ as $documentObj ){
+			$document = array();
+			foreach($documentObj->attributes() as $a => $b) {
+				$document[$a] = trim($b);
+			}
+
+			// $document["ИД"] = trim($document["ИД"]);
+			// $document["Дата"] = trim($document["Дата"]);
+			// $document["Номер"] = trim($document["Номер"]);
+			// $document["НазваниеАгентства"] = trim($document["НазваниеАгентства"]);
+			// $document["ИсходТочка"] = trim($document["ИсходТочка"]);
+			// $document["КонТочка"] = trim($document["КонТочка"]);
+			// $document["Рейс"] = trim($document["Рейс"]);
+			// $document["ДатаПрилетаРейса"] = trim($document["ДатаПрилетаРейса"]);
+			// $document["ДатаВылетаРейса"] = trim($document["ДатаВылетаРейса"]);
+			// $document["ДатаВыезда"] = trim($document["ДатаВыезда"]);
+			// $document["ДатаПриезда"] = trim($document["ДатаПриезда"]);
+			// $document["ТипЗаказа"] = trim($document["ТипЗаказа"]);
+
+			if( !empty($document["Рейс"]) ){
+				$flight = Flight::model()->find("code_1c = '".$document["Рейс"]."'");
+				if( !$flight ){
+					$result[ $document["Номер"] ] = "Error: Не найден рейс с кодом \"".$document["Рейс"]."\"";
+					continue;
+				}
+			}
+
+			$startPoint = Point::model()->find("code_1c = '".$document["ИсходТочка"]."'");
+			if( !$startPoint ){
+				$result[ $document["Номер"] ] = "Error: Не найдена точка маршрута с кодом \"".$document["ИсходТочка"]."\"";
+				continue;
+			}
+
+			$endPoint = Point::model()->find("code_1c = '".$document["КонТочка"]."'");
+			if( !$endPoint ){
+				$result[ $document["Номер"] ] = "Error: Не найдена точка маршрута с кодом \"".$document["КонТочка"]."\"";
+				continue;
+			}
+
+			$agency = Agency::model()->find("code_1c = '".$document["НазваниеАгентства"]."'");
+			if( !$agency ){
+				$result[ $document["Номер"] ] = "Error: Не найдено агентство с кодом \"".$document["НазваниеАгентства"]."\"";
+				continue;
+			}
+			if( !count($agency->users) ){
+				$result[ $document["Номер"] ] = "Error: Не найден пользователь у агентства с кодом  \"".$document["НазваниеАгентства"]."\"";
+				continue;	
+			}else{
+				$user = array_pop($agency->users);
+			}
+
+			$order = Order::model()->find(( ($document["ТипЗаказа"] == "Вылет")?"to_code_1c":"from_code_1c" )." = '".$document["Номер"]."'");
+			if( !$order ){
+				$order = new Order();
+			}
+
+			$isNewOrder = $order->isNewRecord;
+
+			$order->create_date = $document["Дата"];
+			$order->export_date = date(time());
+
+			if( $document["ТипЗаказа"] == "Вылет" ){
+				$order->start_point_id = $startPoint->id;
+				$order->end_point_id = $endPoint->id;
+				$order->to_date = ( !empty($document["ДатаВылетаРейса"]) )?$document["ДатаВылетаРейса"]:$document["ДатаВыезда"];
+				$order->to_flight_id = $flight->id;
+				$order->to_code_1c = $document["Номер"];
+			}else{
+				$order->start_point_id = $endPoint->id;
+				$order->end_point_id = $startPoint->id;
+				$order->from_date = ( !empty($document["ДатаПрилетаРейса"]) )?$document["ДатаПрилетаРейса"]:$document["ДатаПриезда"];
+				$order->from_flight_id = $flight->id;
+				$order->from_code_1c = $document["Номер"];
+			}
+
+			$direction_id = ($document["ТипЗаказа"] == "Вылет")?2:3;
+			foreach ($documentObj->Пассажиры->Пассажир as $key => $passengerObj) {
+				$passenger = array();
+				foreach($passengerObj->attributes() as $a => $b) {
+					$passenger[$a] = trim($b);
+				}
+				$passenger["Серия"] = trim( $passenger["Серия"] );
+				$passenger["НомерПаспорта"] = trim( $passenger["НомерПаспорта"] );
+				$passenger["ВидДокумента"] = trim( $passenger["ВидДокумента"] );
+				$passenger["ФИО"] = trim( $passenger["ФИО"] );
+				$passenger["ИДПассажира"] = trim( $passenger["ИДПассажира"] );
+				$passenger["ПассажирКод"] = trim( $passenger["ПассажирКод"] );
+				$passenger["НомерСтроки"] = trim( $passenger["НомерСтроки"] );
+				$passenger["ДатаРождения"] = trim( $passenger["ДатаРождения"] );
+				$passenger["Телефон"] = trim( $passenger["Телефон"] );
+				$passenger["Адрес"] = trim( $passenger["Адрес"] );
+				$passenger["ТипПассажира"] = trim( $passenger["ТипПассажира"] );
+				$passenger["Цена"] = trim( $passenger["Цена"] );
+				$passenger["Комментарий"] = trim( $passenger["Комментарий"] );
+				$passenger["СпособОплаты"] = trim( $passenger["СпособОплаты"] );
+				$passenger["СостояниеИсполнения"] = trim( $passenger["СостояниеИсполнения"] );
+				$passenger["СтатусОплаты"] = trim( $passenger["СтатусОплаты"] );
+
+				if( !$isNewOrder ){
+					$person = Person::model()->find("code_1c = '".$document["ПассажирКод"]."' AND order_id = '".$order->id."' AND number = '".$passenger["НомерСтроки"]."'");
+
+					if( !$person ){
+						$person = new Person();
+					}
+				}
+
+				// Если способ оплаты не указан, то задаем оплата по карте
+				$payment_type_id = array_search($passenger["СпособОплаты"], $person->paymentTypes);
+				if( $payment_type_id === false ){
+					$payment_type_id = 1;
+				}
+
+				// $person->last_name = adalsf;
+				$person->name = $passenger["ФИО"];
+				// $person->third_name = adalsf;
+				$person->order_id = $order->id;
+				$person->is_child = ( $passenger["ТипПассажира"] == "Детский" )?1:0;
+				$person->phone = Controller::convertPhoneNumber($passenger["Телефон"]);
+				$person->comment = $passenger["Комментарий"];
+				$person->address = $passenger["Адрес"];
+				$person->transfer_id = 0;
+				$person->price = adalsf;
+				$person->one_way_price = adalsf;
+				$person->commission = adalsf;
+				$person->cash = adalsf;
+				$person->to_status_id = adalsf;
+				$person->from_status_id = adalsf;
+				$person->passport = ( !empty($passenger["Серия"]) && !empty($passenger["НомерПаспорта"]) )?($passenger["Серия"]." ".$passenger["НомерПаспорта"]):NULL;
+				$person->birthday = $passenger["ДатаРождения"];
+				$person->payment_type_id = $payment_type_id;
+				$person->code_1c = $passenger["ПассажирКод"];
+				$person->number = $passenger["НомерСтроки"];
+
+				if( $person->direction_id != 1 ){
+					if( $person->isNewRecord ){
+						$person->direction_id = $direction_id;
+					}else{
+						if( $person->direction_id != $direction_id ){
+							$person->direction_id = 1;
+						}
+					}
+				}
+
+				["Серия"]=>
+				string(7) "IX-АВ"
+				["НомерПаспорта"]=>
+				string(6) "456678"
+				["ВидДокумента"]=>
+				string(46) "Свидетельство о рождении"
+				["ФИО"]=>
+				string(18) "Лукина Н.Н"
+				["ИДПассажира"]=>
+				string(36) "77bd71bc-8e4a-11e9-80d3-00155d3daa02"
+				["ПассажирКод"]=>
+				string(11) "00-00029283"
+				["ДатаРождения"]=>
+				string(0) ""
+				["Телефон"]=>
+				string(11) "79627767627"
+				["Адрес"]=>
+				string(25) "ост.Жилмассив"
+				["ТипПассажира"]=>
+				string(16) "Взрослый"
+				["Цена"]=>
+				string(7) "1800.00"
+				["Комментарий"]=>
+				string(0) ""
+				["СпособОплаты"]=>
+				string(28) "Оплата по карте"
+				["СостояниеИсполнения"]=>
+				string(10) "Бронь"
+				["СтатусОплаты"]=>
+				string(19) "Не оплачен"
+
+
+				var_dump($passenger);
+			}
+
+			die();
+
+
+			// $order->user_id = $user->id;
+
+			// if( !$order->save() ){
+			// 	print_r($order->getErrors());
+			// }else{
+			// 	$result[ $document["Номер"] ] = "Success";
+			// }
+		}
+
+		echo "<pre>";
+		var_dump($result);
+		echo "</pre>";
 	}
 }

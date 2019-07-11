@@ -18,7 +18,6 @@
  * @property integer $price
  * @property integer $to_price
  * @property integer $from_price
- * @property integer $one_way_price
  * @property integer $commission
  * @property integer $cash
  * @property integer $to_status_id
@@ -90,8 +89,8 @@ class Person extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array("name, last_name, order_id, phone, address", "required"),
-			array("is_child, transfer_id, direction_id, price, to_price, from_price, one_way_price, commission, cash, to_status_id, from_status_id, payment_type_id, number", "numerical", "integerOnly" => true),
+			array("name, order_id, phone, address", "required"),
+			array("is_child, transfer_id, direction_id, price, to_price, from_price, commission, cash, to_status_id, from_status_id, payment_type_id, number", "numerical", "integerOnly" => true),
 			array("name, last_name, third_name", "length", "max" => 64),
 			array("order_id", "length", "max" => 10),
 			array("phone, code_1c, birthday", "length", "max" => 32),
@@ -99,7 +98,7 @@ class Person extends CActiveRecord
 			array("comment, address", "length", "max" => 1024),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array("id, name, last_name, third_name, order_id, is_child, phone, comment, address, transfer_id, direction_id, price, to_price, from_price, one_way_price, commission, cash, to_status_id, from_status_id, passport, birthday, payment_type_id, code_1c, number", "safe", "on" => "search"),
+			array("id, name, last_name, third_name, order_id, is_child, phone, comment, address, transfer_id, direction_id, price, to_price, from_price, commission, cash, to_status_id, from_status_id, passport, birthday, payment_type_id, code_1c, number", "safe", "on" => "search"),
 		);
 	}
 
@@ -137,7 +136,6 @@ class Person extends CActiveRecord
 			"price" => "Стоимость",
 			"to_price" => "Стоимость туда (для 1С)",
 			"from_price" => "Стоимость обратно (для 1С)",
-			"one_way_price" => "Стоимость в одну сторону",
 			"commission" => "Комиссия",
 			"cash" => "Получено",
 			"to_status_id" => "Статус поездки «туда»",
@@ -184,7 +182,6 @@ class Person extends CActiveRecord
 		$criteria->compare("transfer_id", $this->transfer_id);
 		$criteria->compare("direction_id", $this->direction_id);
 		$criteria->compare("price", $this->price);
-		$criteria->compare("one_way_price", $this->one_way_price);
 		$criteria->compare("commission", $this->commission);
 		$criteria->compare("cash", $this->cash);
 		$criteria->compare("to_status_id", $this->to_status_id);
@@ -312,6 +309,7 @@ class Person extends CActiveRecord
         }
 
         $this->birthday = ( empty($this->birthday) )?NULL:date("Y-m-d H:i:s", strtotime($this->birthday));
+        $this->price = intval($this->to_price) + intval($this->from_price);
 
         return true;
     }  

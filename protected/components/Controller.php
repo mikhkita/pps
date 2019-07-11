@@ -169,7 +169,7 @@ class Controller extends CController
     }
 
     public function getRusDate($time, $withTime = false){
-        $tmp = explode(" ", $time);
+        $tmp = explode(" ", $time);
         $date = explode(".", date("j.n.Y", strtotime($tmp[0])));
         return $date[0]."&nbsp;".Controller::getRusMonth($date[1])."&nbsp;".$date[2]."&nbsp;г.".( (isset($tmp[1]) && $withTime == true)?(" ".$tmp[1]):"" );
     }
@@ -450,8 +450,8 @@ class Controller extends CController
     }
 
     public function convertPhoneNumber($str){
-        if (strlen($str) == 11 && substr($str, 0, 1) == "7") {
-            $str = '+'.substr($str, 0, 1).' ('.substr($str, 1, 3).') '.substr($str, 4, 3).'-'.substr($str, 7, 2).'-'.substr($str, 9, 2);
+        if (strlen($str) == 11 && in_array(substr($str, 0, 1), array("7", "8")) ) {
+            $str = '+7 ('.substr($str, 1, 3).') '.substr($str, 4, 3).'-'.substr($str, 7, 2).'-'.substr($str, 9, 2);
         } 
         return $str;
     }

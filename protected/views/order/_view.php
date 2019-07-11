@@ -53,7 +53,7 @@
 						<label for="Order_to_date" class="required"><? if( !empty($model->to_flight_id) ): ?>Дата/время вылета рейса<?else:?><?=$labels["to_date"]?><? endif; ?></label>
 					</div>
 					<div class="b-hor-input-right b-to-datepicker">
-						<?=$model->to_date?>
+						<?=Controller::getRusDate($model->to_date, true)?>
 					</div>
 				</div>
 				<? endif; ?>
@@ -75,7 +75,7 @@
 						<label for="Order_from_date" class="required"><? if( !empty($model->from_flight_id) ): ?>Дата/время прилета рейса<?else:?><?=$labels["from_date"]?><? endif; ?></span></label>
 					</div>
 					<div class="b-hor-input-right b-to-datepicker">
-						<?=$model->from_date?>
+						<?=Controller::getRusDate($model->from_date, true)?>
 					</div>
 				</div>
 				<? endif; ?>

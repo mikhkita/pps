@@ -266,23 +266,22 @@ class ExchangeController extends Controller
 					}
 				}
 
-				if( $person->pay_himself ){
-					$personFields["СпособОплаты"] = "На руки водителю";
-				}
+				$personFields["СпособОплаты"] = $person->paymentType;
 
 				switch ($person->direction_id) {
 					case 1:
-						$personFields["Цена"] = number_format($person->price/2, 2, '.', '');
-
+						$personFields["Цена"] = number_format($person->to_price, 2, '.', '');
 						array_push($personsTo, $personFields);
+
+						$personFields["Цена"] = number_format($person->from_price, 2, '.', '');
 						array_push($personsFrom, $personFields);
 						break;
 					case 2:
-						$personFields["Цена"] = number_format($person->price, 2, '.', '');
+						$personFields["Цена"] = number_format($person->to_price, 2, '.', '');
 						array_push($personsTo, $personFields);
 						break;
 					case 3:
-						$personFields["Цена"] = number_format($person->price, 2, '.', '');
+						$personFields["Цена"] = number_format($person->from_price, 2, '.', '');
 						array_push($personsFrom, $personFields);
 						break;
 				}
@@ -329,11 +328,11 @@ class ExchangeController extends Controller
 
 		$xml = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><Документы/>');
 
-		$order = Order::model()->findByPk(1);
+		$order = Order::model()->findByPk(15);
 		$order = addOrderToXML($xml, $order);
 
-		$order = Order::model()->findByPk(2);
-		$order = addOrderToXML($xml, $order);
+		// $order = Order::model()->findByPk(2);
+		// $order = addOrderToXML($xml, $order);
 		
 
 		// array_walk_recursive($test_array, array ($xml, 'addChild'));
@@ -491,8 +490,12 @@ class ExchangeController extends Controller
 		$result = array();
 		foreach( $xml->Документ as $documentObj ){
 			$document = array();
+			$related = array();
 			foreach($documentObj->attributes() as $a => $b) {
 				$document[$a] = trim($b);
+			}
+			foreach($documentObj->ЗаказПривязанный->attributes() as $a => $b) {
+				$related[$a] = trim($b);
 			}
 
 			// $document["ИД"] = trim($document["ИД"]);
@@ -542,7 +545,10 @@ class ExchangeController extends Controller
 
 			$order = Order::model()->find(( ($document["ТипЗаказа"] == "Вылет")?"to_code_1c":"from_code_1c" )." = '".$document["Номер"]."'");
 			if( !$order ){
-				$order = new Order();
+				$order = Order::model()->find(( ($document["ТипЗаказа"] == "Вылет")?"from_code_1c":"to_code_1c" )." = '".$related["НомерЗаказПривязанный"]."'");
+				if( !$order ){
+					$order = new Order();
+				}
 			}
 
 			$isNewOrder = $order->isNewRecord;
@@ -564,35 +570,81 @@ class ExchangeController extends Controller
 				$order->from_code_1c = $document["Номер"];
 			}
 
+			// Проверяем есть ли взрослые в заявки и есть ли дети в заявке
+			$issetChild = false;
+			$issetAdult = false;
+			foreach ($documentObj->Пассажиры->Пассажир as $key => $passengerObj) {
+				$passenger = array();
+				foreach($passengerObj->attributes() as $a => $b) {
+					$passenger[$a] = trim($b);
+				}
+				if( $passenger["ТипПассажира"] == "Детский" ){
+					$issetChild = true;
+				}else{
+					$issetAdult = true;
+				}
+			}
+
+			if( $issetChild ){
+				// Комиссия за ребенка
+				$priceChild = Price::model()->find("start_point_id = '".$startPoint->id."' AND end_point_id = '".$endPoint->id."' AND is_child = '1'");
+				if( !$priceChild ){
+					$result[ $document["Номер"] ] = "Error: Не найден маршрут для детей \"".$document["ИсходТочка"]." – ".$document["КонТочка"]."\"";
+					continue;
+				}else if( empty($priceChild->commission) ){
+					$result[ $document["Номер"] ] = "Error: У маршрута не задана комиссия за детский билет по маршруту \"".$document["ИсходТочка"]." – ".$document["КонТочка"]."\"";
+					continue;
+				}
+			}
+
+			if( $issetAdult ){
+				// Комиссия за взрослого
+				$priceAdult = Price::model()->find("start_point_id = '".$startPoint->id."' AND end_point_id = '".$endPoint->id."' AND is_child = '0'");
+				if( !$priceAdult ){
+					$result[ $document["Номер"] ] = "Error: Не найден маршрут для взрослых \"".$document["ИсходТочка"]." – ".$document["КонТочка"]."\"";
+					continue;
+				}else if( empty($priceAdult->commission) ){
+					$result[ $document["Номер"] ] = "Error: У маршрута не задана комиссия за взрослый билет по маршруту \"".$document["ИсходТочка"]." – ".$document["КонТочка"]."\"";
+					continue;
+				}
+			}
+
 			$direction_id = ($document["ТипЗаказа"] == "Вылет")?2:3;
 			foreach ($documentObj->Пассажиры->Пассажир as $key => $passengerObj) {
 				$passenger = array();
 				foreach($passengerObj->attributes() as $a => $b) {
 					$passenger[$a] = trim($b);
 				}
-				$passenger["Серия"] = trim( $passenger["Серия"] );
-				$passenger["НомерПаспорта"] = trim( $passenger["НомерПаспорта"] );
-				$passenger["ВидДокумента"] = trim( $passenger["ВидДокумента"] );
-				$passenger["ФИО"] = trim( $passenger["ФИО"] );
-				$passenger["ИДПассажира"] = trim( $passenger["ИДПассажира"] );
-				$passenger["ПассажирКод"] = trim( $passenger["ПассажирКод"] );
-				$passenger["НомерСтроки"] = trim( $passenger["НомерСтроки"] );
-				$passenger["ДатаРождения"] = trim( $passenger["ДатаРождения"] );
-				$passenger["Телефон"] = trim( $passenger["Телефон"] );
-				$passenger["Адрес"] = trim( $passenger["Адрес"] );
-				$passenger["ТипПассажира"] = trim( $passenger["ТипПассажира"] );
-				$passenger["Цена"] = trim( $passenger["Цена"] );
-				$passenger["Комментарий"] = trim( $passenger["Комментарий"] );
-				$passenger["СпособОплаты"] = trim( $passenger["СпособОплаты"] );
-				$passenger["СостояниеИсполнения"] = trim( $passenger["СостояниеИсполнения"] );
-				$passenger["СтатусОплаты"] = trim( $passenger["СтатусОплаты"] );
+				// $passenger["Серия"] = trim( $passenger["Серия"] );
+				// $passenger["НомерПаспорта"] = trim( $passenger["НомерПаспорта"] );
+				// $passenger["ВидДокумента"] = trim( $passenger["ВидДокумента"] );
+				// $passenger["ФИО"] = trim( $passenger["ФИО"] );
+				// $passenger["ИДПассажира"] = trim( $passenger["ИДПассажира"] );
+				// $passenger["ПассажирКод"] = trim( $passenger["ПассажирКод"] );
+				// $passenger["НомерСтроки"] = trim( $passenger["НомерСтроки"] );
+				// $passenger["ДатаРождения"] = trim( $passenger["ДатаРождения"] );
+				// $passenger["Телефон"] = trim( $passenger["Телефон"] );
+				// $passenger["Адрес"] = trim( $passenger["Адрес"] );
+				// $passenger["ТипПассажира"] = trim( $passenger["ТипПассажира"] );
+				// $passenger["Цена"] = trim( $passenger["Цена"] );
+				// $passenger["Комментарий"] = trim( $passenger["Комментарий"] );
+				// $passenger["СпособОплаты"] = trim( $passenger["СпособОплаты"] );
+				// $passenger["СостояниеИсполнения"] = trim( $passenger["СостояниеИсполнения"] );
+				// $passenger["СтатусОплаты"] = trim( $passenger["СтатусОплаты"] );
 
 				if( !$isNewOrder ){
-					$person = Person::model()->find("code_1c = '".$document["ПассажирКод"]."' AND order_id = '".$order->id."' AND number = '".$passenger["НомерСтроки"]."'");
+					$person = Person::model()->find("code_1c = '".$passenger["ПассажирКод"]."' AND order_id = '".$order->id."' AND number = '".$passenger["НомерСтроки"]."'");
+				}
 
-					if( !$person ){
-						$person = new Person();
-					}
+				if( !$person ){
+					$person = new Person();
+				}
+
+				// Если способ оплаты не указан, то задаем оплата по карте
+				$status_id = array_search($passenger["СостояниеИсполнения"], $person->statuses);
+				if( $status_id === false ){
+					$result[ $document["Номер"] ] = "Error: Неизвестное Состояние Исполнения: \"".$passenger["СостояниеИсполнения"]."\"";
+					continue;	
 				}
 
 				// Если способ оплаты не указан, то задаем оплата по карте
@@ -601,26 +653,30 @@ class ExchangeController extends Controller
 					$payment_type_id = 1;
 				}
 
-				// $person->last_name = adalsf;
-				$person->name = $passenger["ФИО"];
-				// $person->third_name = adalsf;
+				if( $person->fio != $passenger["ФИО"] ){
+					$person->name = $passenger["ФИО"];
+					$person->third_name = NULL;
+					$person->last_name = NULL;
+				}
 				$person->order_id = $order->id;
 				$person->is_child = ( $passenger["ТипПассажира"] == "Детский" )?1:0;
 				$person->phone = Controller::convertPhoneNumber($passenger["Телефон"]);
 				$person->comment = $passenger["Комментарий"];
 				$person->address = $passenger["Адрес"];
 				$person->transfer_id = 0;
-				$person->price = adalsf;
-				$person->one_way_price = adalsf;
-				$person->commission = adalsf;
-				$person->cash = adalsf;
-				$person->to_status_id = adalsf;
-				$person->from_status_id = adalsf;
 				$person->passport = ( !empty($passenger["Серия"]) && !empty($passenger["НомерПаспорта"]) )?($passenger["Серия"]." ".$passenger["НомерПаспорта"]):NULL;
 				$person->birthday = $passenger["ДатаРождения"];
 				$person->payment_type_id = $payment_type_id;
 				$person->code_1c = $passenger["ПассажирКод"];
 				$person->number = $passenger["НомерСтроки"];
+
+				if( $document["ТипЗаказа"] == "Вылет" ){
+					$person->to_status_id = $status_id;
+					$person->to_price = intval( $passenger["Цена"] );
+				}else{
+					$person->from_status_id = $status_id;
+					$person->from_price = intval( $passenger["Цена"] );
+				}
 
 				if( $person->direction_id != 1 ){
 					if( $person->isNewRecord ){
@@ -632,55 +688,33 @@ class ExchangeController extends Controller
 					}
 				}
 
-				["Серия"]=>
-				string(7) "IX-АВ"
-				["НомерПаспорта"]=>
-				string(6) "456678"
-				["ВидДокумента"]=>
-				string(46) "Свидетельство о рождении"
-				["ФИО"]=>
-				string(18) "Лукина Н.Н"
-				["ИДПассажира"]=>
-				string(36) "77bd71bc-8e4a-11e9-80d3-00155d3daa02"
-				["ПассажирКод"]=>
-				string(11) "00-00029283"
-				["ДатаРождения"]=>
-				string(0) ""
-				["Телефон"]=>
-				string(11) "79627767627"
-				["Адрес"]=>
-				string(25) "ост.Жилмассив"
-				["ТипПассажира"]=>
-				string(16) "Взрослый"
-				["Цена"]=>
-				string(7) "1800.00"
-				["Комментарий"]=>
-				string(0) ""
-				["СпособОплаты"]=>
-				string(28) "Оплата по карте"
-				["СостояниеИсполнения"]=>
-				string(10) "Бронь"
-				["СтатусОплаты"]=>
-				string(19) "Не оплачен"
+				$priceObj = ( $passenger["ТипПассажира"] == "Детский" )?$priceChild:$priceAdult;
+				if( $priceObj->is_percent ){
+					$person->commission = (intval($person->to_price) + intval($person->from_price)) / 100 * $priceObj->commission;
+				}else{
+					if( $person->direction_id == 1 ){
+						$person->commission = $priceObj->commission*2;
+					}else{
+						$person->commission = $priceObj->commission;
+					}
+				}
 
-
-				var_dump($passenger);
+				if( !$person->save() ){
+					print_r($person->getErrors());
+				}
 			}
 
-			die();
+			$order->user_id = $user->id;
 
-
-			// $order->user_id = $user->id;
-
-			// if( !$order->save() ){
-			// 	print_r($order->getErrors());
-			// }else{
-			// 	$result[ $document["Номер"] ] = "Success";
-			// }
+			if( !$order->save() ){
+				print_r($order->getErrors());
+			}else{
+				$result[ $document["Номер"] ] = "Success";
+			}
 		}
 
-		echo "<pre>";
+		// echo "<pre>";
 		var_dump($result);
-		echo "</pre>";
+		// echo "</pre>";
 	}
 }

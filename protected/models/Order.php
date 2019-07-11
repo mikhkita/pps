@@ -7,6 +7,8 @@
  * @property string $id
  * @property string $to_date
  * @property string $from_date
+ * @property string $to_time
+ * @property string $from_time
  * @property string $create_date
  * @property string $export_date
  * @property string $start_point_id
@@ -53,10 +55,11 @@ class Order extends CActiveRecord
 			array("start_point_id, end_point_id, user_id", "required", "message" => "Поле «{attribute}» не может быть пустым"),
 			array("id, start_point_id, end_point_id", "length", "max" => 10, "tooLong" => "Поле «{attribute}» должно содержать не более 10 символов"),
 			array("to_flight_id, from_flight_id, to_date, from_date, create_date, export_date, to_code_1c, from_code_1c", "length", "max" => 32, "tooLong" => "Поле «{attribute}» должно содержать не более 32 символов"),
+			array("to_time, from_time", "length", "max" => 5, "tooLong" => "Поле «{attribute}» должно содержать не более 5 символов"),
 			array("comment", "length", "max" => 1024, "tooLong" => "Поле «{attribute}» должно содержать не более 1024 символов"),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array("id, to_date, from_date, create_date, export_date, start_point_id, end_point_id, to_flight_id, from_flight_id, comment, to_code_1c, from_code_1c, user_id", "safe", "on" => "search"),
+			array("id, to_date, from_date, to_time, from_time, create_date, export_date, start_point_id, end_point_id, to_flight_id, from_flight_id, comment, to_code_1c, from_code_1c, user_id", "safe", "on" => "search"),
 		);
 	}
 
@@ -188,6 +191,19 @@ class Order extends CActiveRecord
 						$model->to_status_id = ( $model->direction_id == 1 || $model->direction_id == 2 )?1:NULL;
 						$model->from_status_id = ( $model->direction_id == 1 || $model->direction_id == 3 )?1:NULL;
 
+						switch ($model->direction_id) {
+							case 1:
+								$model->to_price = intval($model->price) / 2;
+								$model->from_price = intval($model->price) / 2;
+								break;
+							case 2:
+								$model->to_price = intval($model->price);
+								break;
+							case 3:
+								$model->from_price = intval($model->price);
+								break;
+						}
+						
 						if( !$model->save() ){
 							array_push($errors, Controller::implodeErrors($model->getErrors()) );
 						}
@@ -275,11 +291,19 @@ class Order extends CActiveRecord
 		parent::afterFind();
 
 		if( !empty($this->to_date) ){
-			$this->to_date = date("d.m.Y H:i", strtotime($this->to_date));
+			$this->to_date = date("d.m.Y", strtotime($this->to_date));
+
+			if( $this->to_time ){
+				$this->to_date = $this->to_date." ".$this->to_time;
+			}
 		}
 
 		if( !empty($this->from_date) ){
-			$this->from_date = date("d.m.Y H:i", strtotime($this->from_date));
+			$this->from_date = date("d.m.Y", strtotime($this->from_date));
+
+			if( $this->from_time ){
+				$this->from_date = $this->from_date." ".$this->from_time;
+			}
 		}
 
 		if( !empty($this->create_date) ){
@@ -342,6 +366,20 @@ class Order extends CActiveRecord
 	protected function beforeSave() {
         if (!parent::beforeSave()) {
             return false;
+        }
+
+        if( !empty($this->to_date) ){
+        	$tmp = explode(" ", $this->to_date);
+        	if( isset($tmp[1]) ){
+        		$this->to_time = $tmp[1];
+        	}
+        }
+
+        if( !empty($this->from_date) ){
+        	$tmp = explode(" ", $this->from_date);
+        	if( isset($tmp[1]) ){
+        		$this->from_time = $tmp[1];
+        	}
         }
 
         $this->to_date = ( empty($this->to_date) )?NULL:date("Y-m-d H:i:s", strtotime($this->to_date));

@@ -13,15 +13,15 @@ class DictionaryController extends Controller
 	{
 		return array(
 			array("allow",
-				"actions" => array("adminIndex", "adminList"),
+				"actions" => array("index", "list"),
 				"roles" => array("readDictionary"),
 			),
 			array("allow",
-				"actions" => array("adminUpdate"),
+				"actions" => array("update"),
 				"roles" => array("updateDictionary"),
 			),
 			array("allow",
-				"actions" => array("adminDelete", "adminCreate"),
+				"actions" => array("delete", "create"),
 				"roles" => array("root"),
 			),
 			array("deny",
@@ -30,7 +30,7 @@ class DictionaryController extends Controller
 		);
 	}
 
-	public function actionAdminIndex($partial = false){
+	public function actionIndex($partial = false){
 		unset($_GET["partial"]);
 
 		$models = ModelNames::model()->findAll(array("order" => "t.sort ASC", "condition" => "parent_id = '23'"));
@@ -41,13 +41,13 @@ class DictionaryController extends Controller
 		);
 
 		if( !$partial ){
-			$this->render("adminIndex".(($this->isMobile)?"Mobile":""), $params);
+			$this->render("index".(($this->isMobile)?"Mobile":""), $params);
 		}else{
-			$this->renderPartial("adminIndex".(($this->isMobile)?"Mobile":""), $params);
+			$this->renderPartial("index".(($this->isMobile)?"Mobile":""), $params);
 		}
 	}
 
-	public function actionAdminList($partial = false, $class = NULL){
+	public function actionList($partial = false, $class = NULL){
 		unset($_GET["partial"]);
 
 		$className = trim($class);
@@ -78,13 +78,13 @@ class DictionaryController extends Controller
 		);
 
 		if( !$partial ){
-			$this->render("adminList".(($this->isMobile)?"Mobile":""), $params);
+			$this->render("list".(($this->isMobile)?"Mobile":""), $params);
 		}else{
-			$this->renderPartial("adminList".(($this->isMobile)?"Mobile":""), $params);
+			$this->renderPartial("list".(($this->isMobile)?"Mobile":""), $params);
 		}
 	}
 
-	public function actionAdminCreate($class = NULL)
+	public function actionCreate($class = NULL)
 	{
 		$className = trim($class);
 
@@ -108,18 +108,18 @@ class DictionaryController extends Controller
 
 		if(isset($_POST[ $className ])) {
 			if( $model->updateObj($_POST[ $className ]) ){
-				$this->actionAdminList(true, $_GET["class"]);
+				$this->actionList(true, $_GET["class"]);
 				return true;
 			}
 		} else {
-			$this->renderPartial("adminCreate",array(
+			$this->renderPartial("create",array(
 				"model" => $model,
 				"fields" => $fields
 			));
 		}
 	}
 
-	public function actionAdminUpdate($id, $class = NULL)
+	public function actionUpdate($id, $class = NULL)
 	{
 		$className = trim($class);
 
@@ -143,18 +143,18 @@ class DictionaryController extends Controller
 
 		if(isset($_POST[ $className ])) {
 			if( $model->updateObj($_POST[ $className ]) ){
-				$this->actionAdminList(true, $_GET["class"]);
+				$this->actionList(true, $_GET["class"]);
 				return true;
 			}
 		} else {
-			$this->renderPartial("adminUpdate",array(
+			$this->renderPartial("update",array(
 				"model" => $model,
 				"fields" => $fields
 			));
 		}
 	}
 
-	public function actionAdminDelete($id, $class = NULL)
+	public function actionDelete($id, $class = NULL)
 	{
 		$className = trim($class);
 
@@ -170,7 +170,7 @@ class DictionaryController extends Controller
 
 		$model->delete();
 
-		$this->actionAdminList(true, $_GET["class"]);
+		$this->actionList(true, $_GET["class"]);
 	}
 
 	public function loadModel($id, $className)

@@ -9,6 +9,7 @@
  * @property integer $number
  * @property integer $transaction
  * @property string $filename
+ * @property string $export_date
  * @property string $date
  * @property integer $type_id
  */
@@ -51,10 +52,10 @@ class Payment extends CActiveRecord
 			array("type_id, status_id, number", "numerical", "integerOnly" => true),
 			array("user_id", "length", "max" => 10),
 			array("filename", "length", "max" => 1024),
-			array("transaction", "length", "max" => 64),
+			array("transaction, export_date", "length", "max" => 64),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array("id, user_id, number, date, type_id, status_id, filename, transaction", "safe", "on" => "search"),
+			array("id, user_id, number, date, type_id, export_date, status_id, filename, transaction", "safe", "on" => "search"),
 		);
 	}
 
@@ -81,6 +82,7 @@ class Payment extends CActiveRecord
 			"id" => "ID",
 			"user_id" => "Ответственный",
 			"number" => "Номер",
+			"export_date" => "Дата выгрузки",
 			"transaction" => "Номер транзакции",
 			"filename" => "Ссылка на файл",
 			"date" => "Дата",
@@ -117,6 +119,7 @@ class Payment extends CActiveRecord
 
 		$criteria->addSearchCondition("t.id", $this->id);
 		$criteria->addSearchCondition("user_id", $this->user_id);
+		$criteria->addSearchCondition("export_date", $this->export_date);
 		$criteria->addSearchCondition("number", $this->number);
 		$criteria->addSearchCondition("date", $this->date);
 		$criteria->compare("type_id", $this->type_id);
@@ -126,7 +129,7 @@ class Payment extends CActiveRecord
 		}else{
 			return new CActiveDataProvider($this, array(
 				"criteria" => $criteria,
-				"pagination" => array("pageSize" => $pages, "route" => "payment/adminindex")
+				"pagination" => array("pageSize" => $pages, "route" => "payment/index")
 			));
 		}
 	}
@@ -151,6 +154,10 @@ class Payment extends CActiveRecord
 		parent::afterFind();
 
 		$this->date = date("d.m.Y H:i", strtotime($this->date));
+
+		if( !empty($this->export_date) ){
+			$this->export_date = date("d.m.Y H:i:s", strtotime($this->export_date));
+		}
 
 		if( $this->filename ){
 			$this->ext = substr(array_pop(explode(".", $this->filename)), 0, 3);
@@ -224,6 +231,8 @@ class Payment extends CActiveRecord
         if( !empty($this->date) ){
         	$this->date = date("Y-m-d H:i:s", strtotime($this->date));
         }
+
+        $this->export_date = ( empty($this->export_date) )?NULL:date("Y-m-d H:i:s", strtotime($this->export_date));
 
         return true;
     }  

@@ -14,7 +14,7 @@ class UserController extends Controller
 	{
 		return array(
 			"accessControl", // perform access control for CRUD operations
-			"postOnly + delete", // we only allow deletion via POST request
+			// "postOnly + delete", // we only allow deletion via POST request
 		);
 	}
 
@@ -27,11 +27,11 @@ class UserController extends Controller
 	{
 		return array(
 			array("allow",
-                "actions" => array("adminIndex"),
+                "actions" => array("index"),
                 "roles" => array("readUser"),
             ),
             array("allow",
-                "actions" => array("adminCreate", "adminUpdate", "adminDelete"),
+                "actions" => array("create", "update", "delete"),
                 "roles" => array("updateUser"),
             ),
 			array("deny",
@@ -40,7 +40,7 @@ class UserController extends Controller
 		);
 	}
 
-	public function actionAdminCreate()
+	public function actionCreate()
 	{
 		$model=new User;
 
@@ -62,7 +62,7 @@ class UserController extends Controller
 					}
 				}
 				
-				$this->actionAdminindex(true);
+				$this->actionIndex(true);
 				return true;
 			}
 		}
@@ -73,14 +73,14 @@ class UserController extends Controller
 			$roleList = Role::model()->toDirector()->findAll();
 		}
 
-		$this->renderPartial("adminCreate",array(
+		$this->renderPartial("create",array(
 			"model" => $model,
 			"roleList" => $roleList
 		));
 
 	}
 
-	public function actionAdminUpdate($id)
+	public function actionUpdate($id)
 	{
 		$model = $this->loadModel($id);
 
@@ -101,7 +101,7 @@ class UserController extends Controller
 			}
 
 			if($model->save()){
-				$this->actionAdminindex(true);
+				$this->actionIndex(true);
 			}
 				
 		}else{
@@ -116,7 +116,7 @@ class UserController extends Controller
 				$roleList = Role::model()->toDirector()->findAll();
 			}
 
-			$this->renderPartial("adminUpdate",array(
+			$this->renderPartial("update",array(
 				"model" => $model,
 				"roles" => $roles,
 				"roleList" => $roleList
@@ -124,14 +124,14 @@ class UserController extends Controller
 		}
 	}
 
-	public function actionAdminDelete($id)
+	public function actionDelete($id)
 	{
 		$this->loadModel($id)->delete();
 
-		$this->actionAdminindex(true);
+		$this->actionIndex(true);
 	}
 
-	public function actionAdminIndex($partial = false)
+	public function actionIndex($partial = false)
 	{
 		if( !$partial ){
 			$this->layout="admin";
@@ -158,9 +158,9 @@ class UserController extends Controller
 		);
 
 		if( !$partial ){
-			$this->render("adminIndex".(($this->isMobile)?"Mobile":""), $params);
+			$this->render("index".(($this->isMobile)?"Mobile":""), $params);
 		}else{
-			$this->renderPartial("adminIndex".(($this->isMobile)?"Mobile":""), $params);
+			$this->renderPartial("index".(($this->isMobile)?"Mobile":""), $params);
 		}
 	}
 

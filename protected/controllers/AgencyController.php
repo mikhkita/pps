@@ -13,15 +13,15 @@ class AgencyController extends Controller
 	{
 		return array(
 			array("allow",
-				"actions" => array("adminIndex"),
+				"actions" => array("index"),
 				"roles" => array("readAgency"),
 			),
 			array("allow",
-				"actions" => array("adminUpdate"),
+				"actions" => array("update"),
 				"roles" => array("updateAgency"),
 			),
 			array("allow",
-				"actions" => array("adminDelete", "adminCreate"),
+				"actions" => array("delete", "create"),
 				"roles" => array("root"),
 			),
 			array("deny",
@@ -30,7 +30,7 @@ class AgencyController extends Controller
 		);
 	}
 
-	public function actionAdminIndex($partial = false){
+	public function actionIndex($partial = false){
 		unset($_GET["partial"]);
 		if( !$partial ){
 			$this->layout = "admin";
@@ -55,49 +55,49 @@ class AgencyController extends Controller
 		);
 
 		if( !$partial ){
-			$this->render("adminIndex".(($this->isMobile)?"Mobile":""), $params);
+			$this->render("index".(($this->isMobile)?"Mobile":""), $params);
 		}else{
-			$this->renderPartial("adminIndex".(($this->isMobile)?"Mobile":""), $params);
+			$this->renderPartial("index".(($this->isMobile)?"Mobile":""), $params);
 		}
 	}
 
-	public function actionAdminCreate()
+	public function actionCreate()
 	{
 		$model = new Agency;
 
 		if(isset($_POST["Agency"])) {
 			if( $model->updateObj($_POST["Agency"]) ){
-				$this->actionAdminIndex(true);
+				$this->actionIndex(true);
 				return true;
 			}
 		} else {
-			$this->renderPartial("adminCreate",array(
+			$this->renderPartial("create",array(
 				"model" => $model
 			));
 		}
 	}
 
-	public function actionAdminUpdate($id)
+	public function actionUpdate($id)
 	{
 		$model = $this->loadModel($id);
 
 		if(isset($_POST["Agency"])) {
 			if( $model->updateObj($_POST["Agency"]) ){
-				$this->actionAdminIndex(true);
+				$this->actionIndex(true);
 				return true;
 			}
 		}else{
-			$this->renderPartial("adminUpdate",array(
+			$this->renderPartial("update",array(
 				"model" => $model,
 			));
 		}
 	}
 
-	public function actionAdminDelete($id)
+	public function actionDelete($id)
 	{
 		$this->loadModel($id)->delete();
 
-		$this->actionAdminindex(true);
+		$this->actionIndex(true);
 	}
 
 	public function loadModel($id)

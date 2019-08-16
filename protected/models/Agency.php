@@ -114,7 +114,7 @@ class Agency extends CActiveRecord
 		}else{
 			return new CActiveDataProvider($this, array(
 				"criteria" => $criteria,
-				"pagination" => array("pageSize" => $pages, "route" => "Agency/adminindex")
+				"pagination" => array("pageSize" => $pages, "route" => "Agency/index")
 			));
 		}
 	}

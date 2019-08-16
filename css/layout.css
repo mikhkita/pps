@@ -319,6 +319,12 @@ small.block{
 .icon-refresh:before {
     content: "\e90e";
 }
+.icon-refresh:before {
+    content: "\e90e";
+}
+.icon-help:before {
+    content: "\e91b";
+}
 
 h1,h2,h3,h4,h5,h6{
     color: #383B3F;
@@ -1586,7 +1592,7 @@ h1.b-with-nav{
         padding-top: 30px;
     }
     .b-text{
-        margin-top: 20px;
+        /*margin-top: 20px;*/
         line-height: 22px;
         max-width: 800px;
         width: 100%;
@@ -1594,6 +1600,8 @@ h1.b-with-nav{
         text-align: left;   
         font-size: 14px;
         position: relative;
+        /*background-color: #fff;*/
+        /*padding: 10px 20px;*/
     }
        /* .b-text span{
             -webkit-transition: top 50ms ease-out, box-shadow 50ms ease-out;
@@ -1632,6 +1640,10 @@ h1.b-with-nav{
         }
         .b-text span.translate{
             border-bottom: 3px solid #D0673F;
+        }
+        .b-text img{
+            max-width: 100%;
+            box-shadow: 0px 0px 0px 4px #d8d8d8;
         }
         .b-bubble{
             z-index: 999;
@@ -2875,7 +2887,21 @@ ul.yiiPager .first, ul.yiiPager .last{
     box-shadow: 0 6px 15px 0 rgba(0,0,0,0.05);
     text-align: left;
     margin-bottom: 16px;
+    display: block;
 }
+    .b-help a.b-tile h3{
+        /*font-family: "RobotoRegular";*/
+        float: none;
+    }
+    .b-help a.b-tile{
+        text-decoration: none;
+    }
+    .b-help a.b-tile:hover h3{
+        text-decoration: underline;
+    }
+    .b-help a.b-tile p{
+        margin-top: 4px;
+    }
     .b-tile-header{
         text-align: left;
         padding: 20px 24px;

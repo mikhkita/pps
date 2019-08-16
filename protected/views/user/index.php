@@ -1,5 +1,5 @@
 <h1>Пользователи</h1>
-<a href="<?=$this->createUrl("/user/adminCreate")?>" class="ajax-form ajax-create b-butt b-top-butt">Добавить</a>
+<a href="<?=$this->createUrl("/user/create")?>" class="ajax-form ajax-create b-butt b-top-butt">Добавить</a>
 <?php $form=$this->beginWidget('CActiveForm'); ?>
 <table class="b-table" border="0">
 	<tr>
@@ -29,7 +29,7 @@
 			<td class="align-left"><?=$item->email?></td>
 			<td><?=implode(", ", $item->getRoleNames())?></td>
 			<td><?=$item->agency->name?></td>
-			<td><a href="<?=Yii::app()->createUrl("/user/adminUpdate",array("id"=>$item->id))?>" class="ajax-form b-double-click-click ajax-update b-tool b-tool-update" title="Редактировать <?=$this->adminMenu["cur"]->vin_name?>"></a><a href="<?=Yii::app()->createUrl("/user/adminDelete",array("id"=>$item->id))?>" class="ajax-form ajax-delete b-tool b-tool-delete" title="Удалить <?=$this->adminMenu["cur"]->vin_name?>" data-name="<?=$this->adminMenu["cur"]->vin_name?>"></a></td>
+			<td><a href="<?=Yii::app()->createUrl("/user/update",array("id"=>$item->id))?>" class="ajax-form b-double-click-click ajax-update b-tool b-tool-update" title="Редактировать <?=$this->adminMenu["cur"]->vin_name?>"></a><a href="<?=Yii::app()->createUrl("/user/delete",array("id"=>$item->id))?>" class="ajax-form ajax-delete b-tool b-tool-delete" title="Удалить <?=$this->adminMenu["cur"]->vin_name?>" data-name="<?=$this->adminMenu["cur"]->vin_name?>"></a></td>
 		</tr>
 	<? endforeach; ?>
 	<? else: ?>

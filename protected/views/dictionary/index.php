@@ -7,7 +7,7 @@
 	<? if(count($data)): ?>
 		<? foreach ($data as $i => $item): ?>
 			<tr>
-				<td><a href="<?=Yii::app()->createUrl('/'.$this->adminMenu["cur"]->code.'/adminlist',array('class'=>$item->code))?>" class="b-double-click"><?=$item->name?></a></td>
+				<td><a href="<?=Yii::app()->createUrl('/'.$this->adminMenu["cur"]->code.'/list',array('class'=>$item->code))?>" class="b-double-click"><?=$item->name?></a></td>
 			</tr>
 		<? endforeach; ?>
 	<? else: ?>

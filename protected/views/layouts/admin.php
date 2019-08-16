@@ -1,3 +1,4 @@
+<? $version = 1; ?>
 <!DOCTYPE html>
 <html xml:lang="ru" lang="ru">
 <head>
@@ -14,9 +15,9 @@
     <link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/preloader.css" />
     <link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/select2.css" />
     <link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/js/plupload/jquery.plupload.queue/css/jquery.plupload.queue.css" />
-    <link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/layout.css" />
+    <link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/layout.css?<?=$version?>" />
     <? if($this->isMobile): ?>
-        <link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/admin-mobile.css" />
+        <link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/admin-mobile.css?<?=$version?>" />
     <? endif; ?>
 
 	<script type="text/javascript" src="<?php echo Yii::app()->request->baseUrl; ?>/js/jquery-2.1.1.min.js"></script>
@@ -39,7 +40,7 @@
     <script type="text/javascript" src="<?php echo Yii::app()->request->baseUrl; ?>/js/jquery.maskedinput.min.js"></script>
     <script type="text/javascript" src="<?php echo Yii::app()->request->baseUrl; ?>/js/numericInput.min.js"></script>
     <script type="text/javascript" src="<?php echo Yii::app()->request->baseUrl; ?>/js/TweenMax.min.js"></script>
-    <script type="text/javascript" src="<?php echo Yii::app()->request->baseUrl; ?>/js/admin.js"></script>
+    <script type="text/javascript" src="<?php echo Yii::app()->request->baseUrl; ?>/js/admin.js?<?=$version?>"></script>
     <?php foreach ($this->scripts AS $script): ?><script type="text/javascript" src="<?php echo Yii::app()->request->baseUrl; ?>/js/<?php echo $script?>.js"></script><? endforeach; ?>
 </head>
 <body<? if($this->isMobile): ?> class="is-mobile"<? endif; ?>>
@@ -56,7 +57,7 @@
             <h3>Меню</h3>
             <?foreach ($this->adminMenu["items"] as $i => $menuItem):?>
                 <? if( ($menuItem->rule == NULL || Yii::app()->user->checkAccess($menuItem->rule)) && $menuItem->parent_id == 0 ): ?>
-                    <a href="<?php echo $this->createUrl('/'.$menuItem->code.'/adminindex')?>" class="b-menu-tile" data-name="<?=$menuItem->code?>">
+                    <a href="<?php echo $this->createUrl('/'.$menuItem->code.'/index')?>" class="b-menu-tile" data-name="<?=$menuItem->code?>">
                         <span class="b-icon icon-<?=$menuItem->code?>"></span>
                         <p><?=$menuItem->menu_name?></p>
                     </a>

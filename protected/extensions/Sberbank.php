@@ -2,19 +2,22 @@
 
 Class Sberbank {
     private $login  = 'avtobus-api';  //Логин
-    private $password = 'avtobus';  //Пароль 
-    private $token = 'vfehaf30es58m1bpogulgrh9vi'; // token
-    private $apiEndpoint = 'https://3dsec.sberbank.ru/payment/rest'; // endpoint
+    private $password = 'y1DlvdP8TmU*!n3Zwjt!';  //Пароль 
+    private $token = '7gangl1gb8nalvkg984s68g6r7'; // token
+    private $apiEndpoint = 'https://securepayments.sberbank.ru/payment/rest'; // endpoint
     private $backUrl    = "";   //Адрес возврата
     
     function __construct() {
-        $this->backUrl = Yii::app()->params["basePath"]."/payment/callback";
+        $this->backUrl = Yii::app()->params["basePath"].Yii::app()->createUrl("/payment/callback");
+        // var_dump($this->backUrl);
+        // die();
     }
 
     public function requestTicket($id, $amount, $desc, $json_params = []) {
         $data = $this->makeRequestFields($id, $amount, $desc, $json_params, true);
 
         $result = $this->sendSberRequest('/register.do', $id, $data);
+        // var_dump($result);
         if ($result === false) {
             Log::debug( print_r(array(
                 "rest_url" => '/register.do',

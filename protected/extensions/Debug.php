@@ -1,6 +1,6 @@
 <?
 
-Class Log2 {
+Class Debug {
     function __construct() {
 
     }
@@ -17,23 +17,15 @@ Class Log2 {
             file_put_contents(Yii::app()->basePath."/logs/errors.txt", $string."\n", FILE_APPEND);
     }
 
-    public function captcha($message,$error = false){
-        Log::set("captcha",$message,$error);
-        Log::set("debug",$message,$error);
-    }
+    public function log($message, $echo = false, $error = false ){
+        if( $echo ) echo $message."\n";
 
-    public function yandex($message,$error = false){
-        Log::set("yandex",$message,$error);
-        Log::set("debug",$message,$error);
+        Debug::set("debug", $message, $error);
     }
+    public function error($message, $echo = false){
+        if( $echo ) echo $message."\n";
 
-    public function debug($message,$error = false,$echo = false){
-        if( $echo ) echo $message."<br>";
-        Log::set("debug",$message,$error);
-    }
-    public function error($message){
-        Log::set("debug","ОШИБКА: ".$message,true);
-        return false;
+        Debug::set("debug", "Ошибка: ".$message, true);
     }
 
 }

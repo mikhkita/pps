@@ -150,7 +150,7 @@ class User extends CActiveRecord
 		}else{
 			return new CActiveDataProvider($this, array(
 				"criteria" => $criteria,
-				"pagination" => array("pageSize" => $pages, "route" => "User/adminindex")
+				"pagination" => array("pageSize" => $pages, "route" => "User/index")
 			));
 		}
 	}

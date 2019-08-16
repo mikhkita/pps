@@ -36,6 +36,8 @@ class Person extends CActiveRecord
 	public $transfer = NULL;
 	public $paymentType = NULL;
 	public $price_without_commission = 0;
+	public $to_price_without_commission = 0;
+	public $from_price_without_commission = 0;
 	public $to_status = NULL;
 	public $from_status = NULL;
 	public $payment_status_id = NULL;
@@ -192,7 +194,7 @@ class Person extends CActiveRecord
 		}else{
 			return new CActiveDataProvider($this, array(
 				"criteria" => $criteria,
-				"pagination" => array("pageSize" => $pages, "route" => "person/adminindex")
+				"pagination" => array("pageSize" => $pages, "route" => "person/index")
 			));
 		}
 	}
@@ -233,6 +235,13 @@ class Person extends CActiveRecord
 		$this->transfer = $this->transfers[ $this->transfer_id ];
 		$this->paymentType = $this->paymentTypes[ $this->payment_type_id ];
 		$this->price_without_commission = $this->price - $this->commission;
+
+		if( !empty($this->to_price) ){
+			$this->to_price_without_commission = $this->to_price - ( ($this->direction_id == 1)?($this->commission/2):$this->commission );
+		}
+		if( !empty($this->from_price) ){
+			$this->from_price_without_commission = $this->from_price - ( ($this->direction_id == 1)?($this->commission/2):$this->commission );
+		}
 
 		if( !empty($this->to_status_id) ){
 			$this->to_status = $this->statuses[ $this->to_status_id ];
@@ -308,7 +317,7 @@ class Person extends CActiveRecord
             return false;
         }
 
-        $this->birthday = ( empty($this->birthday) )?NULL:date("Y-m-d H:i:s", strtotime($this->birthday));
+        $this->birthday = ( empty($this->birthday) )?NULL:date("Y-m-d H:i:s", strtotime(str_replace(" ", " ", $this->birthday)));
         $this->price = intval($this->to_price) + intval($this->from_price);
 
         return true;

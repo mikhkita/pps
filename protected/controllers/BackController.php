@@ -13,11 +13,11 @@ class BackController extends Controller
 	{
 		return array(
 			array("allow",
-				"actions" => array("adminIndex"),
+				"actions" => array("index"),
 				"roles" => array("readOrder"),
 			),
 			array("allow",
-				"actions" => array("adminUpdate", "adminDelete", "adminCreate"),
+				"actions" => array("update", "delete", "create"),
 				"roles" => array("updateOrder"),
 			),
 			array("deny",
@@ -57,7 +57,7 @@ class BackController extends Controller
 	// 	}
 	// }
 
-	public function actionAdminCreate()
+	public function actionCreate()
 	{
 		$back = new Back();
 
@@ -81,41 +81,41 @@ class BackController extends Controller
 			if( $result->result ){
 				Controller::returnSuccess( array(
 					"action" => "redirectDelay",
-					"href" => Yii::app()->createUrl("/order/adminIndex"),
+					"href" => Yii::app()->createUrl("/order/index"),
 					"message" => "Заявка успешно отправлена"
 				) );
 			}else{
 				Controller::returnError("Ошибка: ".$result->message);
 			}
 		} else {
-			$this->render("adminCreate",array(
+			$this->render("create",array(
 				"back" => $back,
 				"persons" => $persons,
 			));
 		}
 	}
 
-	public function actionAdminUpdate($id)
+	public function actionUpdate($id)
 	{
 		$model = $this->loadModel($id);
 
 		if(isset($_POST["Back"])) {
 			if( $model->updateObj($_POST["Back"]) ){
-				$this->actionAdminIndex(true);
+				$this->actionIndex(true);
 				return true;
 			}
 		}else{
-			$this->renderPartial("adminUpdate",array(
+			$this->renderPartial("update",array(
 				"model" => $model,
 			));
 		}
 	}
 
-	public function actionAdminDelete($id)
+	public function actionDelete($id)
 	{
 		$this->loadModel($id)->delete();
 
-		$this->actionAdminindex(true);
+		$this->actionIndex(true);
 	}
 
 	public function loadModel($id)

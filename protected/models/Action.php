@@ -82,7 +82,7 @@ class Action extends CActiveRecord
 		}else{
 			return new CActiveDataProvider($this, array(
 				"criteria" => $criteria,
-				"pagination" => array("pageSize" => $pages, "route" => "action/adminindex")
+				"pagination" => array("pageSize" => $pages, "route" => "action/index")
 			));
 		}
 	}

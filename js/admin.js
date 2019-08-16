@@ -3,7 +3,7 @@ $(document).ready(function(){
     var myWidth,
         myHeight,
         title = window.location.href,
-        titleVar = ( title.split("localhost").length > 1 )?4:3,
+        titleVar = ( title.split("spp.com").length > 1 )?2:3,
         progress = new KitProgress("#EC8F1E",2),
         isMobile = $("body.is-mobile").length;
 
@@ -404,6 +404,8 @@ $(document).ready(function(){
                 var $form = $(this),
                     url = $form.attr("action"),
                     data;
+
+                $(".b-payment-form input:disabled").prop("disabled", false);
 
                 $(this).find("input[type=submit]").addClass("blocked");
 

@@ -89,7 +89,7 @@ class Back extends CActiveRecord
 		}else{
 			return new CActiveDataProvider($this, array(
 				"criteria" => $criteria,
-				"pagination" => array("pageSize" => $pages, "route" => "back/adminindex")
+				"pagination" => array("pageSize" => $pages, "route" => "back/index")
 			));
 		}
 	}

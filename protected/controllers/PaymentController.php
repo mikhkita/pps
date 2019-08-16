@@ -13,11 +13,11 @@ class PaymentController extends Controller
 	{
 		return array(
 			array("allow",
-				"actions" => array("adminIndex"),
+				"actions" => array("index"),
 				"roles" => array("readPayment"),
 			),
 			array("allow",
-				"actions" => array("adminUpdate", "adminDelete", "adminCreate"),
+				"actions" => array("update", "delete", "create"),
 				"roles" => array("updatePayment"),
 			),
 			array("allow",
@@ -43,7 +43,7 @@ class PaymentController extends Controller
 			}
 			$payment->save();
 
-			$this->redirect( Yii::app()->createUrl("/payment/adminUpdate", array("id" => $payment_id)) );
+			$this->redirect( Yii::app()->createUrl("/payment/update", array("id" => $payment_id)) );
 		}else{
 			echo "Ошибка оплаты. Не найден платеж";
 			var_dump($_GET);
@@ -51,7 +51,7 @@ class PaymentController extends Controller
 		}
 	}
 
-	public function actionAdminIndex($partial = false){
+	public function actionIndex($partial = false){
 		unset($_GET["partial"]);
 
 		// $number = Payment::getNextBillNumber();
@@ -82,13 +82,13 @@ class PaymentController extends Controller
 		);
 
 		if( !$partial ){
-			$this->render("adminIndex".(($this->isMobile)?"Mobile":""), $params);
+			$this->render("index".(($this->isMobile)?"Mobile":""), $params);
 		}else{
-			$this->renderPartial("adminIndex".(($this->isMobile)?"Mobile":""), $params);
+			$this->renderPartial("index".(($this->isMobile)?"Mobile":""), $params);
 		}
 	}
 
-	public function actionAdminCreate($type)
+	public function actionCreate($type)
 	{
 		$persons = explode(",", $_POST["ids"]);
 
@@ -123,14 +123,14 @@ class PaymentController extends Controller
 			}
 			Controller::returnSuccess( array(
 				"action" => "redirect",
-				"href" => Yii::app()->createUrl("/payment/adminUpdate", array("id" => $payment->id)),
+				"href" => Yii::app()->createUrl("/payment/update", array("id" => $payment->id)),
 			) );
 		}else{
 			Controller::returnError("Ошибка создания платежа");
 		}
 	}
 
-	public function actionAdminUpdate($id)
+	public function actionUpdate($id)
 	{
 		$payment = $this->loadModel($id);
 
@@ -193,29 +193,21 @@ class PaymentController extends Controller
 			}else{
 				Controller::returnError("Ошибка: не выбраны пассажиры");
 			}
-			// foreach ($variable as $key => $value) {
-			// 	# code...
-			// }
-
-			// if( $model->updateObj($_POST["Payment"], $_POST["Person"]) ){
-			// 	$this->actionAdminIndex();
-			// 	return true;
-			// }
 		}else{
 			$title = $payment->getTitle();
 
-			$this->render("adminUpdate",array(
+			$this->render("update",array(
 				"payment" => $payment,
 				"title" => $title
 			));
 		}
 	}
 
-	public function actionAdminDelete($id)
+	public function actionDelete($id)
 	{
 		$this->loadModel($id)->delete();
 
-		$this->actionAdminindex(true);
+		$this->actionIndex(true);
 	}
 
 	public function loadModel($id)

@@ -11,6 +11,13 @@
  */
 class PaymentPerson extends CActiveRecord
 {
+	public $direction = NULL;
+	public $directions = array( 
+		1 => "В обе стороны",
+		2 => "Туда",
+		3 => "Обратно"
+	);
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -108,6 +115,13 @@ class PaymentPerson extends CActiveRecord
 			print_r($this->getErrors());
 			return false;
 		}
+	}
+
+	public function afterFind()
+	{
+		parent::afterFind();
+
+		$this->direction = $this->directions[ $this->direction_id ];
 	}
 
 	/**

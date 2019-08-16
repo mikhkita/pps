@@ -35,7 +35,7 @@
 						<? if( $person->person->direction_id == 1 && $payment->isEditable() ): ?>
 							<?=CHTML::radioButtonList("PaymentPerson[".$person->person_id."][direction_id]", $person->direction_id, $person->person->directions, array("template" => '<div class="b-radio">{input}{label}</div>', "separator" => "", "container" => "div", "class" => "direction-field", "baseID" => "person_".$person->person_id)); ?>
 						<? else: ?>
-							<div><?=$person->person->direction?></div>
+							<div><?=$person->direction?></div>
 						<? endif; ?>
 							<div class="b-right-price icon-rub-regular">
 								<? if( $payment->isEditable() ): ?>

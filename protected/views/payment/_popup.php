@@ -13,7 +13,7 @@
 	</div>
 </div>
 <div class="b-right-tile-bottom-block b-right-tile-block">
-	<a href="<?=$this->createUrl("/payment/adminIndex")?>" class="b-btn b-btn-green">
+	<a href="<?=$this->createUrl("/payment/index")?>" class="b-btn b-btn-green">
 		<span class="b-btn-popup-text">Перейти в список платежей</span>
 	</a>
 </div>

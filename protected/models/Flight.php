@@ -123,7 +123,7 @@ class Flight extends CActiveRecord
 		}else{
 			return new CActiveDataProvider($this, array(
 				"criteria" => $criteria,
-				"pagination" => array("pageSize" => $pages, "route" => "dictionary/adminlist")
+				"pagination" => array("pageSize" => $pages, "route" => "dictionary/list")
 			));
 		}
 	}

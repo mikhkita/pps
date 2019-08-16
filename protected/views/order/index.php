@@ -1,15 +1,15 @@
 <div class="b-section-nav">
 	<div class="b-section-nav-back clearfix">
 		<h1><?=$this->adminMenu["cur"]->name?></h1>
-		<? if( Yii::app()->user->checkAccess('updateOrder') ): ?><a href="<?php echo $this->createUrl("/".$this->adminMenu["cur"]->code."/admincreate")?>" class="b-butt icon-add b-top-butt">Добавить заявку</a><? endif; ?>
+		<? if( Yii::app()->user->checkAccess('updateOrder') ): ?><a href="<?php echo $this->createUrl("/".$this->adminMenu["cur"]->code."/create")?>" class="b-butt icon-add b-top-butt">Добавить заявку</a><? endif; ?>
 	</div>
 	<div class="b-section-actions">
 		<div class="b-checkbox"><input type="checkbox" id="all-checkboxes"><label for="all-checkboxes"></label></div>
 		<? if( Yii::app()->user->checkAccess('updatePayment') ): ?>
-		<a href="<?php echo Yii::app()->createUrl('/payment/adminCreate',array('type'=>1))?>" class="b-icon-btn b-pay-action icon-card">Оплатить онлайн</a>
-		<a href="<?php echo Yii::app()->createUrl('/payment/adminCreate',array('type'=>2))?>" class="b-icon-btn b-pay-action icon-bill">Выставить счет</a>
+		<a href="<?php echo Yii::app()->createUrl('/payment/create',array('type'=>1))?>" class="b-icon-btn b-pay-action icon-card">Оплатить онлайн</a>
+		<a href="<?php echo Yii::app()->createUrl('/payment/create',array('type'=>2))?>" class="b-icon-btn b-pay-action icon-bill">Выставить счет</a>
 		<? endif; ?>
-		<a href="<?php echo Yii::app()->createUrl('/back/adminCreate')?>" class="b-icon-btn b-return-action icon-return">Оформить отмену</a>
+		<a href="<?php echo Yii::app()->createUrl('/back/create')?>" class="b-icon-btn b-return-action icon-return">Оформить отмену</a>
 	</div>
 </div>
 
@@ -18,7 +18,7 @@
 	<? foreach ($data as $i => $order): ?>
 	<div class="b-tile">
 		<div class="b-tile-header clearfix">
-			<a href="<?php echo Yii::app()->createUrl('/'.$this->adminMenu["cur"]->code.'/adminupdate',array('id'=>$order->id))?>"><h3 class="b-tile-title"><?=$order->getTitle()?></h3></a>
+			<a href="<?php echo Yii::app()->createUrl('/'.$this->adminMenu["cur"]->code.'/update',array('id'=>$order->id))?>"><h3 class="b-tile-title"><?=$order->getTitle()?></h3></a>
 			<? if( Yii::app()->user->checkAccess('accessAgency') ): ?>
 			<div class="b-tile-header-right">
 				<h4><?=$order->user->fio?></h4>
@@ -79,48 +79,3 @@
     )) ?>
     <div class="b-lot-count">Всего заявок: <?=$count?></div>
 </div>
-<?php /* $form=$this->beginWidget('CActiveForm'); ?>
-<table class="b-table" border="0">
-	<tr>
-		<th style="width: 30px;">№</th>
-		<th><? echo $labels["name"]; ?></th>
-		<th><? echo $labels["code_1c"]; ?></th>
-		<th style="width: 100px;">Действия</th>
-	</tr>
-	<tr class="b-filter">
-		<td></td>
-		<td><?php echo CHtml::activeTextField($filter, 'name', array('tabindex' => 1, "placeholder" => "Поиск по наименованию")); ?></td>
-		<td></td>
-		<td><a href="#" class="b-clear-filter">Сбросить</a></td>
-	</tr>
-	<? if(count($data)): ?>
-		<? foreach ($data as $i => $item): ?>
-			<tr>
-				<td><? echo $item->id; ?></td>
-				<td class="align-left"><? echo $item->name; ?></td>
-				<td class="align-left"><? echo $item->code_1c; ?></td>
-				<td>
-					<? if( Yii::app()->user->checkAccess('updateSection') ): ?><a href="<?php echo Yii::app()->createUrl('/'.$this->adminMenu["cur"]->code.'/adminupdate',array('id'=>$item->id))?>" class="ajax-form ajax-update b-tool b-tool-update" title="Редактировать <?=$this->adminMenu["cur"]->vin_name?>"></a>
-					<a href="<?=Yii::app()->createUrl('/'.$this->adminMenu["cur"]->code.'/admindelete',array('id'=>$item->id))?>" class="ajax-form ajax-delete b-tool b-tool-delete" title="Удалить <?=$this->adminMenu["cur"]->vin_name?>"></a><? endif; ?>
-				</td>
-			</tr>
-		<? endforeach; ?>
-	<? else: ?>
-		<tr>
-			<td colspan="20">Ничего не найдено, попробуйте изменить фильтр</td>
-		</tr>
-	<? endif; ?>
-</table>
-<?php $this->endWidget(); ?>
-<div class="b-pagination-cont clearfix">
-    <?php $this->widget('CLinkPager', array(
-        'header' => '',
-        'lastPageLabel' => 'последняя &raquo;',
-        'firstPageLabel' => '&laquo; первая', 
-        'pages' => $pages,
-        'prevPageLabel' => '< назад',
-        'nextPageLabel' => 'далее >'
-    )) ?>
-    <div class="b-lot-count">Всего групп: <?=$count?></div>
-</div>
-<? */ ?>

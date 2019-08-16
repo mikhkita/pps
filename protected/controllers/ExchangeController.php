@@ -13,13 +13,89 @@ class ExchangeController extends Controller
 	{
 		return array(
 			array("allow",
-				"actions" => array("importDictionaries", "exportOrder", "exportBack", "exportPayments", "importOrders"),
+				"actions" => array("importDictionaries", "exportOrders", "exportBack", "exportPayments", "importOrders", "ordersResult"),
 				"users" => array("*"),
 			),
 			array("deny",
 				"users" => array("*"),
 			),
 		);
+	}
+
+	public function actionOrdersResult(){
+		// $filename = Yii::app()->basePath."/../1c_exchange/result.xml";
+		$filename = Controller::readFileFromInput("result");
+
+		$xml = simplexml_load_file($filename);
+		if( !$xml ){
+			Debug::log("Пустой файл или не XML-файл", true);
+			die();
+		}
+
+		$result = array();
+		
+		foreach( $xml->Документ as $documentObj ){
+			$document = array();
+			foreach($documentObj->attributes() as $a => $b) {
+				$document[$a] = trim($b);
+			}
+			$tmp = explode("-", $document["ИД"]);
+			$id = intval($tmp[0]);
+			$type = intval($tmp[1]);
+
+			$order = Order::model()->findByPk($id);
+
+			if( !$order ){
+				$result[ $document["Номер"] ] = "Error: Не найден заказ с ID \"".$id."\"";
+				continue;
+			}
+
+			if( !empty($document["Номер"]) ){
+				if( $type == 1 ){
+					$order->to_code_1c = $document["Номер"];
+				}else{
+					$order->from_code_1c = $document["Номер"];
+				}
+			}else{
+				if( !empty($document["Причина"]) ){
+					if( !empty($order->reason_1c) ){
+						$order->reason_1c = $order->reason_1c.";<br>";
+					}
+					$order->reason_1c = $order->reason_1c.( ( $type == 1 )?"Туда: ":"Обратно: " ).$document["Причина"];
+				}
+				$order->canceled = 1;
+			}
+
+			$order->save();
+
+			foreach ($documentObj->Пассажиры->Пассажир as $key => $passengerObj) {
+				$passenger = array();
+				foreach($passengerObj->attributes() as $a => $b) {
+					$passenger[$a] = trim($b);
+				}
+				$person = Person::model()->findByPk($passenger["ИДПассажира"]);
+
+				if( !$person ){
+					$result[ $document["Номер"] ] = "Error: Не найден пассажир с ID \"".$id."\"";
+					continue;
+				}
+
+				$status_id = array_search($passenger["СостояниеИсполнения"], $person->statuses);
+				if( $status_id === false ){
+					$result[ $document["Номер"] ] = "Error: Неизвестное Состояние Исполнения: \"".$passenger["СостояниеИсполнения"]."\"";
+					continue;	
+				}
+
+				if( $type == 1 ){
+					$person->to_status_id = $status_id;
+				}else{
+					$person->from_status_id = $status_id;
+				}
+
+				$person->code_1c = $passenger["ПассажирКод"];
+				$person->save();
+			}
+		}
 	}
 
 	public function actionExportBack(){
@@ -93,16 +169,13 @@ class ExchangeController extends Controller
 				}
 			}
 
-			file_put_contents("backs.xml", $xml->asXML());
+			// file_put_contents("backs.xml", $xml->asXML());
 			
-			$model = Back::model()->findAll("export_date is NULL");
+			Back::model()->updateAll(array(
+				"export_date" => date("Y-m-d H:i:s")
+			), "export_date is NULL");
 
-			$date = date("Y-m-d H:i:s");
-
-			foreach ($model as $key => $back) {
-				$back->export_date = $date;
-				$back->save();
-			}
+			var_dump($xml->asXML());
 		}
 
 		$xml = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><Отмены/>');
@@ -116,25 +189,40 @@ class ExchangeController extends Controller
 	}
 
 	public function actionExportPayments(){
-		
-		function getArPayments(){
-			
-			$model = Payment::model()->findAll();
+		$exportedIds = array();
+
+		function getArPayments(&$exportedIds){
+			$model = Payment::model()->findAll("export_date is NULL");
 			$arPayments = array();
 
 			if (!empty($model)) {
 				foreach ($model as $key => $payment) {
+					$arPayments[$key] = array(
+						"ID" => $payment->id,
+						"AGENCY_ID" => $payment->user->agency->code_1c,
+						"NUMBER" => $payment->number,
+						"DATE" => $payment->date,
+						"TRANSACTION" => $payment->transaction,
+						"TYPE" => $payment->type->name_1c,
+						"ORDERS" => array(),
+					);
 
-					$arPayments[$key]["ID"] = $payment->id;
-					$arPayments[$key]["AGENCY_ID"] = $payment->user->agency->code_1c;
-					$arPayments[$key]["NUMBER"] = $payment->number;
-					$arPayments[$key]["DATE"] = $payment->date;
-					$arPayments[$key]["TRANSACTION"] = $payment->transaction;
-					$arPayments[$key]["TYPE"] = $payment->type->name_1c;
-					$arPayments[$key]["ORDERS"] = array();
-
+					$error = false;
 					foreach ($payment->persons as $paymentPerson) {
-						if ($paymentPerson->person->direction_id == 1 || $paymentPerson->person->direction_id == 2){
+						if( $error ){
+							continue;
+						}
+
+						if( empty($paymentPerson->person->code_1c) ){
+							$error = true;
+							continue;
+						}
+
+						if ($paymentPerson->direction_id == 1 || $paymentPerson->direction_id == 2){
+							if( empty($paymentPerson->person->order->to_code_1c) ){
+								$error = true;
+								continue;
+							}
 
 							if (!isset($arPayments[$key]["ORDERS"][$paymentPerson->person->order->to_code_1c])) {
 								$arPayments[$key]["ORDERS"][$paymentPerson->person->order->to_code_1c] = array(
@@ -146,11 +234,15 @@ class ExchangeController extends Controller
 							$arPayments[$key]["ORDERS"][$paymentPerson->person->order->to_code_1c]['PERSONS'][] = array(
 								'CODE' => $paymentPerson->person->code_1c,
 								'NUMBER' => $paymentPerson->person->number,
-								'SUM' => $paymentPerson->sum,
+								'SUM' => $paymentPerson->person->to_price_without_commission,
 							);
 						}
 
-						if ($paymentPerson->person->direction_id == 1 || $paymentPerson->person->direction_id == 3) {
+						if ($paymentPerson->direction_id == 1 || $paymentPerson->direction_id == 3) {
+							if( empty($paymentPerson->person->order->from_code_1c) ){
+								$error = true;
+								continue;
+							}
 
 							if (!isset($arPayments[$key]["ORDERS"][$paymentPerson->person->order->from_code_1c])) {
 								$arPayments[$key]["ORDERS"][$paymentPerson->person->order->from_code_1c] = array(
@@ -162,17 +254,19 @@ class ExchangeController extends Controller
 							$arPayments[$key]["ORDERS"][$paymentPerson->person->order->from_code_1c]['PERSONS'][] = array(
 								'CODE' => $paymentPerson->person->code_1c,
 								'NUMBER' => $paymentPerson->person->number,
-								'SUM' => $paymentPerson->sum,
+								'SUM' => $paymentPerson->person->from_price_without_commission,
 							);
 						}
 
 					}
+
+					if( !$error ){
+						array_push($exportedIds, $payment->id);
+					}else{
+						unset($arPayments[$key]);
+					}
 				}
 			}
-
-			echo "<pre>";
-			// var_dump($arPayments);
-			echo "</pre>";
 
 			return $arPayments;
 		}
@@ -182,10 +276,6 @@ class ExchangeController extends Controller
 			foreach ($arPayments as $code => $payment) {
 
 				$document = $xml->addChild("Платеж");
-
-				echo "<pre>";
-				var_dump($payment['ID']);
-				echo "</pre>";
 
 				$document->addAttribute("ИД", $payment['ID']);
 				$document->addAttribute("КодАгентства", $payment['AGENCY_ID']);
@@ -206,39 +296,27 @@ class ExchangeController extends Controller
 					}
 				}
 			}
-
-			file_put_contents("payments.xml", $xml->asXML());
-
 		}
 
 		$xml = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><Платежи/>');
 
-		$arPayments = getArPayments();
+		$arPayments = getArPayments($exportedIds);
 
 		if (!empty($arPayments)) {
 			addDocumentToXML($xml, $arPayments);
 		}
+
+		if( count($exportedIds) ){
+			// Payment::model()->updateAll(array(
+			// 	"export_date" => date("Y-m-d H:i:s")
+			// ), "id IN (".implode(",", $exportedIds).")");
+			
+			Controller::returnXMLFile("payments", $xml->asXML());
+		}
 	}
 
-	public function actionExportOrder(){
-
-		// $test_array = array (
-		//   'bla' => 'blub',
-		//   'foo' => 'bar',
-		//   'another_array' => array (
-		//     'stack' => 'overflow',
-		//   ),
-		// );
-		// $xml = new SimpleXMLElement('<root/>');
-		// array_walk_recursive($test_array, array ($xml, 'addChild'));
-		// print $xml->asXML();
-		// die();
-
+	public function actionExportOrders(){
 		function addDocumentToXML(&$xml, $order, $persons){
-			// var_dump($document);
-			// var_dump($passengers);
-			// echo "\n=============\n";
-
 			$document = $xml->addChild("Документ");
 			foreach ($order as $code => $field) {
 				$document->addAttribute($code, $field);
@@ -362,24 +440,30 @@ class ExchangeController extends Controller
 
 		$xml = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><Документы/>');
 
-		$order = Order::model()->findByPk(15);
-		$order = addOrderToXML($xml, $order);
+		$orders = Order::model()->findAll("export_date is NULL");
 
-		// $order = Order::model()->findByPk(2);
-		// $order = addOrderToXML($xml, $order);
-		
+		foreach ($orders as $key => $order) {
+			$order = addOrderToXML($xml, $order);
+		}
 
-		// array_walk_recursive($test_array, array ($xml, 'addChild'));
-		// print $xml->asXML();
-		file_put_contents("example.xml", $xml->asXML());
+		// Order::model()->updateAll(array(
+		// 	"export_date" => date("Y-m-d H:i:s")
+		// ), "export_date is NULL");
 
-		// var_dump($order);
+		Controller::returnXMLFile("orders", $xml->asXML());
+		// file_put_contents("example.xml", $xml->asXML());
 	}
 
 	public function actionImportDictionaries($partial = false){
-		$filename = Yii::app()->basePath."/../1c_exchange/dictionaries.xml";
+		// $filename = Yii::app()->basePath."/../1c_exchange/dictionaries.xml";
+		$filename = Controller::readFileFromInput("dictionary");
 
 		$xml = simplexml_load_file($filename);
+
+		if( !$xml ){
+			Debug::log("Пустой файл или не XML-файл", true);
+			die();
+		}
 
 		// Импорт точек маршрута
 		foreach( $xml->ТочкиМаршрута->{"Элемент.ТочкиМаршрута"} as $item ){
@@ -398,9 +482,10 @@ class ExchangeController extends Controller
 			$model->active = $active;
 
 			if( !$model->save() ){
-				print_r($model->getErrors());
+				Debug::log(print_r($model->getErrors(), true), true);
 			}
 		}
+		Debug::log("ТочкиМаршрута импортированы ", true);
 
 		// Импорт рейсов
 		foreach( $xml->Рейсы->{"Элемент.Рейсы"} as $item ){
@@ -419,9 +504,10 @@ class ExchangeController extends Controller
 			$model->active = $active;
 
 			if( !$model->save() ){
-				print_r($model->getErrors());
+				Debug::log(print_r($model->getErrors(), true), true);
 			}
 		}
+		Debug::log("Рейсы импортированы ", true);
 
 		// Импорт турагентств
 		foreach( $xml->Партнеры->{"Элемент.Партнеры"} as $item ){
@@ -440,9 +526,10 @@ class ExchangeController extends Controller
 			$model->active = $active;
 
 			if( !$model->save() ){
-				print_r($model->getErrors());
+				Debug::log(print_r($model->getErrors(), true), true);
 			}
 		}
+		Debug::log("Партнеры импортированы ", true);
 
 		// Индексирование точек маршрута по коду 1С
 		$model = Point::model()->findAll();
@@ -461,7 +548,7 @@ class ExchangeController extends Controller
 			$date = date("Y-m-d H:i:s", strtotime( $item->Период ));
 
 			if( empty($start_point_id) || empty($end_point_id) ){
-				echo "Нет точки маршрута\n";
+				Debug::log("Нет точки маршрута ".trim( $item->НачТочка )." – ".trim( $item->КонТочка ), true);
 				continue;
 			}
 
@@ -479,9 +566,10 @@ class ExchangeController extends Controller
 			$model->date = $date;
 
 			if( !$model->save() ){
-				print_r($model->getErrors());
+				Debug::log(print_r($model->getErrors(), true), true);
 			}
 		}
+		Debug::log("СтоимостиПроезда импортированы ", true);
 
 		// Импорт комиссий
 		foreach( $xml->КомиссияАгентств->{"Элемент.КомиссияАгентств"} as $item ){
@@ -492,7 +580,7 @@ class ExchangeController extends Controller
 			$commission = intval( trim( $item->ЧислоКомиссии ) );
 
 			if( empty($start_point_id) || empty($end_point_id) ){
-				echo "Нет точки маршрута\n";
+				Debug::log("Нет точки маршрута ".trim( $item->НачТочка )." – ".trim( $item->КонТочка ), true);
 				continue;
 			}
 
@@ -510,13 +598,15 @@ class ExchangeController extends Controller
 			$model->commission = $commission;
 
 			if( !$model->save() ){
-				print_r($model->getErrors());
+				Debug::log(print_r($model->getErrors(), true), true);
 			}
 		}
+		Debug::log("КомиссииАгентств импортированы ", true);
 	}
 
 	public function actionImportOrders($partial = false){
-		$filename = Yii::app()->basePath."/../1c_exchange/orders.xml";
+		// $filename = Yii::app()->basePath."/../1c_exchange/orders.xml";
+		$filename = Controller::readFileFromInput("order");
 
 		$xml = simplexml_load_file($filename);
 

@@ -19,6 +19,8 @@
  * @property string $to_code_1c
  * @property string $from_code_1c
  * @property string $user_id
+ * @property string $canceled
+ * @property string $reason_1c
  */
 class Order extends CActiveRecord
 {
@@ -55,11 +57,11 @@ class Order extends CActiveRecord
 			array("start_point_id, end_point_id, user_id", "required", "message" => "Поле «{attribute}» не может быть пустым"),
 			array("id, start_point_id, end_point_id", "length", "max" => 10, "tooLong" => "Поле «{attribute}» должно содержать не более 10 символов"),
 			array("to_flight_id, from_flight_id, to_date, from_date, create_date, export_date, to_code_1c, from_code_1c", "length", "max" => 32, "tooLong" => "Поле «{attribute}» должно содержать не более 32 символов"),
-			array("to_time, from_time", "length", "max" => 5, "tooLong" => "Поле «{attribute}» должно содержать не более 5 символов"),
-			array("comment", "length", "max" => 1024, "tooLong" => "Поле «{attribute}» должно содержать не более 1024 символов"),
+			array("to_time, from_time, canceled", "length", "max" => 5, "tooLong" => "Поле «{attribute}» должно содержать не более 5 символов"),
+			array("comment, reason_1c", "length", "max" => 1024, "tooLong" => "Поле «{attribute}» должно содержать не более 1024 символов"),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array("id, to_date, from_date, to_time, from_time, create_date, export_date, start_point_id, end_point_id, to_flight_id, from_flight_id, comment, to_code_1c, from_code_1c, user_id", "safe", "on" => "search"),
+			array("id, to_date, from_date, to_time, from_time, create_date, export_date, start_point_id, end_point_id, to_flight_id, from_flight_id, comment, to_code_1c, from_code_1c, user_id, canceled, reason_1c", "safe", "on" => "search"),
 		);
 	}
 
@@ -99,6 +101,8 @@ class Order extends CActiveRecord
 			"to_code_1c" => "Код 1С заявки «туда»",
 			"from_code_1c" => "Код 1С заявки «обратно»",
 			"user_id" => "Пользователь",
+			"canceled" => "Отказ",
+			"reason_1c" => "Причина отказа",
 		);
 	}
 
@@ -146,7 +150,7 @@ class Order extends CActiveRecord
 		}else{
 			return new CActiveDataProvider($this, array(
 				"criteria" => $criteria,
-				"pagination" => array("pageSize" => $pages, "route" => "order/adminindex")
+				"pagination" => array("pageSize" => $pages, "route" => "order/index")
 			));
 		}
 	}
@@ -381,11 +385,11 @@ class Order extends CActiveRecord
         		$this->from_time = $tmp[1];
         	}
         }
-
-        $this->to_date = ( empty($this->to_date) )?NULL:date("Y-m-d H:i:s", strtotime($this->to_date));
-		$this->from_date = ( empty($this->from_date) )?NULL:date("Y-m-d H:i:s", strtotime($this->from_date));
-		$this->create_date = ( empty($this->create_date) )?NULL:date("Y-m-d H:i:s", strtotime($this->create_date));
-		$this->export_date = ( empty($this->export_date) )?NULL:date("Y-m-d H:i:s", strtotime($this->export_date));
+        
+        $this->to_date = ( empty($this->to_date) )?NULL:date("Y-m-d H:i:s", strtotime(str_replace(" ", " ", $this->to_date)));
+		$this->from_date = ( empty($this->from_date) )?NULL:date("Y-m-d H:i:s", strtotime(str_replace(" ", " ", $this->from_date)));
+		$this->create_date = ( empty($this->create_date) )?NULL:date("Y-m-d H:i:s", strtotime(str_replace(" ", " ", $this->create_date)));
+		$this->export_date = ( empty($this->export_date) )?NULL:date("Y-m-d H:i:s", strtotime(str_replace(" ", " ", $this->export_date)));
 
         return true;
     }  

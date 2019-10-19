@@ -1,4 +1,4 @@
-<? $version = 1; ?>
+<? $version = 5; ?>
 <!DOCTYPE html>
 <html xml:lang="ru" lang="ru">
 <head>

@@ -9,6 +9,7 @@
  * @property string $code_1c
  * @property string $active
  * @property string $is_airport
+ * @property string $is_departure
  */
 class Point extends CActiveRecord
 {
@@ -31,10 +32,10 @@ class Point extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array("name, code_1c", "required"),
-			array("name, active, is_airport", "length", "max" => 128),
+			array("name, active, is_airport, is_departure", "length", "max" => 128),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array("id, name, code_1c, active, is_airport", "safe", "on" => "search"),
+			array("id, name, code_1c, active, is_airport, is_departure", "safe", "on" => "search"),
 		);
 	}
 
@@ -54,6 +55,9 @@ class Point extends CActiveRecord
             "endAvailable" => array(
             	"with" => "pricesEnd",
             	"condition" => "pricesEnd.id IS NOT NULL"
+            ),
+            "departureOnly" => array(
+            	"condition" => "t.is_departure = '1'",
             )
         );
     }
@@ -94,6 +98,10 @@ class Point extends CActiveRecord
 					"name" => "Аэропорт",
 					"type" => "bool"
 				),
+				"is_departure" => (object) array(
+					"name" => "Отправная точка",
+					"type" => "bool"
+				),
 				"active" => (object) array(
 					"name" => "Активность",
 					"type" => "bool"
@@ -105,6 +113,7 @@ class Point extends CActiveRecord
 				"name" => "Наименование",
 				"code_1c" => "Код 1С",
 				"is_airport" => "Аэропорт",
+				"is_departure" => "Отправная точка",
 				"active" => "Активность",
 			);
 		}

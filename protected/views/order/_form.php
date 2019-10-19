@@ -23,7 +23,8 @@
 						<?php echo $form->labelEx($model, "start_point_id"); ?>
 					</div>
 					<div class="b-hor-input-right">
-						<?php echo $form->dropDownList($model, "start_point_id", array("" => "Не выбрано") + CHtml::listData(Point::model()->sorted()->active()->startAvailable()->findAll(), "id", "name"), array("class" => "select2", "required" => true, "title" => "Поле обязательно")); ?>
+						<?php echo $form->dropDownList($model, "start_point_id", array("" => "Не выбрано") + CHtml::listData(Point::model()->sorted()->departureOnly()->active()->startAvailable()->findAll(), "id", "name"), array("class" => "select2", "required" => true, "title" => "Поле обязательно")); ?>
+						<a href="#b-start-point-notify" class="fancy right icon-notify">Почему только Томск и Юрга?</a>
 					</div>
 				</div>
 				<div class="b-hor-input">
@@ -36,7 +37,7 @@
 				</div>
 				<div class="b-hor-input date-airplane hide">
 					<div class="b-input b-hor-input-left">
-						<label for="Order_to_flight_id" class="required"><?=$labels["to_flight_id"]?> <span class="required">*</span></label>
+						<label for="Order_to_flight_id" class="required icon-airplane-takeoff"><?=$labels["to_flight_id"]?> <span class="required">*</span></label>
 					</div>
 					<div class="b-hor-input-right">
 						<?php echo $form->dropDownList($model, "to_flight_id", array("" => "Не выбрано") + CHtml::listData(Flight::model()->sorted()->active()->findAll(), "id", "name"), array("class" => "select2", "required" => true, "title" => "Поле обязательно")); ?>
@@ -52,7 +53,7 @@
 				</div>
 				<div class="b-hor-input date-airplane hide">
 					<div class="b-input b-hor-input-left">
-						<label for="Order_from_flight_id" class="required"><?=$labels["from_flight_id"]?> <span class="required">*</span></label>
+						<label for="Order_from_flight_id" class="required icon-airplane-landing"><?=$labels["from_flight_id"]?> <span class="required">*</span></label>
 					</div>
 					<div class="b-hor-input-right">
 						<?php echo $form->dropDownList($model, "from_flight_id", array("" => "Не выбрано") + CHtml::listData(Flight::model()->sorted()->active()->findAll(), "id", "name"), array("class" => "select2", "required" => true, "title" => "Поле обязательно")); ?>
@@ -232,3 +233,8 @@
 		</div>
 	</div>
 </script>
+<div style="display: none;">
+	<div class="b-success-payment-popup b-notify-popup" id="b-start-point-notify">
+		<?php $this->renderPartial("_startPointNotifyPopup"); ?>
+	</div>
+</div>

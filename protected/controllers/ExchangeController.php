@@ -108,7 +108,7 @@ class ExchangeController extends Controller
 
 		function getArBack(){
 			
-			$model = Back::model()->findAll("export_date is NULL");
+			$model = Back::model()->findAll("export_date is NULL OR export_date = '0000-00-00 00:00:00'");
 			$arBack = array();
 
 			if (!empty($model)) {
@@ -173,7 +173,7 @@ class ExchangeController extends Controller
 			
 			Back::model()->updateAll(array(
 				"export_date" => date("Y-m-d H:i:s")
-			), "export_date is NULL");
+			), "export_date is NULL OR export_date = '0000-00-00 00:00:00'");
 
 			var_dump($xml->asXML());
 		}
@@ -192,7 +192,7 @@ class ExchangeController extends Controller
 		$exportedIds = array();
 
 		function getArPayments(&$exportedIds){
-			$model = Payment::model()->findAll("export_date is NULL");
+			$model = Payment::model()->findAll("export_date is NULL OR export_date = '0000-00-00 00:00:00'");
 			$arPayments = array();
 
 			if (!empty($model)) {
@@ -307,9 +307,9 @@ class ExchangeController extends Controller
 		}
 
 		if( count($exportedIds) ){
-			// Payment::model()->updateAll(array(
-			// 	"export_date" => date("Y-m-d H:i:s")
-			// ), "id IN (".implode(",", $exportedIds).")");
+			Payment::model()->updateAll(array(
+				"export_date" => date("Y-m-d H:i:s")
+			), "id IN (".implode(",", $exportedIds).")");
 			
 			Controller::returnXMLFile("payments", $xml->asXML());
 		}
@@ -440,15 +440,15 @@ class ExchangeController extends Controller
 
 		$xml = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><Документы/>');
 
-		$orders = Order::model()->findAll("export_date is NULL");
+		$orders = Order::model()->findAll("export_date is NULL OR export_date = '0000-00-00 00:00:00'");
 
 		foreach ($orders as $key => $order) {
 			$order = addOrderToXML($xml, $order);
 		}
 
-		// Order::model()->updateAll(array(
-		// 	"export_date" => date("Y-m-d H:i:s")
-		// ), "export_date is NULL");
+		Order::model()->updateAll(array(
+			"export_date" => date("Y-m-d H:i:s")
+		), "export_date is NULL OR export_date = '0000-00-00 00:00:00'");
 
 		Controller::returnXMLFile("orders", $xml->asXML());
 		// file_put_contents("example.xml", $xml->asXML());
@@ -757,7 +757,7 @@ class ExchangeController extends Controller
 				// $passenger["СтатусОплаты"] = trim( $passenger["СтатусОплаты"] );
 
 				if( !$isNewOrder ){
-					$person = Person::model()->find("code_1c = '".$passenger["ПассажирКод"]."' AND order_id = '".$order->id."' AND number = '".$passenger["НомерСтроки"]."'");
+					$person = Person::model()->find("code_1c = '".$passenger["ПассажирКод"]."' AND order_id = '".$order->id."'");
 				}
 
 				if( !$person ){
@@ -828,7 +828,9 @@ class ExchangeController extends Controller
 				}
 			}
 
-			$order->user_id = $user->id;
+			if( empty($order->user_id) ){
+				$order->user_id = $user->id;
+			}
 
 			if( !$order->save() ){
 				print_r($order->getErrors());

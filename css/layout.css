@@ -220,11 +220,31 @@ small.block{
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-[class^="icon-"],
-[class*=" icon-"]{
+[class^="icon-"]:not(.icon-notify),
+[class*=" icon-"]:not(.icon-notify){
     text-decoration: none;
 }
 
+
+.icon-notify:before {
+  content: "\e91e";
+}
+.icon-airplane-landing:before {
+  content: "\e91c";
+}
+.icon-airplane-takeoff:before {
+  content: "\e91d";
+}
+.icon-airplane-landing:before,
+.icon-airplane-takeoff:before,
+.icon-notify:before{
+    color: #373b3f;
+    font-size: 18px;
+    margin: -10px 10px -10px 0px;
+    position: relative;
+    top: 2px;
+    display: inline-block;
+}
 .icon-return:before {
     content: "\e91a";
 }
@@ -1603,6 +1623,26 @@ h1.b-with-nav{
         /*background-color: #fff;*/
         /*padding: 10px 20px;*/
     }
+    .b-text-big *{
+        font-size: 16px;
+        line-height: 24px;
+    }
+        .b-text ul li {
+            list-style: none;
+            padding-left: 25px;
+            position: relative;
+        }
+        .b-text ul li:before {
+            position: absolute;
+            content: "s";
+            font-size: 0px;
+            width: 6px;
+            height: 6px;
+            left: 0px;
+            top: 10px;
+            background-color: #EC8F1E;
+            border-radius: 10px;
+        }
        /* .b-text span{
             -webkit-transition: top 50ms ease-out, box-shadow 50ms ease-out;
                -moz-transition: top 50ms ease-out, box-shadow 50ms ease-out;
@@ -2906,14 +2946,25 @@ ul.yiiPager .first, ul.yiiPager .last{
         text-align: left;
         padding: 20px 24px;
     }
+        .b-tile-title-link,
+        .b-tile-title-link *{
+            text-decoration: none;
+        }
         .b-tile-header a:hover h3{
             text-decoration: underline;
         }
-        h3.b-tile-title{
+        .b-tile-title-link{
             float: left;
         }
+        /*.b-tile-header-date{
+            float: left;
+        }*/
         .b-tile-header-right{
             float: right;
+        }
+        .b-tile-header-right .b-tool-delete {
+            margin-left: 20px;
+            margin-top: 12px;
         }
     .b-tile .b-table{
         box-shadow: none;
@@ -3476,6 +3527,9 @@ div.notifyjs-bootstrap-error{
     overflow: hidden;
     padding: 0;
 }   
+.b-notify-popup{
+    max-width: 760px;
+}
     .b-success-payment-popup h1{
         padding: 0;
         margin-bottom: 0;

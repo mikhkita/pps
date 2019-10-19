@@ -96,7 +96,7 @@ class OrderController extends Controller
 		$model = $this->loadModel($id);
 
 		if(isset($_POST["Person"])) {
-			$result = $model->updateObj(NULL, $_POST["Person"]);
+			$result = $model->updateObj($_POST["Order"], $_POST["Person"]);
 			if( $result->result ){
 				Controller::returnSuccess( array(
 					"action" => "redirectDelay",

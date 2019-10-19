@@ -97,6 +97,26 @@
 						<?=$model->comment?>
 					</div>
 				</div>
+
+				<? if( Yii::app()->user->checkAccess('root') ): ?>
+					<div class="b-hor-input">
+						<div class="b-input b-hor-input-left">
+							<?php echo $form->labelEx($model, "to_code_1c"); ?>
+						</div>
+						<div class="b-hor-input-right">
+							<?php echo $form->textField($model, "to_code_1c", array("maxlength" => 32, "autocomplete" => "off", "placeholder" => "...",)); ?>
+						</div>
+					</div>
+
+					<div class="b-hor-input">
+						<div class="b-input b-hor-input-left">
+							<?php echo $form->labelEx($model, "from_code_1c"); ?>
+						</div>
+						<div class="b-hor-input-right">
+							<?php echo $form->textField($model, "from_code_1c", array("maxlength" => 32, "autocomplete" => "off", "placeholder" => "...",)); ?>
+						</div>
+					</div>
+				<? endif; ?>
 			</div>
 		</div>
 
@@ -109,6 +129,16 @@
 				<div class="b-order-form-fio">
 					<h3><?=$person->last_name?> <?=$person->name?> <?=$person->third_name?></h3>
 				</div>
+				<? if( Yii::app()->user->checkAccess('root') ): ?>
+					<div class="b-hor-input">
+						<div class="b-input b-hor-input-left">
+							<?php echo $form->labelEx($person, "code_1c"); ?>
+						</div>
+						<div class="b-hor-input-right">
+							<?=CHTML::textField("Person[".$person->id."][code_1c]", $person->code_1c, array("maxlength" => 32, "placeholder" => "..."))?>
+						</div>
+					</div>
+				<? endif; ?>
 				<div class="b-hor-input">
 					<div class="b-input b-hor-input-left">
 						<?php echo $form->labelEx($person, "is_child"); ?>

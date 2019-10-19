@@ -67,6 +67,7 @@ class Person extends CActiveRecord
 		3 => "Бронь",
 		4 => "Исполнен",
 		5 => "Отменен",
+		6 => "В ожидании",
 	);
 	public $paymentStatuses = array(  // Продублировано в Order для статуса оплаты у заказа
 		1 => "Не оплачено",
@@ -134,7 +135,7 @@ class Person extends CActiveRecord
 			"comment" => "Комментарий",
 			"address" => "Адрес",
 			"transfer_id" => "Добирается до посадки",
-			"direction_id" => "Направление",
+			"direction_id" => "Направление пассажира",
 			"price" => "Стоимость",
 			"to_price" => "Стоимость туда (для 1С)",
 			"from_price" => "Стоимость обратно (для 1С)",
@@ -311,6 +312,24 @@ class Person extends CActiveRecord
     	);
 		return $colors[ $this->payment_status_id ];
     }
+
+    protected function beforeDelete()
+	{
+		if(parent::beforeDelete() === false) {
+			return false;
+		}
+
+		foreach ($this->backs as $key => $back) {
+			$back->delete();
+		}
+
+		foreach ($this->payments as $key => $payment) {
+			$payment->delete();
+		}
+
+		return true;
+	}
+
 
     protected function beforeSave() {
         if (!parent::beforeSave()) {

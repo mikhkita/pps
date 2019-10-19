@@ -705,7 +705,7 @@ $(document).ready(function(){
     /* Preloader ----------------------------------- Preloader */
 
     /* Hot keys ------------------------------------ Hot keys */
-    if( $(".ajax-create").length ){
+    if( $(".ajax-create, .ajax-delete").length ){
         var cmddown = false,
             ctrldown = false;
         function down(e){

@@ -93,10 +93,10 @@ class Order extends CActiveRecord
 			"from_date" => "Дата/время выезда «обратно»",
 			"create_date" => "Дата создания",
 			"export_date" => "Дата выгрузки",
-			"start_point_id" => "Откуда",
-			"end_point_id" => "Куда",
-			"to_flight_id" => "Рейс «Туда»",
-			"from_flight_id" => "Рейс «Обратно»",
+			"start_point_id" => "Город выезда/приезда",
+			"end_point_id" => "Направление автобуса",
+			"to_flight_id" => "Рейс вылета",
+			"from_flight_id" => "Рейс прилета",
 			"comment" => "Комментарий",
 			"to_code_1c" => "Код 1С заявки «туда»",
 			"from_code_1c" => "Код 1С заявки «обратно»",
@@ -168,7 +168,9 @@ class Order extends CActiveRecord
 			$attributes["user_id"] = Yii::app()->user->id;
 			$attributes["from_flight_id"] = ( empty($attributes["from_flight_id"]) )?NULL:$attributes["from_flight_id"];
 			$attributes["to_flight_id"] = ( empty($attributes["to_flight_id"]) )?NULL:$attributes["to_flight_id"];
+		}
 
+		if( count($attributes) ){
 			$this->attributes = $attributes;
 		}
 
@@ -192,8 +194,8 @@ class Order extends CActiveRecord
 						$model->order_id = $this->id;
 						$model->number = $number;
 
-						$model->to_status_id = ( $model->direction_id == 1 || $model->direction_id == 2 )?1:NULL;
-						$model->from_status_id = ( $model->direction_id == 1 || $model->direction_id == 3 )?1:NULL;
+						$model->to_status_id = ( $model->direction_id == 1 || $model->direction_id == 2 )?6:NULL;
+						$model->from_status_id = ( $model->direction_id == 1 || $model->direction_id == 3 )?6:NULL;
 
 						switch ($model->direction_id) {
 							case 1:
@@ -252,7 +254,11 @@ class Order extends CActiveRecord
 			$this->title = $this->title." (".count($this->persons)." чел.)";
 		}
 
-		return $this->title;
+		if( Yii::app()->user->checkAccess('root') ){
+			return "#".$this->id." ".$this->title;
+		}else{
+			return $this->title;
+		}
 	}
 
 	public function getTotals(){
@@ -366,6 +372,19 @@ class Order extends CActiveRecord
     	);
 		return $colors[ $this->payment_status_id ];
     }
+
+    protected function beforeDelete()
+	{
+		if(parent::beforeDelete() === false) {
+			return false;
+		}
+
+		foreach ($this->persons as $key => $person) {
+			$person->delete();
+		}
+
+		return true;
+	}
 
 	protected function beforeSave() {
         if (!parent::beforeSave()) {

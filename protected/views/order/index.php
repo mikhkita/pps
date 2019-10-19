@@ -18,10 +18,15 @@
 	<? foreach ($data as $i => $order): ?>
 	<div class="b-tile">
 		<div class="b-tile-header clearfix">
-			<a href="<?php echo Yii::app()->createUrl('/'.$this->adminMenu["cur"]->code.'/update',array('id'=>$order->id))?>"><h3 class="b-tile-title"><?=$order->getTitle()?></h3></a>
+			<a href="<?php echo Yii::app()->createUrl('/'.$this->adminMenu["cur"]->code.'/update',array('id'=>$order->id))?>" class="b-tile-title-link"><h3 class="b-tile-title"><?=$order->getTitle()?></h3>
+			</a>
 			<? if( Yii::app()->user->checkAccess('accessAgency') ): ?>
 			<div class="b-tile-header-right">
-				<h4><?=$order->user->fio?></h4>
+				<a href="<?=Yii::app()->createUrl('/'.$this->adminMenu["cur"]->code.'/delete',array('id'=>$order->id))?>" data-name="<?=$this->adminMenu["cur"]->vin_name?>" class="ajax-form ajax-delete b-tool b-tool-delete" title="Удалить <?=$this->adminMenu["cur"]->vin_name?>"></a>
+			</div>
+			<div class="b-tile-header-right">
+				<h4 class="tr"><?=$order->user->fio?> <? if( Yii::app()->user->checkAccess('admin') ): ?><? endif; ?></h4>
+				<p class="tr grey"><?=$order->user->agency->name?></p>
 			</div>
 			<? endif; ?>
 		</div>
@@ -51,10 +56,7 @@
 			</tr>
 			<? endforeach; ?>
 			<tr class="b-big-row">
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
+				<td colspan="4"><p class="b-tile-header-date grey"><?=Controller::getRusDate($order->create_date)?></p></td>
 				<td class="b-label-block tr"><label>Итого:</label></td>
 				<td class="tr"><h4 class="icon-rub-bold"><?=number_format( $order->getTotalPrice(), 0, ',', '&nbsp;' )?></h4></td>
 				<td class="tr"><h4 class="icon-rub-bold"><?=number_format( $order->getTotalCash(), 0, ',', '&nbsp;' )?></h4></td>

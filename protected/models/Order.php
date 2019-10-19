@@ -256,7 +256,7 @@ class Order extends CActiveRecord
 
 		if( Yii::app()->user->checkAccess('root') ){
 			return "#".$this->id." ".$this->title;
-		}else{
+		}else{ 
 			return $this->title;
 		}
 	}
